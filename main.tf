@@ -2,7 +2,7 @@
 terraform {
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
       version = ">= 2.26"
     }
   }
@@ -36,7 +36,7 @@ resource "azurerm_storage_account" "tikweb_sa" {
   allow_blob_public_access  = true
 
   static_website {
-    index_document = "index.html"
+    index_document     = "index.html"
     error_404_document = "404.html"
   }
 }
@@ -48,10 +48,10 @@ resource "azurerm_storage_container" "frontend_container" {
 }
 
 resource "azurerm_storage_blob" "index_html" {
-  name                    = "index.html"
-  storage_account_name    = azurerm_storage_account.tikweb_sa.name
-  storage_container_name  = azurerm_storage_container.frontend_container.name
-  type                    = "Block"
-  content_type            = "text/html"
-  source                  = "index.html"
+  name                   = "index.html"
+  storage_account_name   = azurerm_storage_account.tikweb_sa.name
+  storage_container_name = azurerm_storage_container.frontend_container.name
+  type                   = "Block"
+  content_type           = "text/html"
+  source                 = "index.html"
 }
