@@ -13,3 +13,11 @@ variable "resource_group_location" {
 variable "postgres_server_name" {
   type = string
 }
+
+variable "postgres_server_fqdn" {
+  type = string
+}
+
+variable "postgres_admin_password" {
+  type = string
+}

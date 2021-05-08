@@ -9,3 +9,7 @@ output "resource_group_location" {
 output "postgres_server_name" {
   value = azurerm_postgresql_server.tikweb_pg.name
 }
+
+output "postgres_server_fqdn" {
+  value = azurerm_postgresql_server.tikweb_pg.fqdn
+}
