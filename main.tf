@@ -1,18 +1,16 @@
-# Configure the Azure provider
 terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 2.26"
+      version = "2.57.0"
     }
   }
   backend "azurerm" {
-    resource_group_name  = "terraform-state"
-    storage_account_name = "tikprodterraform"
     container_name       = "tfstate"
-    key                  = "prod.terraform.tfstate"
+    key                  = "terraform.tfstate"
   }
 }
+
 locals {
   env_prefix = "prod"
 }
