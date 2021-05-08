@@ -26,3 +26,10 @@ module "frontend" {
   resource_group_name     = module.common.resource_group_name
   resource_group_location = module.common.resource_group_location
 }
+
+module "cms" {
+  source                  = "./modules/cms"
+  env_name                = terraform.workspace
+  resource_group_name     = module.common.resource_group_name
+  resource_group_location = module.common.resource_group_location
+}
