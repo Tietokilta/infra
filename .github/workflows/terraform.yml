@@ -26,6 +26,11 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Run initialization script
         run: . ./init.sh prod
 
