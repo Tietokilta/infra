@@ -16,8 +16,9 @@ provider "azurerm" {
 }
 
 module "common" {
-  source   = "./modules/common"
-  env_name = terraform.workspace
+  source                  = "./modules/common"
+  env_name                = terraform.workspace
+  postgres_admin_password = var.postgres_admin_password
 }
 
 module "frontend" {
@@ -32,4 +33,5 @@ module "cms" {
   env_name                = terraform.workspace
   resource_group_name     = module.common.resource_group_name
   resource_group_location = module.common.resource_group_location
+  postgres_server_name    = module.common.postgres_server_name
 }
