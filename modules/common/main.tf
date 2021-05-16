@@ -20,3 +20,12 @@ resource "azurerm_postgresql_server" "tikweb_pg" {
   version                      = "11"
   ssl_enforcement_enabled      = true
 }
+
+# Enable access from other Azure services
+resource "azurerm_postgresql_firewall_rule" "tikweb_pg_interal_access" {
+  name                = "tikweb-${var.env_name}-pg-internal-access"
+  resource_group_name = azurerm_resource_group.tikweb_rg.name
+  server_name         = azurerm_postgresql_server.tikweb_pg.name
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "0.0.0.0"
+}
