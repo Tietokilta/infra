@@ -36,4 +36,5 @@ module "cms" {
   postgres_server_name    = module.common.postgres_server_name
   postgres_server_fqdn    = module.common.postgres_server_fqdn
   postgres_admin_password = var.postgres_admin_password
+  strapi_admin_jwt_secret = var.strapi_admin_jwt_secret
 }

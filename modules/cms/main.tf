@@ -36,17 +36,16 @@ resource "azurerm_app_service" "tikweb_cms" {
   site_config {
     ftps_state       = "Disabled"
     always_on        = true
-    linux_fx_version = "DOCKER|" # FIXME specify container
+    linux_fx_version = "DOCKER|ghcr.io/tietokilta/strapi-cms:latest"
   }
 
   app_settings = {
-    # FIXME: Are these needed for docker hub?
-    # DOCKER_REGISTRY_SERVER_URL = ""
-    # DOCKER_REGISTRY_SERVER_USERNAME = ""
-    # DOCKER_REGISTRY_SERVER_PASSWORD = ""
+    DOCKER_REGISTRY_SERVER_URL = "https://ghcr.io"
+
+    WEBSITES_PORT     = 1337
 
     HOST              = "0.0.0.0"
-    PORT              = 80
+    PORT              = 1337
     DATABASE          = "postgres"
     DATABASE_HOST     = var.postgres_server_fqdn
     DATABASE_PORT     = 5432
@@ -54,7 +53,7 @@ resource "azurerm_app_service" "tikweb_cms" {
     DATABASE_USERNAME = "tietokilta"
     DATABASE_PASSWORD = var.postgres_admin_password
     DATABASE_SSL      = true
-    ADMIN_JWT_SECRET  = "badsecret" # FIXME: generate
+    ADMIN_JWT_SECRET  = var.strapi_admin_jwt_secret
 
     #Strapi env
     STRAPI_DISABLE_UPDATE_NOTIFICATION = false

@@ -54,3 +54,4 @@ jobs:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       TF_VAR_postgres_admin_password: ${{ secrets.TF_VAR_POSTGRES_ADMIN_PASSWORD }}
+      TF_VAR_strapi_admin_jwt_secret: ${{ secrets.TF_VAR_STRAPI_ADMIN_JWT_SECRET }}
