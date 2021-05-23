@@ -1,5 +1,7 @@
 locals {
-  db_name = "${var.env_name}_cms_db"
+  db_name             = "${var.env_name}_cms_db"
+  logs_container_name = "cms-logs"
+  logs_container_url  = "${var.logs_sa_blob_endpoint}/${local.logs_container_name}"
 }
 
 resource "azurerm_postgresql_database" "tikweb_cms_db" {
@@ -7,7 +9,7 @@ resource "azurerm_postgresql_database" "tikweb_cms_db" {
   resource_group_name = var.resource_group_name
   server_name         = var.postgres_server_name
   charset             = "UTF8"
-  collation           = "fi_FI"
+  collation           = "fi-FI"
 }
 
 
@@ -25,6 +27,29 @@ resource "azurerm_app_service_plan" "tikweb_plan" {
   }
 }
 
+resource "azurerm_storage_container" "cms_logs" {
+  name                 = local.logs_container_name
+  storage_account_name = var.logs_sa_name
+}
+
+data "azurerm_storage_account_blob_container_sas" "logs_sas" {
+  connection_string = var.logs_sa_connection_string
+  container_name    = azurerm_storage_container.cms_logs.name
+  https_only        = true
+
+  start  = "2021-01-01"
+  expiry = "2069-01-01"
+
+  permissions {
+    read   = true
+    add    = true
+    create = true
+    write  = true
+    delete = true
+    list   = true
+  }
+}
+
 resource "azurerm_app_service" "tikweb_cms" {
   name                = "tikweb-${var.env_name}-app-cms"
   location            = var.resource_group_location
@@ -39,10 +64,22 @@ resource "azurerm_app_service" "tikweb_cms" {
     linux_fx_version = "DOCKER|ghcr.io/tietokilta/strapi-cms:latest"
   }
 
+  logs {
+    application_logs {
+      azure_blob_storage {
+        level             = "Verbose"
+        sas_url           = "${local.logs_container_url}?${data.azurerm_storage_account_blob_container_sas.logs_sas.sas}"
+        retention_in_days = 7
+      }
+    }
+
+    detailed_error_messages_enabled = true
+  }
+
   app_settings = {
     DOCKER_REGISTRY_SERVER_URL = "https://ghcr.io"
 
-    WEBSITES_PORT     = 1337
+    WEBSITES_PORT = 1337
 
     HOST              = "0.0.0.0"
     PORT              = 1337
