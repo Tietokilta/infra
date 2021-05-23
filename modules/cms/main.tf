@@ -50,7 +50,7 @@ resource "azurerm_app_service" "tikweb_cms" {
     DATABASE_HOST     = var.postgres_server_fqdn
     DATABASE_PORT     = 5432
     DATABASE_NAME     = local.db_name
-    DATABASE_USERNAME = "tietokilta"
+    DATABASE_USERNAME = "tietokilta@${var.postgres_server_host}"
     DATABASE_PASSWORD = var.postgres_admin_password
     DATABASE_SSL      = true
     ADMIN_JWT_SECRET  = var.strapi_admin_jwt_secret

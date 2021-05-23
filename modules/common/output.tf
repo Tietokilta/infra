@@ -13,3 +13,7 @@ output "postgres_server_name" {
 output "postgres_server_fqdn" {
   value = azurerm_postgresql_server.tikweb_pg.fqdn
 }
+
+output "postgres_server_host" {
+  value = local.pg_server_name
+}

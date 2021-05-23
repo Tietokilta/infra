@@ -25,3 +25,7 @@ variable "postgres_admin_password" {
 variable "strapi_admin_jwt_secret" {
   type = string
 }
+
+variable "postgres_server_host" {
+  type = string
+}
