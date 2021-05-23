@@ -26,14 +26,6 @@ variable "strapi_admin_jwt_secret" {
   type = string
 }
 
-variable "logs_sa_name" {
-  type = string
-}
-
-variable "logs_sa_connection_string" {
-  type = string
-}
-
-variable "logs_sa_blob_endpoint" {
+variable "postgres_server_host" {
   type = string
 }

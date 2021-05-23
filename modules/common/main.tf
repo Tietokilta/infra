@@ -1,10 +1,14 @@
+locals {
+  pg_server_name = "tikweb-${var.env_name}-pg-server"
+}
+
 resource "azurerm_resource_group" "tikweb_rg" {
   name     = "tikweb-${var.env_name}-rg"
   location = "northeurope"
 }
 
 resource "azurerm_postgresql_server" "tikweb_pg" {
-  name                = "tikweb-${var.env_name}-pg-server"
+  name                = local.pg_server_name
   location            = azurerm_resource_group.tikweb_rg.location
   resource_group_name = azurerm_resource_group.tikweb_rg.name
 
@@ -28,14 +32,4 @@ resource "azurerm_postgresql_firewall_rule" "tikweb_pg_internal_access" {
   server_name         = azurerm_postgresql_server.tikweb_pg.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-}
-
-
-resource "azurerm_storage_account" "logs_storage" {
-  name                     = "tikweb${var.env_name}logs"
-  resource_group_name      = azurerm_resource_group.tikweb_rg.name
-  location                 = azurerm_resource_group.tikweb_rg.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  account_kind             = "BlobStorage"
 }

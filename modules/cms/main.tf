@@ -1,7 +1,5 @@
 locals {
-  db_name             = "${var.env_name}_cms_db"
-  logs_container_name = "cms-logs"
-  logs_container_url  = "${var.logs_sa_blob_endpoint}/${local.logs_container_name}"
+  db_name = "${var.env_name}_cms_db"
 }
 
 resource "azurerm_postgresql_database" "tikweb_cms_db" {
@@ -27,29 +25,6 @@ resource "azurerm_app_service_plan" "tikweb_plan" {
   }
 }
 
-resource "azurerm_storage_container" "cms_logs" {
-  name                 = local.logs_container_name
-  storage_account_name = var.logs_sa_name
-}
-
-data "azurerm_storage_account_blob_container_sas" "logs_sas" {
-  connection_string = var.logs_sa_connection_string
-  container_name    = azurerm_storage_container.cms_logs.name
-  https_only        = true
-
-  start  = "2021-01-01"
-  expiry = "2069-01-01"
-
-  permissions {
-    read   = true
-    add    = true
-    create = true
-    write  = true
-    delete = true
-    list   = true
-  }
-}
-
 resource "azurerm_app_service" "tikweb_cms" {
   name                = "tikweb-${var.env_name}-app-cms"
   location            = var.resource_group_location
@@ -65,15 +40,12 @@ resource "azurerm_app_service" "tikweb_cms" {
   }
 
   logs {
-    application_logs {
-      azure_blob_storage {
-        level             = "Verbose"
-        sas_url           = "${local.logs_container_url}?${data.azurerm_storage_account_blob_container_sas.logs_sas.sas}"
+    http_logs {
+      file_system {
         retention_in_days = 7
+        retention_in_mb   = 100
       }
     }
-
-    detailed_error_messages_enabled = true
   }
 
   app_settings = {
@@ -87,7 +59,7 @@ resource "azurerm_app_service" "tikweb_cms" {
     DATABASE_HOST     = var.postgres_server_fqdn
     DATABASE_PORT     = 5432
     DATABASE_NAME     = local.db_name
-    DATABASE_USERNAME = "tietokilta"
+    DATABASE_USERNAME = "tietokilta@${var.postgres_server_host}"
     DATABASE_PASSWORD = var.postgres_admin_password
     DATABASE_SSL      = true
     ADMIN_JWT_SECRET  = var.strapi_admin_jwt_secret
