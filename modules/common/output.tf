@@ -13,15 +13,3 @@ output "postgres_server_name" {
 output "postgres_server_fqdn" {
   value = azurerm_postgresql_server.tikweb_pg.fqdn
 }
-
-output "logs_sa_name" {
-  value = azurerm_storage_account.logs_storage.name
-}
-
-output "logs_sa_connection_string" {
-  value = azurerm_storage_account.logs_storage.primary_connection_string
-}
-
-output "logs_sa_blob_endpoint" {
-  value = azurerm_storage_account.logs_storage.primary_connection_string
-}
