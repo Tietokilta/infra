@@ -39,6 +39,15 @@ resource "azurerm_app_service" "tikweb_cms" {
     linux_fx_version = "DOCKER|ghcr.io/tietokilta/strapi-cms:latest"
   }
 
+  logs {
+    http_logs {
+      file_system {
+        retention_in_days = 7
+        retention_in_mb   = 100
+      }
+    }
+  }
+
   app_settings = {
     DOCKER_REGISTRY_SERVER_URL = "https://ghcr.io"
 
