@@ -22,7 +22,7 @@ resource "azurerm_postgresql_server" "tikweb_pg" {
 }
 
 # Enable access from other Azure services
-resource "azurerm_postgresql_firewall_rule" "tikweb_pg_interal_access" {
+resource "azurerm_postgresql_firewall_rule" "tikweb_pg_internal_access" {
   name                = "tikweb-${var.env_name}-pg-internal-access"
   resource_group_name = azurerm_resource_group.tikweb_rg.name
   server_name         = azurerm_postgresql_server.tikweb_pg.name
