@@ -39,3 +39,33 @@ module "cms" {
   postgres_admin_password = var.postgres_admin_password
   strapi_admin_jwt_secret = var.strapi_admin_jwt_secret
 }
+
+module "tikjob_storage" {
+  source                  = "./modules/recruiting/storage"
+  env_name                = terraform.workspace
+  resource_group_location = "northeurope"
+  ghost_db_username       = "tikrekryadmin"
+}
+
+module "tikjob_app" {
+  source = "./modules/recruiting/ghost"
+
+  env_name                = terraform.workspace
+  resource_group_name     = module.tikjob_storage.resource_group_name
+  resource_group_location = module.tikjob_storage.resource_group_location
+  ghost_front_url         = "https://rekry.tietokilta.fi"
+
+  mysql_db_name         = module.tikjob_storage.mysql_db_name
+  mysql_fqdn            = module.tikjob_storage.mysql_fqdn
+  mysql_connection_user = module.tikjob_storage.mysql_connection_user
+  mysql_password        = module.tikjob_storage.mysql_password
+
+  storage_account_name = module.tikjob_storage.storage_account_name
+  storage_account_key  = module.tikjob_storage.storage_account_key
+  storage_share_name   = module.tikjob_storage.storage_share_name
+
+  ghost_mail_host     = "smtp.eu.mailgun.org"
+  ghost_mail_port     = 465
+  ghost_mail_username = var.ghost_mail_username
+  ghost_mail_password = var.ghost_mail_password
+}
