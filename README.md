@@ -5,6 +5,6 @@
 ## Development
 
 Initialize terraform into correct environment by running `. ./init.sh <env>` where
-env is e.g. `prod`.
+env is e.g. `prod` (env name can contain only lowercase letters or numbers).
 
 Run `terraform plan` to see changes.
