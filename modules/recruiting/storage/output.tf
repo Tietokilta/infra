@@ -11,7 +11,7 @@ output "mysql_fqdn" {
   value = azurerm_mysql_server.tikjob_mysql.fqdn
 }
 
-output "mysql_connection_user" {
+output "mysql_username" {
   value = "${azurerm_mysql_server.tikjob_mysql.administrator_login}@${azurerm_mysql_server.tikjob_mysql.name}"
 }
 

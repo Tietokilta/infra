@@ -54,7 +54,7 @@ resource "azurerm_app_service" "tikjob_ghost" {
     # Database
     database__client                     = "mysql"
     database__connection__host           = var.mysql_fqdn
-    database__connection__user           = var.mysql_connection_user
+    database__connection__user           = var.mysql_username
     database__connection__password       = var.mysql_password
     database__connection__database       = var.mysql_db_name
     database__connection__ssl            = "true"

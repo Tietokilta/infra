@@ -15,7 +15,7 @@ variable "mysql_fqdn" {
   type = string
 }
 
-variable "mysql_connection_user" {
+variable "mysql_username" {
   type = string
 }
 

@@ -55,10 +55,10 @@ module "tikjob_app" {
   resource_group_location = module.tikjob_storage.resource_group_location
   ghost_front_url         = "https://rekry.tietokilta.fi"
 
-  mysql_db_name         = module.tikjob_storage.mysql_db_name
-  mysql_fqdn            = module.tikjob_storage.mysql_fqdn
-  mysql_connection_user = module.tikjob_storage.mysql_connection_user
-  mysql_password        = module.tikjob_storage.mysql_password
+  mysql_db_name  = module.tikjob_storage.mysql_db_name
+  mysql_fqdn     = module.tikjob_storage.mysql_fqdn
+  mysql_username = module.tikjob_storage.mysql_username
+  mysql_password = module.tikjob_storage.mysql_password
 
   storage_account_name = module.tikjob_storage.storage_account_name
   storage_account_key  = module.tikjob_storage.storage_account_key

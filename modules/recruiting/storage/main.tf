@@ -10,7 +10,7 @@ resource "random_password" "db_password" {
 }
 
 resource "azurerm_mysql_server" "tikjob_mysql" {
-  name                = "tikjob-ghost-database"
+  name                = "tikjob-${var.env_name}-mysql-server"
   location            = azurerm_resource_group.tikjob_rg.location
   resource_group_name = azurerm_resource_group.tikjob_rg.name
 
@@ -31,7 +31,7 @@ resource "azurerm_mysql_server" "tikjob_mysql" {
 }
 
 resource "azurerm_mysql_database" "tikjob_mysql_db" {
-  name                = "ghost"
+  name                = "tikjob_${var.env_name}_ghost"
   resource_group_name = azurerm_resource_group.tikjob_rg.name
   server_name         = azurerm_mysql_server.tikjob_mysql.name
   charset             = "utf8"
@@ -48,7 +48,7 @@ resource "azurerm_mysql_firewall_rule" "tikjob_mysql_access" {
 }
 
 resource "azurerm_storage_account" "tikjob_storage_account" {
-  name                     = "tikjobpersistentcontent"
+  name                     = "tikjob${var.env_name}contents"
   resource_group_name      = azurerm_resource_group.tikjob_rg.name
   location                 = azurerm_resource_group.tikjob_rg.location
   account_tier             = "Standard"
