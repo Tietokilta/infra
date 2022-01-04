@@ -7,6 +7,12 @@ resource "azurerm_resource_group" "tikweb_rg" {
   location = "northeurope"
 }
 
+resource "random_password" "db_password" {
+  length           = 30
+  special          = true
+  override_special = "_%@"
+}
+
 resource "azurerm_postgresql_server" "tikweb_pg" {
   name                = local.pg_server_name
   location            = azurerm_resource_group.tikweb_rg.location
@@ -20,7 +26,7 @@ resource "azurerm_postgresql_server" "tikweb_pg" {
   auto_grow_enabled            = false
 
   administrator_login          = "tietokilta"
-  administrator_login_password = var.postgres_admin_password
+  administrator_login_password = random_password.db_password.result
   version                      = "11"
   ssl_enforcement_enabled      = true
 }

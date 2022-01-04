@@ -15,5 +15,10 @@ output "postgres_server_fqdn" {
 }
 
 output "postgres_server_host" {
-  value = local.pg_server_name
+  value = azurerm_postgresql_server.tikweb_pg.name
+}
+
+output "postgres_admin_password" {
+  value = azurerm_postgresql_server.tikweb_pg.administrator_login_password
+  sensitive = true
 }
