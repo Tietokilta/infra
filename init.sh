@@ -32,7 +32,7 @@ echo "Activating subscription: $SUBSCRIPTION ($SUBSCRIPTION_NAME)"
 az account set --subscription "$SUBSCRIPTION"
 TFSTATE_STORAGE_ACCOUNT_KEY=$(az storage account keys list --account-name "$TFSTATE_STORAGE_ACCOUNT_NAME" --resource-group "$TFSTATE_STORAGE_RESOURCE_GROUP_NAME" --subscription "$SUBSCRIPTION" --query "[?keyName=='key1'].value" --output tsv)
 
-cat >> config.azurerm.tfbackend << EOF
+cat > config.azurerm.tfbackend << EOF
 storage_account_name = "$TFSTATE_STORAGE_ACCOUNT_NAME"
 access_key           = "$TFSTATE_STORAGE_ACCOUNT_KEY"
 EOF
