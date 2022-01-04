@@ -65,6 +65,10 @@ module "tikjob_app" {
 
   ghost_mail_host     = "smtp.eu.mailgun.org"
   ghost_mail_port     = 465
-  ghost_mail_username = var.ghost_mail_username
-  ghost_mail_password = var.ghost_mail_password
+  ghost_mail_username = var.tikjob_ghost_mail_username
+  ghost_mail_password = var.tikjob_ghost_mail_password
+
+  ghost_hostname = "rekry.tietokilta.fi"
+
+  cert_password = var.tikjob_cert_password
 }

@@ -70,3 +70,27 @@ resource "azurerm_app_service" "tikjob_ghost" {
     mail__options__auth__pass = var.ghost_mail_password
   }
 }
+
+resource "azurerm_app_service_custom_hostname_binding" "tikjob_hostname_binding" {
+  hostname            = var.ghost_hostname
+  app_service_name    = azurerm_app_service.tikjob_ghost.name
+  resource_group_name = var.resource_group_name
+
+  lifecycle {
+    ignore_changes = [ssl_state, thumbprint]
+  }
+}
+
+resource "azurerm_app_service_certificate" "tikjob_cert" {
+  name                = "tikjob-cert"
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
+  pfx_blob            = filebase64("${path.module}/rekry.tietokilta.fi.pfx")
+  password            = var.cert_password
+}
+
+resource "azurerm_app_service_certificate_binding" "tikjob_cert_binding" {
+  certificate_id      = azurerm_app_service_certificate.tikjob_cert.id
+  hostname_binding_id = azurerm_app_service_custom_hostname_binding.tikjob_hostname_binding.id
+  ssl_state           = "SniEnabled"
+}

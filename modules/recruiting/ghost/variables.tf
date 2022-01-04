@@ -60,3 +60,11 @@ variable "ghost_mail_password" {
 variable "ghost_front_url" {
   type = string
 }
+
+variable "ghost_hostname" {
+  type = string
+}
+
+variable "cert_password" {
+  type = string
+}
