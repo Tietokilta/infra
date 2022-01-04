@@ -16,9 +16,8 @@ provider "azurerm" {
 }
 
 module "common" {
-  source                  = "./modules/common"
-  env_name                = terraform.workspace
-  postgres_admin_password = var.postgres_admin_password
+  source   = "./modules/common"
+  env_name = terraform.workspace
 }
 
 module "frontend" {
@@ -36,7 +35,7 @@ module "cms" {
   postgres_server_name    = module.common.postgres_server_name
   postgres_server_fqdn    = module.common.postgres_server_fqdn
   postgres_server_host    = module.common.postgres_server_host
-  postgres_admin_password = var.postgres_admin_password
+  postgres_admin_password = module.common.postgres_admin_password
   strapi_admin_jwt_secret = var.strapi_admin_jwt_secret
 }
 
