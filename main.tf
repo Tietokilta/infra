@@ -39,6 +39,19 @@ module "cms" {
   strapi_admin_jwt_secret = var.strapi_admin_jwt_secret
 }
 
+module "ilmo" {
+  source                  = "./modules/ilmo"
+  env_name                = terraform.workspace
+  resource_group_name     = module.common.resource_group_name
+  resource_group_location = module.common.resource_group_location
+  postgres_server_name    = module.common.postgres_server_name
+  postgres_server_fqdn    = module.common.postgres_server_fqdn
+  postgres_server_host    = module.common.postgres_server_host
+  postgres_admin_password = module.common.postgres_admin_password
+  edit_token_secret       = var.ilmo_edit_token_secret
+  auth_jwt_secret         = var.ilmo_auth_jwt_secret
+}
+
 module "tikjob_storage" {
   source                  = "./modules/recruiting/storage"
   env_name                = terraform.workspace
