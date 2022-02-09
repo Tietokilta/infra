@@ -69,6 +69,8 @@ resource "azurerm_app_service" "ilmo_backend" {
     MAILGUN_API_KEY = var.mailgun_api_key
     MAILGUN_DOMAIN  = var.mailgun_domain
 
+    EMAIL_BASE_URL = "https://tik-ilmo-${var.env_name}-app.azurewebsites.net"
+
     BRANDING_MAIL_FOOTER_TEXT = ""
     BRANDING_MAIL_FOOTER_LINK = "ilmo.tietokilta.fi"
   }
