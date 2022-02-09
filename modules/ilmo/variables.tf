@@ -19,7 +19,7 @@ variable "postgres_server_fqdn" {
 }
 
 variable "postgres_admin_password" {
-  type = string
+  type      = string
   sensitive = true
 }
 
@@ -28,11 +28,20 @@ variable "postgres_server_host" {
 }
 
 variable "edit_token_secret" {
-  type = string
+  type      = string
   sensitive = true
 }
 
 variable "auth_jwt_secret" {
-  type = string
+  type      = string
   sensitive = true
+}
+
+variable "mailgun_api_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "mailgun_domain" {
+  type = string
 }

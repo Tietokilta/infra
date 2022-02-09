@@ -66,19 +66,11 @@ resource "azurerm_app_service" "ilmo_backend" {
     FEATHERS_AUTH_SECRET  = var.auth_jwt_secret
 
     MAIL_FROM       = "ilmo@tietokilta.fi"
-    MAILGUN_API_KEY = ""
-    MAILGUN_DOMAIN  = ""
-
-    BRANDING_HEADER_TITLE_TEXT = "Tietokillan ilmomasiina"
-    BRANDING_FOOTER_GDPR_TEXT  = "Tietosuoja"
-    BRANDING_FOOTER_GDPR_LINK  = "https://tietokilta.fi/kilta/hallinto/viralliset-asiat/rekisteriselosteet/"
-    BRANDING_FOOTER_HOME_TEXT  = "Tietokilta.fi"
-    BRANDING_FOOTER_HOME_LINK  = "https://tietokilta.fi"
+    MAILGUN_API_KEY = var.mailgun_api_key
+    MAILGUN_DOMAIN  = var.mailgun_domain
 
     BRANDING_MAIL_FOOTER_TEXT = ""
     BRANDING_MAIL_FOOTER_LINK = "ilmo.tietokilta.fi"
-
-    ENFORCE_HTTPS = "azure"
   }
 
   lifecycle {

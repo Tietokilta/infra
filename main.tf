@@ -50,6 +50,8 @@ module "ilmo" {
   postgres_admin_password = module.common.postgres_admin_password
   edit_token_secret       = var.ilmo_edit_token_secret
   auth_jwt_secret         = var.ilmo_auth_jwt_secret
+  mailgun_api_key         = var.ilmo_mailgun_api_key
+  mailgun_domain          = var.ilmo_mailgun_domain
 }
 
 module "tikjob_storage" {

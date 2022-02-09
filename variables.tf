@@ -13,6 +13,15 @@ variable "ilmo_auth_jwt_secret" {
   sensitive = true
 }
 
+variable "ilmo_mailgun_api_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "ilmo_mailgun_domain" {
+  type = string
+}
+
 variable "tikjob_ghost_mail_username" {
   type = string
 }

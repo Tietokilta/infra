@@ -19,6 +19,6 @@ output "postgres_server_host" {
 }
 
 output "postgres_admin_password" {
-  value = azurerm_postgresql_server.tikweb_pg.administrator_login_password
+  value     = azurerm_postgresql_server.tikweb_pg.administrator_login_password
   sensitive = true
 }
