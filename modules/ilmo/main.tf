@@ -65,7 +65,7 @@ resource "azurerm_app_service" "ilmo_backend" {
     NEW_EDIT_TOKEN_SECRET = var.edit_token_secret
     FEATHERS_AUTH_SECRET  = var.auth_jwt_secret
 
-    MAIL_FROM       = "ilmo@tietokilta.fi"
+    MAIL_FROM       = "noreply@ilmo.tietokilta.fi"
     MAILGUN_API_KEY = var.mailgun_api_key
     MAILGUN_DOMAIN  = var.mailgun_domain
 
