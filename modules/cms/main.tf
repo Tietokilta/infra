@@ -74,4 +74,10 @@ resource "azurerm_app_service" "tikweb_cms" {
     STRAPI_LOG_PRETTY_PRINT            = true
     BROWSER                            = true
   }
+
+  lifecycle {
+    ignore_changes = [
+      site_config.0.linux_fx_version,
+    ]
+  }
 }
