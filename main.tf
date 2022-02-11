@@ -8,6 +8,8 @@ terraform {
   backend "azurerm" {
     container_name = "tfstate"
     key            = "terraform.tfstate"
+    resource_group_name  = "terraform-state"
+    storage_account_name = "tikprodterraform"
   }
 }
 
