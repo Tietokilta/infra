@@ -23,7 +23,7 @@ resource "azurerm_app_service" "tikjob_ghost" {
   site_config {
     ftps_state       = "Disabled"
     always_on        = true
-    linux_fx_version = "DOCKER|docker.io/library/ghost:4-alpine"
+    linux_fx_version = "DOCKER|docker.io/library/ghost:4.36-alpine"
   }
 
   storage_account {
@@ -52,13 +52,13 @@ resource "azurerm_app_service" "tikjob_ghost" {
     url = var.ghost_front_url
 
     # Database
-    database__client                      = "mysql"
-    database__connection__host            = var.mysql_fqdn
-    database__connection__user            = var.mysql_username
-    database__connection__password        = var.mysql_password
-    database__connection__database        = var.mysql_db_name
-    database__connection__ssl__ca         = file("${path.module}/digicert-ca.crt")
-    database__connection__ssl__minVersion = "TLSv1.2"
+    database__client                              = "mysql"
+    database__connection__host                    = var.mysql_fqdn
+    database__connection__user                    = var.mysql_username
+    database__connection__password                = var.mysql_password
+    database__connection__database                = var.mysql_db_name
+    database__connection__ssl__rejectUnauthorized = "true"
+    database__connection__ssl__minVersion         = "TLSv1.2"
 
     # Email
     mail__transport           = "SMTP"
