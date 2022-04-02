@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "2.57.0"
+      version = "2.99.0"
     }
   }
   backend "azurerm" {
@@ -52,6 +52,12 @@ module "ilmo" {
   auth_jwt_secret         = var.ilmo_auth_jwt_secret
   mailgun_api_key         = var.ilmo_mailgun_api_key
   mailgun_domain          = var.ilmo_mailgun_domain
+}
+
+module "histotik" {
+  source                  = "./modules/histotik"
+  env_name                = terraform.workspace
+  resource_group_location = module.common.resource_group_location
 }
 
 module "tikjob_storage" {
