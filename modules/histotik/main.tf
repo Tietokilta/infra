@@ -39,7 +39,7 @@ resource "azurerm_cdn_endpoint" "histotik_cdn_endpoint" {
 
   origin {
     name      = "storage"
-    host_name = azurerm_storage_account.histotik_storage_account.primary_web_endpoint
+    host_name = azurerm_storage_account.histotik_storage_account.primary_web_host
   }
 
   delivery_rule {
