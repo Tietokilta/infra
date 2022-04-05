@@ -36,6 +36,7 @@ resource "azurerm_cdn_endpoint" "histotik_cdn_endpoint" {
   resource_group_name = azurerm_resource_group.histotik_rg.name
   location            = azurerm_resource_group.histotik_rg.location
   profile_name        = azurerm_cdn_profile.histotik_cdn_profile.name
+  origin_host_header  = azurerm_storage_account.histotik_storage_account.primary_web_host
 
   origin {
     name      = "storage"
