@@ -26,22 +26,14 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
-      # Log in to Azure CLI
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       # Initialize Terraform working directory
-      - name: Terraform initialize
-        run: terraform init
-
-      # Set Terraform workspace
-      - name: Terraform workspace
-        run: terraform workspace select prod
+      - name: Initialize Terraform
+        run: |
+          terraform init
+          terraform workspace select prod
 
       # Checks that all Terraform configuration files adhere to a canonical format
-      - name: Terraform Format
+      - name: Check formatting
         run: terraform fmt -check -recursive
 
       # Generates an execution plan for Terraform (not necessary when running apply immediately after)
@@ -56,6 +48,10 @@ jobs:
         run: terraform apply -input=false -auto-approve
 
     env:
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       TF_VAR_strapi_admin_jwt_secret: ${{ secrets.TF_VAR_STRAPI_ADMIN_JWT_SECRET }}
       TF_VAR_ilmo_edit_token_secret: ${{ secrets.TF_VAR_ILMO_EDIT_TOKEN_SECRET }}
       TF_VAR_ilmo_auth_jwt_secret: ${{ secrets.TF_VAR_ILMO_AUTH_JWT_SECRET }}
