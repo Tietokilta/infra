@@ -10,16 +10,16 @@ on:
     paths-ignore:
       - '**.md'
 
-jobs:
-  terraform:
-    name: "Terraform"
-    runs-on: ubuntu-latest
-    environment: production
+# Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+defaults:
+  run:
+    shell: bash
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
+jobs:
+  plan:
+    name: "Terraform Plan"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
 
     steps:
       # Checkout the repository
@@ -42,25 +42,48 @@ jobs:
 
       # Generates an execution plan for Terraform (not necessary when running apply immediately after)
       - name: Terraform Plan
-        if: github.event_name == 'pull_request'
         run: terraform plan -input=false
+
+  apply:
+    name: "Terraform Apply"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      # Checkout the repository
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Install the latest version of Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      # Initialize Terraform working directory
+      - name: Initialize Terraform
+        run: |
+          terraform init
+          terraform workspace select prod
+
+      # Checks that all Terraform configuration files adhere to a canonical format
+      - name: Check formatting
+        run: terraform fmt -check -recursive
 
       # On push to main, build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform apply -input=false -auto-approve
 
-    env:
-      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-      TF_VAR_strapi_admin_jwt_secret: ${{ secrets.TF_VAR_STRAPI_ADMIN_JWT_SECRET }}
-      TF_VAR_ilmo_edit_token_secret: ${{ secrets.TF_VAR_ILMO_EDIT_TOKEN_SECRET }}
-      TF_VAR_ilmo_auth_jwt_secret: ${{ secrets.TF_VAR_ILMO_AUTH_JWT_SECRET }}
-      TF_VAR_ilmo_mailgun_api_key: ${{ secrets.TF_VAR_ILMO_MAILGUN_API_KEY }}
-      TF_VAR_ilmo_mailgun_domain: ${{ secrets.TF_VAR_ILMO_MAILGUN_DOMAIN }}
-      TF_VAR_tikjob_ghost_mail_username: ${{ secrets.TF_VAR_GHOST_MAIL_USERNAME }}
-      TF_VAR_tikjob_ghost_mail_password: ${{ secrets.TF_VAR_GHOST_MAIL_PASSWORD }}
-      TF_VAR_tikjob_cert_password: ${{ secrets.TF_VAR_TIKJOB_CERT_PASSWORD }}
+env:
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  TF_VAR_strapi_admin_jwt_secret: ${{ secrets.TF_VAR_STRAPI_ADMIN_JWT_SECRET }}
+  TF_VAR_ilmo_edit_token_secret: ${{ secrets.TF_VAR_ILMO_EDIT_TOKEN_SECRET }}
+  TF_VAR_ilmo_auth_jwt_secret: ${{ secrets.TF_VAR_ILMO_AUTH_JWT_SECRET }}
+  TF_VAR_ilmo_mailgun_api_key: ${{ secrets.TF_VAR_ILMO_MAILGUN_API_KEY }}
+  TF_VAR_ilmo_mailgun_domain: ${{ secrets.TF_VAR_ILMO_MAILGUN_DOMAIN }}
+  TF_VAR_tikjob_ghost_mail_username: ${{ secrets.TF_VAR_GHOST_MAIL_USERNAME }}
+  TF_VAR_tikjob_ghost_mail_password: ${{ secrets.TF_VAR_GHOST_MAIL_PASSWORD }}
+  TF_VAR_tikjob_cert_password: ${{ secrets.TF_VAR_TIKJOB_CERT_PASSWORD }}
