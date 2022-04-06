@@ -18,24 +18,22 @@ jobs:
         shell: bash
 
     steps:
-      # Checkout the repository to the GitHub Actions runner
+      # Checkout the repository
       - name: Checkout
         uses: actions/checkout@v2
 
-      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      # Install the latest version of Terraform CLI
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Run initialization script
-        run: . ./init.sh prod
+      # Initialize Terraform working directory
+      - name: Initialize Terraform
+        run: |
+          terraform init
+          terraform workspace select prod
 
       # Checks that all Terraform configuration files adhere to a canonical format
-      - name: Terraform Format
+      - name: Check formatting
         run: terraform fmt -check -recursive
 
       # Generates an execution plan for Terraform (not necessary when running apply immediately after)
