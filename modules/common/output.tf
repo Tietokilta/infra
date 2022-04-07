@@ -22,3 +22,7 @@ output "postgres_admin_password" {
   value     = azurerm_postgresql_server.tikweb_pg.administrator_login_password
   sensitive = true
 }
+
+output "aux_app_plan_id" {
+  value = azurerm_app_service_plan.aux_plan.id
+}

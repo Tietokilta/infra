@@ -13,6 +13,7 @@ resource "random_password" "db_password" {
   override_special = "_%@"
 }
 
+# Shared Postgres server
 resource "azurerm_postgresql_server" "tikweb_pg" {
   name                = local.pg_server_name
   location            = azurerm_resource_group.tikweb_rg.location
@@ -38,4 +39,19 @@ resource "azurerm_postgresql_firewall_rule" "tikweb_pg_internal_access" {
   server_name         = azurerm_postgresql_server.tikweb_pg.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
+}
+
+# Shared App Service Plan for auxiliary services
+resource "azurerm_app_service_plan" "aux_plan" {
+  name                = "tik-aux-${var.env_name}-plan"
+  location            = azurerm_resource_group.tikweb_rg.location
+  resource_group_name = azurerm_resource_group.tikweb_rg.name
+
+  kind     = "linux"
+  reserved = true # Needs to be true for linux
+
+  sku {
+    tier = "Basic"
+    size = "B1"
+  }
 }

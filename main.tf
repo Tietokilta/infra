@@ -62,6 +62,18 @@ module "histotik" {
   resource_group_location = module.common.resource_group_location
 }
 
+module "tenttiarkisto" {
+  source                       = "./modules/tenttiarkisto"
+  env_name                     = terraform.workspace
+  postgres_resource_group_name = module.common.resource_group_name
+  resource_group_location      = module.common.resource_group_location
+  postgres_server_name         = module.common.postgres_server_name
+  postgres_server_fqdn         = module.common.postgres_server_fqdn
+  postgres_server_host         = module.common.postgres_server_host
+  postgres_admin_password      = module.common.postgres_admin_password
+  django_secret_key            = var.tenttiarkisto_django_secret_key
+}
+
 module "tikjob_storage" {
   source                  = "./modules/recruiting/storage"
   env_name                = terraform.workspace
