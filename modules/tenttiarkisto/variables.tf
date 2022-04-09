@@ -27,6 +27,10 @@ variable "postgres_server_host" {
   type = string
 }
 
+variable "aux_app_plan_id" {
+  type = string
+}
+
 variable "django_secret_key" {
   type      = string
   sensitive = true
