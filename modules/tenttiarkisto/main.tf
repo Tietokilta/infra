@@ -80,3 +80,51 @@ resource "azurerm_app_service" "tenttiarkisto" {
     ]
   }
 }
+
+resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_hostname_binding" {
+  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+  app_service_name    = azurerm_app_service.tenttiarkisto.name
+  hostname            = "tenttiarkisto.fi"
+
+  lifecycle {
+    ignore_changes = [ssl_state, thumbprint]
+  }
+}
+
+resource "azurerm_dns_zone" "tenttiarkisto_zone" {
+  name                = "tenttiarkisto.fi"
+  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+}
+
+# https://github.com/hashicorp/terraform-provider-azurerm/issues/14642#issuecomment-1084728235
+# Currently, the azurerm provider doesn't give us the IP address, so we need to fetch it ourselves.
+data "dns_a_record_set" "tenttiarkisto_dns_fetch" {
+  host = azurerm_app_service.tenttiarkisto.default_site_hostname
+}
+
+resource "azurerm_dns_a_record" "tenttiarkisto_a" {
+  name                = "@"
+  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+  zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
+  ttl                 = 300
+  records             = data.dns_a_record_set.tenttiarkisto_dns_fetch.addrs
+}
+
+resource "azurerm_dns_cname_record" "tenttiarkisto_cname_www" {
+  name                = "www"
+  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+  zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
+  ttl                 = 300
+  record              = "tenttiarkisto.fi"
+}
+
+resource "azurerm_dns_txt_record" "tenttiarkisto_txt_asuid" {
+  name                = "asuid"
+  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+  zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
+  ttl                 = 300
+
+  record {
+    value = azurerm_app_service.tenttiarkisto.custom_domain_verification_id
+  }
+}

@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "2.99.0"
     }
+    dns = {
+      source  = "hashicorp/dns"
+      version = "3.2.3"
+    }
   }
   backend "azurerm" {
     container_name       = "tfstate"
@@ -15,6 +19,9 @@ terraform {
 
 provider "azurerm" {
   features {}
+}
+
+provider "dns" {
 }
 
 module "common" {
@@ -73,6 +80,12 @@ module "tenttiarkisto" {
   postgres_admin_password      = module.common.postgres_admin_password
   aux_app_plan_id              = module.common.aux_app_plan_id
   django_secret_key            = var.tenttiarkisto_django_secret_key
+}
+
+module "voo" {
+  source                  = "./modules/voo"
+  env_name                = terraform.workspace
+  resource_group_location = "northeurope"
 }
 
 module "tikjob_storage" {
