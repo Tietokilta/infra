@@ -95,6 +95,10 @@ resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_hostname_b
   lifecycle {
     ignore_changes = [ssl_state, thumbprint]
   }
+
+  depends_on = [
+    azurerm_dns_txt_record.tenttiarkisto_txt_asuid
+  ]
 }
 
 resource "azurerm_dns_zone" "tenttiarkisto_zone" {
