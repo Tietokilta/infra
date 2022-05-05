@@ -24,6 +24,12 @@ resource "azurerm_storage_account" "tenttiarkisto_storage_account" {
   allow_blob_public_access  = true
   enable_https_traffic_only = true
   min_tls_version           = "TLS1_2"
+
+  blob_properties {
+    delete_retention_policy {
+      days = 14
+    }
+  }
 }
 
 resource "azurerm_storage_container" "tenttiarkisto_storage_container" {
@@ -89,6 +95,10 @@ resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_hostname_b
   lifecycle {
     ignore_changes = [ssl_state, thumbprint]
   }
+
+  depends_on = [
+    azurerm_dns_txt_record.tenttiarkisto_txt_asuid
+  ]
 }
 
 resource "azurerm_dns_zone" "tenttiarkisto_zone" {
