@@ -138,3 +138,13 @@ resource "azurerm_dns_txt_record" "tenttiarkisto_txt_asuid" {
     value = azurerm_app_service.tenttiarkisto.custom_domain_verification_id
   }
 }
+
+resource "azurerm_app_service_managed_certificate" "tenttiarkisto_cert" {
+  custom_hostname_binding_id = azurerm_app_service_custom_hostname_binding.tenttiarkisto_hostname_binding.id
+}
+
+resource "azurerm_app_service_certificate_binding" "tenttiarkisto_cert_binding" {
+  hostname_binding_id = azurerm_app_service_custom_hostname_binding.tenttiarkisto_hostname_binding.id
+  certificate_id      = azurerm_app_service_managed_certificate.tenttiarkisto_cert.id
+  ssl_state           = "SniEnabled"
+}
