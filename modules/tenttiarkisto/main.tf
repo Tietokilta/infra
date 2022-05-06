@@ -87,20 +87,6 @@ resource "azurerm_app_service" "tenttiarkisto" {
   }
 }
 
-resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_hostname_binding" {
-  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
-  app_service_name    = azurerm_app_service.tenttiarkisto.name
-  hostname            = "tenttiarkisto.fi"
-
-  lifecycle {
-    ignore_changes = [ssl_state, thumbprint]
-  }
-
-  depends_on = [
-    azurerm_dns_txt_record.tenttiarkisto_txt_asuid
-  ]
-}
-
 resource "azurerm_dns_zone" "tenttiarkisto_zone" {
   name                = "tenttiarkisto.fi"
   resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
@@ -125,7 +111,7 @@ resource "azurerm_dns_cname_record" "tenttiarkisto_cname_www" {
   resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
   zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
   ttl                 = 300
-  record              = "tenttiarkisto.fi"
+  record              = azurerm_app_service.tenttiarkisto.default_site_hostname
 }
 
 resource "azurerm_dns_txt_record" "tenttiarkisto_txt_asuid" {
@@ -139,6 +125,20 @@ resource "azurerm_dns_txt_record" "tenttiarkisto_txt_asuid" {
   }
 }
 
+resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_hostname_binding" {
+  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+  app_service_name    = azurerm_app_service.tenttiarkisto.name
+  hostname            = "tenttiarkisto.fi"
+
+  lifecycle {
+    ignore_changes = [ssl_state, thumbprint]
+  }
+
+  depends_on = [
+    azurerm_dns_txt_record.tenttiarkisto_txt_asuid
+  ]
+}
+
 resource "azurerm_app_service_managed_certificate" "tenttiarkisto_cert" {
   custom_hostname_binding_id = azurerm_app_service_custom_hostname_binding.tenttiarkisto_hostname_binding.id
 }
@@ -146,5 +146,29 @@ resource "azurerm_app_service_managed_certificate" "tenttiarkisto_cert" {
 resource "azurerm_app_service_certificate_binding" "tenttiarkisto_cert_binding" {
   hostname_binding_id = azurerm_app_service_custom_hostname_binding.tenttiarkisto_hostname_binding.id
   certificate_id      = azurerm_app_service_managed_certificate.tenttiarkisto_cert.id
+  ssl_state           = "SniEnabled"
+}
+
+resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_www_hostname_binding" {
+  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+  app_service_name    = azurerm_app_service.tenttiarkisto.name
+  hostname            = "www.tenttiarkisto.fi"
+
+  lifecycle {
+    ignore_changes = [ssl_state, thumbprint]
+  }
+
+  depends_on = [
+    azurerm_dns_cname_record.tenttiarkisto_cname_www
+  ]
+}
+
+resource "azurerm_app_service_managed_certificate" "tenttiarkisto_www_cert" {
+  custom_hostname_binding_id = azurerm_app_service_custom_hostname_binding.tenttiarkisto_www_hostname_binding.id
+}
+
+resource "azurerm_app_service_certificate_binding" "tenttiarkisto_www_cert_binding" {
+  hostname_binding_id = azurerm_app_service_custom_hostname_binding.tenttiarkisto_www_hostname_binding.id
+  certificate_id      = azurerm_app_service_managed_certificate.tenttiarkisto_www_cert.id
   ssl_state           = "SniEnabled"
 }
