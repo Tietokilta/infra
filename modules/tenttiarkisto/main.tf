@@ -77,7 +77,7 @@ resource "azurerm_app_service" "tenttiarkisto" {
 
     SECRET_KEY = var.django_secret_key
 
-    ALLOWED_HOSTS = "tenttiarkisto-${var.env_name}-app.azurewebsites.net,tenttiarkisto.fi"
+    ALLOWED_HOSTS = "tenttiarkisto-${var.env_name}-app.azurewebsites.net,tenttiarkisto.fi,www.tenttiarkisto.fi"
   }
 
   lifecycle {
