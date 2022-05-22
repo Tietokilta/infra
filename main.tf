@@ -31,7 +31,14 @@ module "common" {
 
 module "frontend" {
   source                  = "./modules/frontend"
-  env_name                = terraform.workspace
+  env_name                = "prod"
+  resource_group_name     = module.common.resource_group_name
+  resource_group_location = module.common.resource_group_location
+}
+
+module "frontend_staging" {
+  source                  = "./modules/frontend"
+  env_name                = "staging"
   resource_group_name     = module.common.resource_group_name
   resource_group_location = module.common.resource_group_location
 }
@@ -46,6 +53,7 @@ module "cms" {
   postgres_server_host    = module.common.postgres_server_host
   postgres_admin_password = module.common.postgres_admin_password
   strapi_admin_jwt_secret = var.strapi_admin_jwt_secret
+  github_app_key          = var.github_app_key
 }
 
 module "ilmo" {

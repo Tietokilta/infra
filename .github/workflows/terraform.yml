@@ -88,3 +88,4 @@ env:
   TF_VAR_tikjob_ghost_mail_password: ${{ secrets.TF_VAR_GHOST_MAIL_PASSWORD }}
   TF_VAR_tikjob_cert_password: ${{ secrets.TF_VAR_TIKJOB_CERT_PASSWORD }}
   TF_VAR_tenttiarkisto_django_secret_key: ${{ secrets.TF_VAR_TENTTIARKISTO_DJANGO_SECRET_KEY }}
+  TF_VAR_github_app_key: ${{ secrets.TF_VAR_GITHUB_APP_KEY }}
