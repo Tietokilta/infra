@@ -31,7 +31,14 @@ module "common" {
 
 module "frontend" {
   source                  = "./modules/frontend"
-  env_name                = terraform.workspace
+  env_name                = "prod"
+  resource_group_name     = module.common.resource_group_name
+  resource_group_location = module.common.resource_group_location
+}
+
+module "frontend_staging" {
+  source                  = "./modules/frontend"
+  env_name                = "staging"
   resource_group_name     = module.common.resource_group_name
   resource_group_location = module.common.resource_group_location
 }
