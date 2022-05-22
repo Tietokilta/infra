@@ -40,3 +40,8 @@ variable "tenttiarkisto_django_secret_key" {
   type      = string
   sensitive = true
 }
+
+variable "github_app_key" {
+  type      = string
+  sensitive = true
+}

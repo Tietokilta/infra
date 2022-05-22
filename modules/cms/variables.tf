@@ -29,3 +29,7 @@ variable "strapi_admin_jwt_secret" {
 variable "postgres_server_host" {
   type = string
 }
+
+variable "github_app_key" {
+  type = string
+}

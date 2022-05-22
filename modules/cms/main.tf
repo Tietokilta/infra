@@ -63,6 +63,7 @@ resource "azurerm_app_service" "tikweb_cms" {
     DATABASE_PASSWORD = var.postgres_admin_password
     DATABASE_SSL      = true
     ADMIN_JWT_SECRET  = var.strapi_admin_jwt_secret
+    GITHUB_APP_KEY    = var.github_app_key
 
     #Strapi env
     STRAPI_DISABLE_UPDATE_NOTIFICATION = false

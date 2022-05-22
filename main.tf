@@ -46,6 +46,7 @@ module "cms" {
   postgres_server_host    = module.common.postgres_server_host
   postgres_admin_password = module.common.postgres_admin_password
   strapi_admin_jwt_secret = var.strapi_admin_jwt_secret
+  github_app_key          = var.github_app_key
 }
 
 module "ilmo" {
