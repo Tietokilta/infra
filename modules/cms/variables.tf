@@ -33,3 +33,16 @@ variable "postgres_server_host" {
 variable "github_app_key" {
   type = string
 }
+
+variable "uploads_storage_account_name" {
+  type = string
+}
+
+variable "uploads_storage_account_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "uploads_container_name" {
+  type = string
+}

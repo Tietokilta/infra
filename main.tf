@@ -44,16 +44,19 @@ module "frontend_staging" {
 }
 
 module "cms" {
-  source                  = "./modules/cms"
-  env_name                = terraform.workspace
-  resource_group_name     = module.common.resource_group_name
-  resource_group_location = module.common.resource_group_location
-  postgres_server_name    = module.common.postgres_server_name
-  postgres_server_fqdn    = module.common.postgres_server_fqdn
-  postgres_server_host    = module.common.postgres_server_host
-  postgres_admin_password = module.common.postgres_admin_password
-  strapi_admin_jwt_secret = var.strapi_admin_jwt_secret
-  github_app_key          = var.github_app_key
+  source                       = "./modules/cms"
+  env_name                     = terraform.workspace
+  resource_group_name          = module.common.resource_group_name
+  resource_group_location      = module.common.resource_group_location
+  postgres_server_name         = module.common.postgres_server_name
+  postgres_server_fqdn         = module.common.postgres_server_fqdn
+  postgres_server_host         = module.common.postgres_server_host
+  postgres_admin_password      = module.common.postgres_admin_password
+  strapi_admin_jwt_secret      = var.strapi_admin_jwt_secret
+  github_app_key               = var.github_app_key
+  uploads_storage_account_name = module.frontend.storage_account_name
+  uploads_storage_account_key  = module.frontend.storage_account_key
+  uploads_container_name       = module.frontend.uploads_container_name
 }
 
 module "ilmo" {

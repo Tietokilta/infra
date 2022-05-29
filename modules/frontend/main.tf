@@ -13,3 +13,9 @@ resource "azurerm_storage_account" "tikweb_sa" {
     error_404_document = "404.html"
   }
 }
+
+resource "azurerm_storage_container" "tikweb_uploads" {
+  name                  = "uploads"
+  storage_account_name  = azurerm_storage_account.tikweb_sa.name
+  container_access_type = "blob"
+}
