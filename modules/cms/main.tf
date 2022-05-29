@@ -65,6 +65,10 @@ resource "azurerm_app_service" "tikweb_cms" {
     ADMIN_JWT_SECRET  = var.strapi_admin_jwt_secret
     GITHUB_APP_KEY    = var.github_app_key
 
+    UPLOADS_ACCOUNT_NAME   = var.uploads_storage_account_name
+    UPLOADS_ACCOUNT_KEY    = var.uploads_storage_account_key
+    UPLOADS_CONTAINER_NAME = var.uploads_container_name
+
     #Strapi env
     STRAPI_DISABLE_UPDATE_NOTIFICATION = false
     STRAPI_HIDE_STARTUP_MESSAGE        = false
