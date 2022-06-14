@@ -64,8 +64,9 @@ resource "azurerm_app_service" "tikweb_cms" {
     DATABASE_SSL      = true
     ADMIN_JWT_SECRET  = var.strapi_admin_jwt_secret
 
-    GITHUB_APP_ID  = "203379"
-    GITHUB_APP_KEY = var.github_app_key
+    GITHUB_APP_ID              = "203379"
+    GITHUB_APP_INSTALLATION_ID = "25896766"
+    GITHUB_APP_KEY             = var.github_app_key
 
     UPLOADS_ACCOUNT_NAME   = var.uploads_storage_account_name
     UPLOADS_ACCOUNT_KEY    = var.uploads_storage_account_key
