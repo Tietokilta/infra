@@ -37,6 +37,11 @@ resource "azurerm_network_interface" "forum_nic" {
   }
 }
 
+resource "azurerm_network_interface_security_group_association" "forum_nic_nsg" {
+  network_interface_id      = azurerm_network_interface.forum_nic.id
+  network_security_group_id = azurerm_network_security_group.forum_nsg.id
+}
+
 // reuse previously created VM disk
 data "azurerm_managed_disk" "forum_disk" {
   resource_group_name = azurerm_resource_group.forum_rg.name
