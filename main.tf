@@ -132,3 +132,9 @@ module "tikjob_app" {
 
   cert_password = var.tikjob_cert_password
 }
+
+module "forum" {
+  source                  = "./modules/forum"
+  env_name                = terraform.workspace
+  resource_group_location = "northeurope"
+}
