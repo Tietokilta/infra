@@ -56,5 +56,6 @@ resource "azurerm_virtual_machine" "forum_vm" {
     create_option   = "Attach"
     name            = data.azurerm_managed_disk.forum_disk.name
     managed_disk_id = data.azurerm_managed_disk.forum_disk.id
+    os_type         = "Linux"
   }
 }
