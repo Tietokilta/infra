@@ -1,7 +1,3 @@
-locals {
-  forum_fqdn = "vaalit.tietokilta.fi"
-}
-
 resource "azurerm_resource_group" "forum_rg" {
   name     = "vaalit-${var.env_name}-rg"
   location = var.resource_group_location
@@ -26,7 +22,6 @@ resource "azurerm_public_ip" "forum_ip" {
   resource_group_name = azurerm_resource_group.forum_rg.name
   location            = azurerm_resource_group.forum_rg.location
   allocation_method   = "Static"
-  reverse_fqdn        = local.forum_fqdn
 }
 
 resource "azurerm_network_interface" "forum_nic" {
