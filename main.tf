@@ -53,6 +53,8 @@ module "cms" {
   postgres_server_host         = module.common.postgres_server_host
   postgres_admin_password      = module.common.postgres_admin_password
   strapi_admin_jwt_secret      = var.strapi_admin_jwt_secret
+  strapi_api_token_salt        = var.strapi_api_token_salt
+  strapi_app_keys              = var.strapi_app_keys
   github_app_key               = var.github_app_key
   uploads_storage_account_name = module.frontend.storage_account_name
   uploads_storage_account_key  = module.frontend.storage_account_key

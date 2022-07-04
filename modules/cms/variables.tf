@@ -23,7 +23,18 @@ variable "postgres_admin_password" {
 }
 
 variable "strapi_admin_jwt_secret" {
-  type = string
+  type      = string
+  sensitive = true
+}
+
+variable "strapi_api_token_salt" {
+  type      = string
+  sensitive = true
+}
+
+variable "strapi_app_keys" {
+  type      = string
+  sensitive = true
 }
 
 variable "postgres_server_host" {
