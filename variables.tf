@@ -3,6 +3,16 @@ variable "strapi_admin_jwt_secret" {
   sensitive = true
 }
 
+variable "strapi_api_token_salt" {
+  type      = string
+  sensitive = true
+}
+
+variable "strapi_app_keys" {
+  type      = string
+  sensitive = true
+}
+
 variable "ilmo_edit_token_secret" {
   type      = string
   sensitive = true

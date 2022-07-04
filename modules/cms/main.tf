@@ -63,6 +63,8 @@ resource "azurerm_app_service" "tikweb_cms" {
     DATABASE_PASSWORD = var.postgres_admin_password
     DATABASE_SSL      = true
     ADMIN_JWT_SECRET  = var.strapi_admin_jwt_secret
+    API_TOKEN_SALT    = var.strapi_api_token_salt
+    APP_KEYS          = var.strapi_app_keys
 
     GITHUB_APP_ID              = "203379"
     GITHUB_APP_INSTALLATION_ID = "25896766"

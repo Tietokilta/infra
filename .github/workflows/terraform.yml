@@ -80,6 +80,8 @@ env:
   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
   ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
   TF_VAR_strapi_admin_jwt_secret: ${{ secrets.TF_VAR_STRAPI_ADMIN_JWT_SECRET }}
+  TF_VAR_strapi_api_token_salt: ${{ secrets.TF_VAR_STRAPI_API_TOKEN_SALT }}
+  TF_VAR_strapi_app_keys: ${{ secrets.TF_VAR_STRAPI_APP_KEYS }}
   TF_VAR_ilmo_edit_token_secret: ${{ secrets.TF_VAR_ILMO_EDIT_TOKEN_SECRET }}
   TF_VAR_ilmo_auth_jwt_secret: ${{ secrets.TF_VAR_ILMO_AUTH_JWT_SECRET }}
   TF_VAR_ilmo_mailgun_api_key: ${{ secrets.TF_VAR_ILMO_MAILGUN_API_KEY }}
