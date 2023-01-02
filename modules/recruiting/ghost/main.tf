@@ -1,3 +1,7 @@
+locals {
+  fqdn = "${var.subdomain}.${var.root_zone_name}"
+}
+
 resource "azurerm_app_service_plan" "tikjob_plan" {
   name                = "tikjob-${var.env_name}-plan"
   location            = var.resource_group_location
@@ -72,13 +76,21 @@ resource "azurerm_app_service" "tikjob_ghost" {
 }
 
 resource "azurerm_app_service_custom_hostname_binding" "tikjob_hostname_binding" {
-  hostname            = var.ghost_hostname
+  hostname            = local.fqdn
   app_service_name    = azurerm_app_service.tikjob_ghost.name
   resource_group_name = var.resource_group_name
 
   lifecycle {
     ignore_changes = [ssl_state, thumbprint]
   }
+
+  # Deletion may need manual work.
+  # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
+  # TODO: Add dependencies for creation
+  # depends_on = [
+  #   azurerm_dns_a_record.tikjob_a,
+  #   azurerm_dns_txt_record.tikjob_asuid
+  # ]
 }
 
 resource "azurerm_app_service_certificate" "tikjob_cert" {
@@ -93,4 +105,10 @@ resource "azurerm_app_service_certificate_binding" "tikjob_cert_binding" {
   certificate_id      = azurerm_app_service_certificate.tikjob_cert.id
   hostname_binding_id = azurerm_app_service_custom_hostname_binding.tikjob_hostname_binding.id
   ssl_state           = "SniEnabled"
+}
+
+# https://github.com/hashicorp/terraform-provider-azurerm/issues/14642#issuecomment-1084728235
+# Currently, the azurerm provider doesn't give us the IP address, so we need to fetch it ourselves.
+data "dns_a_record_set" "tikjob_dns_fetch" {
+  host = azurerm_app_service.tikjob_ghost.default_site_hostname
 }

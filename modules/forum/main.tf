@@ -1,3 +1,7 @@
+locals {
+  fqdn = "${var.subdomain}.${var.root_zone_name}"
+}
+
 resource "azurerm_resource_group" "forum_rg" {
   name     = "vaalit-${var.env_name}-rg"
   location = var.resource_group_location
@@ -63,4 +67,10 @@ resource "azurerm_virtual_machine" "forum_vm" {
     managed_disk_id = data.azurerm_managed_disk.forum_disk.id
     os_type         = "Linux"
   }
+}
+
+// IP addresses can only be read after the VM exists; use a data source dependent on the VM
+data "azurerm_public_ip" "forum_ip" {
+  name                = azurerm_public_ip.forum_ip.name
+  resource_group_name = azurerm_virtual_machine.forum_vm.resource_group_name
 }

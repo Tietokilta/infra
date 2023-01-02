@@ -5,3 +5,7 @@ variable "env_name" {
 variable "resource_group_location" {
   type = string
 }
+
+variable "zone_name" {
+  type = string
+}

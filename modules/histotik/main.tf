@@ -1,3 +1,7 @@
+locals {
+  fqdn = "${var.subdomain}.${var.root_zone_name}"
+}
+
 resource "azurerm_resource_group" "histotik_rg" {
   name     = "histotik-${var.env_name}-rg"
   location = var.resource_group_location
@@ -60,11 +64,17 @@ resource "azurerm_cdn_endpoint" "histotik_cdn_endpoint" {
 resource "azurerm_cdn_endpoint_custom_domain" "histotik_cdn_domain" {
   name            = "histotik-${var.env_name}-domain"
   cdn_endpoint_id = azurerm_cdn_endpoint.histotik_cdn_endpoint.id
-  host_name       = "histotik.tietokilta.fi"
+  host_name       = local.fqdn
 
   cdn_managed_https {
     certificate_type = "Dedicated"
     protocol_type    = "ServerNameIndication"
     tls_version      = "TLS12"
   }
+
+  # Deletion needs manual work. Hashicorp seems uninterested in fixing.
+  # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
+  depends_on = [
+    azurerm_dns_cname_record.histotik_cname_record
+  ]
 }

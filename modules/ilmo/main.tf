@@ -1,5 +1,6 @@
 locals {
   db_name = "${var.env_name}_ilmo_db"
+  fqdn    = "${var.subdomain}.${var.root_zone_name}"
 }
 
 resource "azurerm_postgresql_database" "ilmo_db" {
@@ -9,7 +10,6 @@ resource "azurerm_postgresql_database" "ilmo_db" {
   charset             = "UTF8"
   collation           = "fi-FI"
 }
-
 
 resource "azurerm_app_service_plan" "ilmo_backend_plan" {
   name                = "tik-ilmo-${var.env_name}-plan"
