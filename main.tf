@@ -29,17 +29,34 @@ locals {
 }
 
 module "dns_prod" {
-  source                  = "./modules/dns"
+  source                  = "./modules/dns/root"
   env_name                = "prod"
   resource_group_location = local.resource_group_location
   zone_name               = "tietokilta.fi"
 }
 
 module "dns_staging" {
-  source                  = "./modules/dns"
+  source                  = "./modules/dns/root"
   env_name                = "staging"
   resource_group_location = local.resource_group_location
   zone_name               = "tietokila.fi"
+}
+
+module "mailman" {
+  source = "./modules/dns/mailman"
+
+  dns_resource_group_name = module.dns_prod.resource_group_name
+  root_zone_name          = module.dns_prod.zone_name
+  subdomain               = "list"
+
+  dkim_selector = "mta"
+  dkim_key = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJN6WyS7YQcOKO4MKsSbrYfjL8hh24ot/0uQysHte3eqscbbwCFVlgmsg3423by3e20ZSBMhRXdtIkYdgn8wkfPyZlHVEOvOJBCR+tKqtexxQEbkk8LqmEzVggNZoLLX06wYNqt2Nxl++dlvUuB4IxmPPGQed3Xr7HBT8OZmKJYQIDAQAB"
+}
+
+module "dns_misc_prod" {
+  source = "./modules/dns/prod"
+  dns_resource_group_name = module.dns_prod.resource_group_name
+  root_zone_name          = module.dns_prod.zone_name
 }
 
 module "common" {

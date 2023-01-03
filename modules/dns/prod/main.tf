@@ -1,22 +1,3 @@
-resource "azurerm_resource_group" "dns_rg" {
-  name     = "dns-${var.env_name}-rg"
-  location = var.resource_group_location
-}
-
-resource "azurerm_dns_zone" "root_zone" {
-  name                = var.zone_name
-  resource_group_name = azurerm_resource_group.dns_rg.name
-}
-
-# A record for main website
-resource "azurerm_dns_a_record" "root_a" {
-  name                = "@"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.root_zone.name
-  ttl                 = 300
-  records             = ["130.233.48.30"]
-}
-
 # MX records for tietokilta.fi
 resource "azurerm_dns_mx_record" "root_mx" {
   name                = "@"
@@ -118,37 +99,28 @@ resource "azurerm_dns_txt_record" "root_dmarc_reports_list_tietokila" {
   }
 }
 
-# CNAME record for www.
-resource "azurerm_dns_cname_record" "www_cname" {
-  name                = "www"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.root_zone.name
-  ttl                 = 300
-  record              = azurerm_dns_zone.root_zone.name
-}
-
 # Game servers (?)
 
 resource "azurerm_dns_a_record" "mc_a" {
   name                = "mc"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.root_zone.name
+  resource_group_name = var.dns_resource_group_name
+  zone_name           = var.root_zone_name
   ttl                 = 300
   records             = ["82.130.42.53"]
 }
 
 resource "azurerm_dns_a_record" "mcmap_a" {
   name                = "mcmap"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.root_zone.name
+  resource_group_name = var.dns_resource_group_name
+  zone_name           = var.root_zone_name
   ttl                 = 300
   records             = ["82.130.42.53"]
 }
 
 resource "azurerm_dns_a_record" "ttt_a" {
   name                = "ttt"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.root_zone.name
+  resource_group_name = var.dns_resource_group_name
+  zone_name           = var.root_zone_name
   ttl                 = 300
   records             = ["82.130.42.53"]
 }
