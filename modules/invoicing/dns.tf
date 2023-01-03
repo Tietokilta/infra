@@ -50,15 +50,3 @@ resource "azurerm_dns_txt_record" "invoicing_dmarc" {
     value = "v=DMARC1;p=none;sp=none;rua=mailto:dmarc@tietokilta.fi!10m;ruf=mailto:dmarc@tietokilta.fi!10m"
   }
 }
-
-# Accept DMARC reports at root domain
-resource "azurerm_dns_txt_record" "root_dmarc_reports_invoicing" {
-  name                = "${local.fqdn}._report._dmarc"
-  resource_group_name = var.dns_resource_group_name
-  zone_name           = var.root_zone_name
-  ttl                 = 300
-
-  record {
-    value = "v=DMARC1;"
-  }
-}

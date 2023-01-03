@@ -46,17 +46,26 @@ module "mailman" {
   source = "./modules/dns/mailman"
 
   dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.zone_name
+  root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "list"
 
   dkim_selector = "mta"
-  dkim_key = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJN6WyS7YQcOKO4MKsSbrYfjL8hh24ot/0uQysHte3eqscbbwCFVlgmsg3423by3e20ZSBMhRXdtIkYdgn8wkfPyZlHVEOvOJBCR+tKqtexxQEbkk8LqmEzVggNZoLLX06wYNqt2Nxl++dlvUuB4IxmPPGQed3Xr7HBT8OZmKJYQIDAQAB"
+  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJN6WyS7YQcOKO4MKsSbrYfjL8hh24ot/0uQysHte3eqscbbwCFVlgmsg3423by3e20ZSBMhRXdtIkYdgn8wkfPyZlHVEOvOJBCR+tKqtexxQEbkk8LqmEzVggNZoLLX06wYNqt2Nxl++dlvUuB4IxmPPGQed3Xr7HBT8OZmKJYQIDAQAB"
 }
 
 module "dns_misc_prod" {
-  source = "./modules/dns/prod"
+  source                  = "./modules/dns/prod"
   dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.zone_name
+  root_zone_name          = module.dns_prod.root_zone_name
+
+  dmarc_report_domains = [
+    module.mailman.fqdn,
+    module.tikjob_app.fqdn,
+    module.ilmo.fqdn,
+    module.invoicing.fqdn,
+    module.forum.fqdn,
+    module.mattermost.fqdn,
+  ]
 }
 
 module "common" {
@@ -114,7 +123,7 @@ module "ilmo" {
   website_events_url      = "https://${module.frontend.fqdn}/tapahtumat"
 
   dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.zone_name
+  root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "ilmo"
 
   dkim_selector = "mg"
@@ -127,7 +136,7 @@ module "histotik" {
   resource_group_location = local.resource_group_location
 
   dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.zone_name
+  root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "histotik"
 }
 
@@ -182,7 +191,7 @@ module "tikjob_app" {
   cert_password = var.tikjob_cert_password
 
   dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.zone_name
+  root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "rekry"
 
   dkim_selector = "mta"
@@ -196,7 +205,7 @@ module "forum" {
   resource_group_location = local.resource_group_location
 
   dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.zone_name
+  root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "vaalit"
 
   dkim_selector = "krs"
@@ -207,7 +216,7 @@ module "mattermost" {
   source = "./modules/mattermost"
 
   dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.zone_name
+  root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "mm"
 
   dkim_selector = "email"
@@ -221,7 +230,7 @@ module "invoicing" {
   env_name = "prod"
 
   dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.zone_name
+  root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "laskutus"
 
   dkim_selector = "mta"

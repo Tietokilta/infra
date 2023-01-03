@@ -1,8 +1,8 @@
 # MX records for tietokilta.fi
 resource "azurerm_dns_mx_record" "root_mx" {
   name                = "@"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.root_zone.name
+  resource_group_name = var.dns_resource_group_name
+  zone_name           = var.root_zone_name
   ttl                 = 300
 
   record {
@@ -30,8 +30,8 @@ resource "azurerm_dns_mx_record" "root_mx" {
 # Google site verification key for tietokilta.fi
 resource "azurerm_dns_txt_record" "root_google_verification" {
   name                = "@"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.root_zone.name
+  resource_group_name = var.dns_resource_group_name
+  zone_name           = var.root_zone_name
   ttl                 = 300
 
   record {
@@ -42,8 +42,8 @@ resource "azurerm_dns_txt_record" "root_google_verification" {
 # SPF record for tietokilta.fi
 resource "azurerm_dns_txt_record" "root_spf" {
   name                = "@"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.root_zone.name
+  resource_group_name = var.dns_resource_group_name
+  zone_name           = var.root_zone_name
   ttl                 = 300
 
   record {
@@ -54,8 +54,8 @@ resource "azurerm_dns_txt_record" "root_spf" {
 # DKIM key for G Suite
 resource "azurerm_dns_txt_record" "root_dkim_google" {
   name                = "google._domainkey"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.root_zone.name
+  resource_group_name = var.dns_resource_group_name
+  zone_name           = var.root_zone_name
   ttl                 = 300
 
   record {
@@ -66,8 +66,8 @@ resource "azurerm_dns_txt_record" "root_dkim_google" {
 # DKIM key, no idea what this is used for
 resource "azurerm_dns_txt_record" "root_dkim_default" {
   name                = "default._domainkey"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.root_zone.name
+  resource_group_name = var.dns_resource_group_name
+  zone_name           = var.root_zone_name
   ttl                 = 300
 
   record {
@@ -78,8 +78,8 @@ resource "azurerm_dns_txt_record" "root_dkim_default" {
 # Reporting-only DMARC policy
 resource "azurerm_dns_txt_record" "root_dmarc" {
   name                = "_dmarc"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.root_zone.name
+  resource_group_name = var.dns_resource_group_name
+  zone_name           = var.root_zone_name
   ttl                 = 300
 
   record {
@@ -87,11 +87,13 @@ resource "azurerm_dns_txt_record" "root_dmarc" {
   }
 }
 
-# Accept DMARC reports at root domain for list.tietokila.fi
-resource "azurerm_dns_txt_record" "root_dmarc_reports_list_tietokila" {
-  name                = "list.tietokila.fi._report._dmarc"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.root_zone.name
+# Accept DMARC reports at root domain
+resource "azurerm_dns_txt_record" "root_dmarc_reports" {
+  for_each = var.dmarc_report_domains
+
+  name                = "${each.key}._report._dmarc"
+  resource_group_name = var.dns_resource_group_name
+  zone_name           = var.root_zone_name
   ttl                 = 300
 
   record {
