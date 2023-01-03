@@ -75,6 +75,7 @@ module "ilmo" {
   auth_jwt_secret         = var.ilmo_auth_jwt_secret
   mailgun_api_key         = var.ilmo_mailgun_api_key
   mailgun_domain          = var.ilmo_mailgun_domain
+  website_events_url      = "https://${module.frontend.fqdn}/tapahtumat"
 }
 
 module "histotik" {

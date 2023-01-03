@@ -10,3 +10,7 @@ output "storage_account_key" {
 output "uploads_container_name" {
   value = azurerm_storage_container.tikweb_uploads.name
 }
+
+output "fqdn" {
+  value = azurerm_storage_account.tikweb_sa.primary_web_host
+}

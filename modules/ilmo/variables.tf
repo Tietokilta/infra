@@ -45,3 +45,7 @@ variable "mailgun_api_key" {
 variable "mailgun_domain" {
   type = string
 }
+
+variable "website_events_url" {
+  type = string
+}
