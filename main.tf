@@ -53,6 +53,17 @@ module "mailman" {
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJN6WyS7YQcOKO4MKsSbrYfjL8hh24ot/0uQysHte3eqscbbwCFVlgmsg3423by3e20ZSBMhRXdtIkYdgn8wkfPyZlHVEOvOJBCR+tKqtexxQEbkk8LqmEzVggNZoLLX06wYNqt2Nxl++dlvUuB4IxmPPGQed3Xr7HBT8OZmKJYQIDAQAB"
 }
 
+module "mailing_staging" {
+  source = "./modules/dns/mailing"
+
+  dns_resource_group_name = module.dns_staging.resource_group_name
+  root_zone_name          = module.dns_staging.root_zone_name
+  subdomain               = "list"
+
+  dkim_selector = "mg"
+  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZGR9aFa3+4SaHMkvO44EzQzbmMPEYqryH1tsgBlNErA5Qd/UNtCgQ+vy1uO2SyOGZDoD6xEDVZ8Mqh4JXXX3GVvEgpESjSlj+RkhCLY9JGVJwkgVWTUD65qkLJ9NpADBMQUhzJgxIv+It3zxbFDUOmLv2+Qee7d/MR1Gfgn/wNwIDAQAB"
+}
+
 module "dns_misc_prod" {
   source                  = "./modules/dns/prod"
   dns_resource_group_name = module.dns_prod.resource_group_name
@@ -60,6 +71,7 @@ module "dns_misc_prod" {
 
   dmarc_report_domains = [
     module.mailman.fqdn,
+    module.mailing_staging.fqdn,
     module.tikjob_app.fqdn,
     module.ilmo.fqdn,
     module.invoicing.fqdn,
