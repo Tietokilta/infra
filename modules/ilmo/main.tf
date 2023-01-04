@@ -66,16 +66,19 @@ resource "azurerm_app_service" "ilmo_backend" {
     NEW_EDIT_TOKEN_SECRET = var.edit_token_secret
     FEATHERS_AUTH_SECRET  = var.auth_jwt_secret
 
-    MAIL_FROM       = "noreply@ilmo.tietokilta.fi"
+    MAIL_FROM       = "noreply@${var.mailgun_domain}"
     MAILGUN_API_KEY = var.mailgun_api_key
     MAILGUN_DOMAIN  = var.mailgun_domain
 
     ALLOW_ORIGIN = "*"
 
-    EMAIL_BASE_URL = "https://tik-ilmo-${var.env_name}-app.azurewebsites.net"
+    # Paths from tikweb-frontend
+    BASE_URL          = var.website_events_url
+    EVENT_DETAILS_URL = "${var.website_events_url}/{slug}"
+    EDIT_SIGNUP_URL   = "${var.website_events_url}/ilmo/{id}/{editToken}"
 
-    BRANDING_MAIL_FOOTER_TEXT = ""
-    BRANDING_MAIL_FOOTER_LINK = "ilmo.tietokilta.fi"
+    BRANDING_MAIL_FOOTER_TEXT = "Ilmomasiina"
+    BRANDING_MAIL_FOOTER_LINK = var.website_events_url
   }
 
   lifecycle {
