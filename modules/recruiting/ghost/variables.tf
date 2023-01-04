@@ -10,7 +10,8 @@ variable "resource_group_location" {
   type = string
 }
 
-/* MySQL */
+// MySQL
+
 variable "mysql_fqdn" {
   type = string
 }
@@ -27,7 +28,8 @@ variable "mysql_db_name" {
   type = string
 }
 
-/* Storage */
+// Storage
+
 variable "storage_account_name" {
   type = string
 }
@@ -40,7 +42,8 @@ variable "storage_share_name" {
   type = string
 }
 
-/* Ghost */
+// Ghost config
+
 variable "ghost_mail_host" {
   type = string
 }
@@ -61,10 +64,26 @@ variable "ghost_front_url" {
   type = string
 }
 
-variable "ghost_hostname" {
+variable "cert_password" {
   type = string
 }
 
-variable "cert_password" {
+variable "dns_resource_group_name" {
+  type = string
+}
+
+variable "root_zone_name" {
+  type = string
+}
+
+variable "subdomain" {
+  type = string
+}
+
+variable "dkim_selector" {
+  type = string
+}
+
+variable "dkim_key" {
   type = string
 }

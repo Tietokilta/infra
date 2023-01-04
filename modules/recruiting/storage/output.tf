@@ -6,7 +6,8 @@ output "resource_group_location" {
   value = azurerm_resource_group.tikjob_rg.location
 }
 
-/* MySQL */
+// MySQL
+
 output "mysql_fqdn" {
   value = azurerm_mysql_server.tikjob_mysql.fqdn
 }
@@ -20,7 +21,8 @@ output "mysql_password" {
   sensitive = true
 }
 
-/* Storage */
+// Storage
+
 output "storage_account_name" {
   value = azurerm_storage_account.tikjob_storage_account.name
 }
