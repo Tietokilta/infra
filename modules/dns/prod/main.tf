@@ -27,25 +27,17 @@ resource "azurerm_dns_mx_record" "root_mx" {
   }
 }
 
-# Google site verification key for tietokilta.fi
-resource "azurerm_dns_txt_record" "root_google_verification" {
+resource "azurerm_dns_txt_record" "root_txt" {
   name                = "@"
   resource_group_name = var.dns_resource_group_name
   zone_name           = var.root_zone_name
   ttl                 = 300
 
+  # Google site verification key
   record {
     value = "google-site-verification=OVm2WzCdpqDTSv0LiDyGGutXT0I8YIlBwuyRHyMJFfw"
   }
-}
-
-# SPF record for tietokilta.fi
-resource "azurerm_dns_txt_record" "root_spf" {
-  name                = "@"
-  resource_group_name = var.dns_resource_group_name
-  zone_name           = var.root_zone_name
-  ttl                 = 300
-
+  # SPF record
   record {
     value = "v=spf1 include:_spf.google.com include:mailgun.org a:tietokilta.fi ~all"
   }
