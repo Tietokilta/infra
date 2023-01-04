@@ -19,15 +19,19 @@ resource "azurerm_dns_txt_record" "tikjob_asuid" {
   }
 }
 
-# Google site verification key
-resource "azurerm_dns_txt_record" "tikjob_google_verification" {
+resource "azurerm_dns_txt_record" "tikjob_txt" {
   name                = var.subdomain
   resource_group_name = var.dns_resource_group_name
   zone_name           = var.root_zone_name
   ttl                 = 300
 
+  # Google site verification key
   record {
     value = "google-site-verification=CQLRUnnxEnLtINJtF6cyJJH3YQSA8dxD6ap3qmFma5M"
+  }
+  # SPF record for Mailgun
+  record {
+    value = "v=spf1 include:mailgun.org ~all"
   }
 }
 
@@ -54,18 +58,6 @@ resource "azurerm_dns_mx_record" "tikjob_mx" {
   record {
     preference = 10
     exchange   = "mxb.eu.mailgun.org"
-  }
-}
-
-# SPF record for Mailgun
-resource "azurerm_dns_txt_record" "tikjob_spf" {
-  name                = var.subdomain
-  resource_group_name = var.dns_resource_group_name
-  zone_name           = var.root_zone_name
-  ttl                 = 300
-
-  record {
-    value = "v=spf1 mx include:mailgun.org ~all"
   }
 }
 

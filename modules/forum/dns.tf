@@ -81,7 +81,7 @@ resource "azurerm_dns_txt_record" "forum_spf" {
   ttl                 = 300
 
   record {
-    value = "v=spf1 mx include:mailgun.org ~all"
+    value = "v=spf1 include:mailgun.org ~all"
   }
 }
 
