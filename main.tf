@@ -220,8 +220,8 @@ module "forum" {
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "vaalit"
 
-  dkim_selector = "krs"
-  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDS4SY1m4JfklDMhdIQIVx+k2EHfagB+67WpX5/2YtUjw5By3l7C7skgXvO8XfaANwBpE4TWvV2V1qbYiMfGGMzDnoi7KWb4sFqd6zQGqjEKV2HEysihh0LmKSCCKLnKfPB2nTeSQu2ZSmnGBcKSeCCx9WwPEkGyvpB/1RaiqEy2wIDAQAB"
+  dkim_selector = "mta"
+  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzppfPnLHshnORT2P0C3OBuo80OCsCOpLHQS2txfRq2k+y+P4rocFy4z1H0397Ijy6wKM+VI3qOnc8RzVkaZib8+p08jBf/O/hxTwTkuMrotdIo2zrfBq+T1AaYMj4zNJnPt10+vLptpEA6m0XIWsu7wTRE6WfqHjlHj7CwkhTzwIDAQAB"
 }
 
 module "mattermost" {
