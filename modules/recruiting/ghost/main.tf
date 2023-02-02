@@ -2,32 +2,31 @@ locals {
   fqdn = "${var.subdomain}.${var.root_zone_name}"
 }
 
-resource "azurerm_app_service_plan" "tikjob_plan" {
+resource "azurerm_service_plan" "tikjob_plan" {
   name                = "tikjob-${var.env_name}-plan"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
 
-  kind     = "linux"
-  reserved = true # Needs to be true for linux
-
-  sku {
-    tier = "Basic"
-    size = "B1"
-  }
+  os_type  = "Linux"
+  sku_name = "B1"
 }
 
-resource "azurerm_app_service" "tikjob_ghost" {
+resource "azurerm_linux_web_app" "tikjob_ghost" {
   name                = "tikjob-${var.env_name}-app-ghost"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
-  app_service_plan_id = azurerm_app_service_plan.tikjob_plan.id
+  service_plan_id     = azurerm_service_plan.tikjob_plan.id
 
   https_only = true
 
   site_config {
-    ftps_state       = "Disabled"
-    always_on        = true
-    linux_fx_version = "DOCKER|docker.io/library/ghost:4.36-alpine"
+    ftps_state = "Disabled"
+    always_on  = true
+
+    application_stack {
+      docker_image     = "docker.io/library/ghost"
+      docker_image_tag = "4.36-alpine"
+    }
   }
 
   storage_account {
@@ -77,7 +76,7 @@ resource "azurerm_app_service" "tikjob_ghost" {
 
 resource "azurerm_app_service_custom_hostname_binding" "tikjob_hostname_binding" {
   hostname            = local.fqdn
-  app_service_name    = azurerm_app_service.tikjob_ghost.name
+  app_service_name    = azurerm_linux_web_app.tikjob_ghost.name
   resource_group_name = var.resource_group_name
 
   lifecycle {
@@ -110,5 +109,5 @@ resource "azurerm_app_service_certificate_binding" "tikjob_cert_binding" {
 # https://github.com/hashicorp/terraform-provider-azurerm/issues/14642#issuecomment-1084728235
 # Currently, the azurerm provider doesn't give us the IP address, so we need to fetch it ourselves.
 data "dns_a_record_set" "tikjob_dns_fetch" {
-  host = azurerm_app_service.tikjob_ghost.default_site_hostname
+  host = azurerm_linux_web_app.tikjob_ghost.default_hostname
 }
