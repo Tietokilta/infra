@@ -8,14 +8,14 @@ resource "azurerm_resource_group" "histotik_rg" {
 }
 
 resource "azurerm_storage_account" "histotik_storage_account" {
-  name                      = "histotik${var.env_name}sa"
-  resource_group_name       = azurerm_resource_group.histotik_rg.name
-  location                  = azurerm_resource_group.histotik_rg.location
-  account_tier              = "Standard"
-  account_replication_type  = "LRS"
-  allow_blob_public_access  = true
-  enable_https_traffic_only = true
-  min_tls_version           = "TLS1_2"
+  name                            = "histotik${var.env_name}sa"
+  resource_group_name             = azurerm_resource_group.histotik_rg.name
+  location                        = azurerm_resource_group.histotik_rg.location
+  account_tier                    = "Standard"
+  account_replication_type        = "LRS"
+  allow_nested_items_to_be_public = true
+  enable_https_traffic_only       = true
+  min_tls_version                 = "TLS1_2"
 
   static_website {
     index_document = "index.html"
