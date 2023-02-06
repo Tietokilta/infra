@@ -42,16 +42,11 @@ resource "azurerm_postgresql_firewall_rule" "tikweb_pg_internal_access" {
 }
 
 # Shared App Service Plan for auxiliary services
-resource "azurerm_app_service_plan" "aux_plan" {
+resource "azurerm_service_plan" "aux_plan" {
   name                = "tik-aux-${var.env_name}-plan"
   location            = azurerm_resource_group.tikweb_rg.location
   resource_group_name = azurerm_resource_group.tikweb_rg.name
 
-  kind     = "linux"
-  reserved = true # Needs to be true for linux
-
-  sku {
-    tier = "Basic"
-    size = "B1"
-  }
+  os_type  = "Linux"
+  sku_name = "B1"
 }

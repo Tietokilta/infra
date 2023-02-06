@@ -20,5 +20,5 @@ output "postgres_admin_password" {
 }
 
 output "aux_app_plan_id" {
-  value = azurerm_app_service_plan.aux_plan.id
+  value = azurerm_service_plan.aux_plan.id
 }

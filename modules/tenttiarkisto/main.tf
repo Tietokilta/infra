@@ -38,18 +38,22 @@ resource "azurerm_storage_container" "tenttiarkisto_storage_container" {
   container_access_type = "blob"
 }
 
-resource "azurerm_app_service" "tenttiarkisto" {
+resource "azurerm_linux_web_app" "tenttiarkisto" {
   name                = "tenttiarkisto-${var.env_name}-app"
   location            = var.resource_group_location
   resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
-  app_service_plan_id = var.aux_app_plan_id
+  service_plan_id     = var.aux_app_plan_id
 
   https_only = true
 
   site_config {
-    ftps_state       = "Disabled"
-    always_on        = true
-    linux_fx_version = "DOCKER|ghcr.io/tietokilta/tenttiarkisto:latest"
+    ftps_state = "Disabled"
+    always_on  = true
+
+    application_stack {
+      docker_image     = "ghcr.io/tietokilta/tenttiarkisto"
+      docker_image_tag = "latest"
+    }
   }
 
   logs {
@@ -82,7 +86,7 @@ resource "azurerm_app_service" "tenttiarkisto" {
 
   lifecycle {
     ignore_changes = [
-      site_config.0.linux_fx_version, # deployments are made outside of Terraform
+      site_config.0.application_stack, # deployments are made outside of Terraform
     ]
   }
 }
@@ -95,7 +99,7 @@ resource "azurerm_dns_zone" "tenttiarkisto_zone" {
 # https://github.com/hashicorp/terraform-provider-azurerm/issues/14642#issuecomment-1084728235
 # Currently, the azurerm provider doesn't give us the IP address, so we need to fetch it ourselves.
 data "dns_a_record_set" "tenttiarkisto_dns_fetch" {
-  host = azurerm_app_service.tenttiarkisto.default_site_hostname
+  host = azurerm_linux_web_app.tenttiarkisto.default_hostname
 }
 
 resource "azurerm_dns_a_record" "tenttiarkisto_a" {
@@ -111,7 +115,7 @@ resource "azurerm_dns_cname_record" "tenttiarkisto_cname_www" {
   resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
   zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
   ttl                 = 300
-  record              = azurerm_app_service.tenttiarkisto.default_site_hostname
+  record              = azurerm_linux_web_app.tenttiarkisto.default_hostname
 }
 
 resource "azurerm_dns_txt_record" "tenttiarkisto_txt_asuid" {
@@ -121,13 +125,13 @@ resource "azurerm_dns_txt_record" "tenttiarkisto_txt_asuid" {
   ttl                 = 300
 
   record {
-    value = azurerm_app_service.tenttiarkisto.custom_domain_verification_id
+    value = azurerm_linux_web_app.tenttiarkisto.custom_domain_verification_id
   }
 }
 
 resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_hostname_binding" {
   resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
-  app_service_name    = azurerm_app_service.tenttiarkisto.name
+  app_service_name    = azurerm_linux_web_app.tenttiarkisto.name
   hostname            = "tenttiarkisto.fi"
 
   lifecycle {
@@ -151,7 +155,7 @@ resource "azurerm_app_service_certificate_binding" "tenttiarkisto_cert_binding" 
 
 resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_www_hostname_binding" {
   resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
-  app_service_name    = azurerm_app_service.tenttiarkisto.name
+  app_service_name    = azurerm_linux_web_app.tenttiarkisto.name
   hostname            = "www.tenttiarkisto.fi"
 
   lifecycle {

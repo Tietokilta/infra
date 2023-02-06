@@ -10,33 +10,31 @@ resource "azurerm_postgresql_database" "tikweb_cms_db" {
   collation           = "fi-FI"
 }
 
-
-resource "azurerm_app_service_plan" "tikweb_plan" {
+resource "azurerm_service_plan" "tikweb_plan" {
   name                = "tikweb-${var.env_name}-plan"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
 
-  kind     = "linux"
-  reserved = true # Needs to be true for linux
-
-  sku {
-    tier = "Basic"
-    size = "B1"
-  }
+  os_type  = "Linux"
+  sku_name = "B1"
 }
 
-resource "azurerm_app_service" "tikweb_cms" {
+resource "azurerm_linux_web_app" "tikweb_cms" {
   name                = "tikweb-${var.env_name}-app-cms"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
-  app_service_plan_id = azurerm_app_service_plan.tikweb_plan.id
+  service_plan_id     = azurerm_service_plan.tikweb_plan.id
 
   https_only = true
 
   site_config {
-    ftps_state       = "Disabled"
-    always_on        = true
-    linux_fx_version = "DOCKER|ghcr.io/tietokilta/strapi-cms:latest"
+    ftps_state = "Disabled"
+    always_on  = true
+
+    application_stack {
+      docker_image     = "ghcr.io/tietokilta/strapi-cms"
+      docker_image_tag = "latest"
+    }
   }
 
   logs {
@@ -88,7 +86,7 @@ resource "azurerm_app_service" "tikweb_cms" {
 
   lifecycle {
     ignore_changes = [
-      site_config.0.linux_fx_version,
+      site_config.0.application_stack, # deployments are made outside of Terraform
     ]
   }
 }

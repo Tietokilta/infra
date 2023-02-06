@@ -15,7 +15,7 @@ resource "azurerm_dns_txt_record" "tikjob_asuid" {
   ttl                 = 300
 
   record {
-    value = azurerm_app_service.tikjob_ghost.custom_domain_verification_id
+    value = azurerm_linux_web_app.tikjob_ghost.custom_domain_verification_id
   }
 }
 
