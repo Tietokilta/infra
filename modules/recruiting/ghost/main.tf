@@ -25,7 +25,7 @@ resource "azurerm_linux_web_app" "tikjob_ghost" {
 
     application_stack {
       docker_image     = "docker.io/library/ghost"
-      docker_image_tag = "4.36-alpine"
+      docker_image_tag = "4.48-alpine"
     }
   }
 
