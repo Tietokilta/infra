@@ -22,3 +22,8 @@ output "postgres_admin_password" {
 output "aux_app_plan_id" {
   value = azurerm_service_plan.aux_plan.id
 }
+
+output "acme_account_key" {
+  value     = acme_registration.acme_reg.account_key_pem
+  sensitive = true
+}

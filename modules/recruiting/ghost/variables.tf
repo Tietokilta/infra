@@ -10,6 +10,13 @@ variable "resource_group_location" {
   type = string
 }
 
+// Certs
+
+variable "acme_account_key" {
+  type      = string
+  sensitive = true
+}
+
 // MySQL
 
 variable "mysql_fqdn" {
