@@ -2,6 +2,11 @@
 
 [Architecture diagram](https://miro.com/app/board/o9J_lVeCVWw=/)
 
+## Renewing certs
+
+This Terraform has some ACME cert resources from Let's Encrypt. When those need renewing, just reapplying the config
+should be enough.
+
 ## Development
 
 **NEVER RUN `terraform apply` LOCALLY, WE HAVE A WORKFLOW FOR THAT.**
