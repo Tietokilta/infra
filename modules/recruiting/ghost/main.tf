@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    acme = {
+      source  = "vancluever/acme"
+      version = "2.13.0-beta1"
+    }
+  }
+}
+
 locals {
   fqdn = "${var.subdomain}.${var.root_zone_name}"
 }
@@ -90,6 +99,26 @@ resource "azurerm_app_service_custom_hostname_binding" "tikjob_hostname_binding"
   #   azurerm_dns_a_record.tikjob_a,
   #   azurerm_dns_txt_record.tikjob_asuid
   # ]
+}
+
+resource "random_password" "tikjob_cert_password" {
+  length  = 48
+  special = false
+}
+
+resource "acme_certificate" "tikjob_acme_cert" {
+  account_key_pem          = var.acme_account_key
+  common_name              = local.fqdn
+  key_type                 = "2048" # RSA
+  certificate_p12_password = random_password.tikjob_cert_password.result
+
+  dns_challenge {
+    provider = "azure"
+    config = {
+      AZURE_RESOURCE_GROUP = var.dns_resource_group_name
+      AZURE_ZONE_NAME      = var.root_zone_name
+    }
+  }
 }
 
 resource "azurerm_app_service_certificate" "tikjob_cert" {

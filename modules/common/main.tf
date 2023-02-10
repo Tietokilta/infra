@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    acme = {
+      source  = "vancluever/acme"
+      version = "2.13.0-beta1"
+    }
+  }
+}
+
 locals {
   pg_server_name = "tikweb-${var.env_name}-pg-server"
 }
@@ -49,4 +58,14 @@ resource "azurerm_service_plan" "aux_plan" {
 
   os_type  = "Linux"
   sku_name = "B1"
+}
+
+resource "tls_private_key" "acme_account_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "acme_registration" "acme_reg" {
+  account_key_pem = tls_private_key.acme_account_key.private_key_pem
+  email_address   = "admin@tietokilta.fi"
 }

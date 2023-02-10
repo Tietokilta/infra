@@ -8,6 +8,14 @@ terraform {
       source  = "hashicorp/dns"
       version = "3.2.3"
     }
+    acme = {
+      source  = "vancluever/acme"
+      version = "2.13.0-beta1"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "4.0.4"
+    }
   }
   backend "azurerm" {
     container_name       = "tfstate"
@@ -22,6 +30,10 @@ provider "azurerm" {
 }
 
 provider "dns" {
+}
+
+provider "acme" {
+  server_url = "https://acme-staging-v02.api.letsencrypt.org/directory"
 }
 
 locals {
@@ -200,7 +212,8 @@ module "tikjob_app" {
   ghost_mail_username = var.tikjob_ghost_mail_username
   ghost_mail_password = var.tikjob_ghost_mail_password
 
-  cert_password = var.tikjob_cert_password
+  acme_account_key = module.common.acme_account_key
+  cert_password    = var.tikjob_cert_password
 
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
