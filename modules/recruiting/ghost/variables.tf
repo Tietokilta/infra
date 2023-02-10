@@ -71,10 +71,6 @@ variable "ghost_front_url" {
   type = string
 }
 
-variable "cert_password" {
-  type = string
-}
-
 variable "dns_resource_group_name" {
   type = string
 }
