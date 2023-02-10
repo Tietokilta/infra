@@ -125,8 +125,8 @@ resource "azurerm_app_service_certificate" "tikjob_cert" {
   name                = "tikjob-cert"
   resource_group_name = var.resource_group_name
   location            = var.resource_group_location
-  pfx_blob            = filebase64("${path.module}/rekry.tietokilta.fi.pfx")
-  password            = var.cert_password
+  pfx_blob            = acme_certificate.tikjob_acme_cert.certificate_p12
+  password            = acme_certificate.tikjob_acme_cert.certificate_p12_password
 }
 
 resource "azurerm_app_service_certificate_binding" "tikjob_cert_binding" {

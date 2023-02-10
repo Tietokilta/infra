@@ -46,11 +46,6 @@ variable "tikjob_ghost_mail_password" {
   sensitive = true
 }
 
-variable "tikjob_cert_password" {
-  type      = string
-  sensitive = true
-}
-
 variable "tenttiarkisto_django_secret_key" {
   type      = string
   sensitive = true
