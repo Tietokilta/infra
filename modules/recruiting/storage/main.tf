@@ -45,6 +45,7 @@ resource "azurerm_mysql_flexible_server" "tikjob_mysql_new" {
   administrator_login    = var.ghost_db_username
   administrator_password = random_password.db_password.result
   sku_name               = "B_Standard_B1s"
+  version                = "8.0.21"
 }
 
 resource "azurerm_mysql_flexible_database" "tikjob_mysql_db_new" {
