@@ -46,14 +46,15 @@ resource "azurerm_mysql_flexible_server" "tikjob_mysql_new" {
   administrator_password = random_password.db_password.result
   sku_name               = "B_Standard_B1s"
   version                = "8.0.21"
+  zone                   = "2"
 }
 
 resource "azurerm_mysql_flexible_database" "tikjob_mysql_db_new" {
   name                = "tikjob_${var.env_name}_ghost"
   resource_group_name = azurerm_resource_group.tikjob_rg.name
   server_name         = azurerm_mysql_flexible_server.tikjob_mysql_new.name
-  charset             = "utf8"
-  collation           = "utf8_unicode_ci"
+  charset             = "utf8mb3"
+  collation           = "utf8mb3_unicode_ci"
 }
 
 # Enable access from other Azure services (TODO: Switch to IP list)
