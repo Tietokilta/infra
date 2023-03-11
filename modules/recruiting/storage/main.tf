@@ -38,6 +38,24 @@ resource "azurerm_mysql_database" "tikjob_mysql_db" {
   collation           = "utf8_unicode_ci"
 }
 
+resource "azurerm_mysql_flexible_server" "tikjob_mysql_new" {
+  name                   = "tikjob-${var.env_name}-mysql-flexible"
+  resource_group_name    = azurerm_resource_group.tikjob_rg.name
+  location               = azurerm_resource_group.tikjob_rg.location
+  administrator_login    = var.ghost_db_username
+  administrator_password = random_password.db_password.result
+  sku_name               = "B_Standard_B1s"
+  version                = "8.0.21"
+}
+
+resource "azurerm_mysql_flexible_database" "tikjob_mysql_db_new" {
+  name                = "tikjob_${var.env_name}_ghost"
+  resource_group_name = azurerm_resource_group.tikjob_rg.name
+  server_name         = azurerm_mysql_flexible_server.tikjob_mysql_new.name
+  charset             = "utf8"
+  collation           = "utf8_unicode_ci"
+}
+
 # Enable access from other Azure services (TODO: Switch to IP list)
 resource "azurerm_mysql_firewall_rule" "tikjob_mysql_access" {
   name                = "tikjob-${var.env_name}-mysql-access"
