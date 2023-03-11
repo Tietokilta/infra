@@ -2,3 +2,4 @@
 terraform.exe
 *.tfvars
 *.tfbackend
+.idea/
