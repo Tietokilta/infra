@@ -65,6 +65,15 @@ resource "azurerm_mysql_firewall_rule" "tikjob_mysql_access" {
   end_ip_address      = "0.0.0.0"
 }
 
+# Enable access from other Azure services (TODO: Switch to IP list)
+resource "azurerm_mysql_flexible_server_firewall_rule" "tikjob_new_mysql_access" {
+  name                = "tikjob-${var.env_name}-new-mysql-access"
+  resource_group_name = azurerm_resource_group.tikjob_rg.name
+  server_name         = azurerm_mysql_flexible_server.tikjob_mysql_new.name
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "0.0.0.0"
+}
+
 resource "azurerm_storage_account" "tikjob_storage_account" {
   name                            = "tikjob${var.env_name}contentsa"
   resource_group_name             = azurerm_resource_group.tikjob_rg.name
