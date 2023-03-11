@@ -9,15 +9,15 @@ output "resource_group_location" {
 // MySQL
 
 output "mysql_fqdn" {
-  value = azurerm_mysql_server.tikjob_mysql.fqdn
+  value = azurerm_mysql_flexible_server.tikjob_mysql_new.fqdn
 }
 
 output "mysql_username" {
-  value = "${azurerm_mysql_server.tikjob_mysql.administrator_login}@${azurerm_mysql_server.tikjob_mysql.name}"
+  value = azurerm_mysql_flexible_server.tikjob_mysql_new.administrator_login
 }
 
 output "mysql_password" {
-  value     = azurerm_mysql_server.tikjob_mysql.administrator_login_password
+  value     = azurerm_mysql_flexible_server.tikjob_mysql_new.administrator_password
   sensitive = true
 }
 
@@ -37,5 +37,5 @@ output "storage_share_name" {
 }
 
 output "mysql_db_name" {
-  value = azurerm_mysql_database.tikjob_mysql_db.name
+  value = azurerm_mysql_flexible_database.tikjob_mysql_db_new.name
 }
