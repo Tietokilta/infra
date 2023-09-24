@@ -40,6 +40,15 @@ locals {
   resource_group_location = "northeurope"
 }
 
+module "keyvault" {
+  source   = "./modules/keyvault"
+  env_name = "prod"
+
+  resource_group_name     = module.common.resource_group_name
+  resource_group_location = local.resource_group_location
+}
+
+
 module "dns_prod" {
   source                  = "./modules/dns/root"
   env_name                = "prod"
@@ -121,11 +130,11 @@ module "cms" {
   postgres_server_fqdn         = module.common.postgres_server_fqdn
   postgres_server_host         = module.common.postgres_server_host
   postgres_admin_password      = module.common.postgres_admin_password
-  strapi_jwt_secret            = var.strapi_jwt_secret
-  strapi_admin_jwt_secret      = var.strapi_admin_jwt_secret
-  strapi_api_token_salt        = var.strapi_api_token_salt
-  strapi_app_keys              = var.strapi_app_keys
-  github_app_key               = var.github_app_key
+  strapi_jwt_secret            = module.keyvault.strapi_jwt_secret
+  strapi_admin_jwt_secret      = module.keyvault.strapi_admin_jwt_secret
+  strapi_api_token_salt        = module.keyvault.strapi_api_token_salt
+  strapi_app_keys              = module.keyvault.strapi_app_keys
+  github_app_key               = module.keyvault.github_app_key
   uploads_storage_account_name = module.frontend.storage_account_name
   uploads_storage_account_key  = module.frontend.storage_account_key
   uploads_container_name       = module.frontend.uploads_container_name
@@ -140,10 +149,10 @@ module "ilmo" {
   postgres_server_fqdn    = module.common.postgres_server_fqdn
   postgres_server_host    = module.common.postgres_server_host
   postgres_admin_password = module.common.postgres_admin_password
-  edit_token_secret       = var.ilmo_edit_token_secret
-  auth_jwt_secret         = var.ilmo_auth_jwt_secret
-  mailgun_api_key         = var.ilmo_mailgun_api_key
-  mailgun_domain          = var.ilmo_mailgun_domain
+  edit_token_secret       = module.keyvault.ilmo_edit_token_secret
+  auth_jwt_secret         = module.keyvault.ilmo_auth_jwt_secret
+  mailgun_api_key         = module.keyvault.ilmo_mailgun_api_key
+  mailgun_domain          = module.keyvault.ilmo_mailgun_domain
   website_events_url      = "https://${module.frontend.fqdn}/tapahtumat"
 
   dns_resource_group_name = module.dns_prod.resource_group_name
@@ -174,7 +183,7 @@ module "tenttiarkisto" {
   postgres_server_host         = module.common.postgres_server_host
   postgres_admin_password      = module.common.postgres_admin_password
   aux_app_plan_id              = module.common.aux_app_plan_id
-  django_secret_key            = var.tenttiarkisto_django_secret_key
+  django_secret_key            = module.keyvault.tenttiarkisto_django_secret_key
 }
 
 module "voo" {
@@ -209,8 +218,8 @@ module "tikjob_app" {
 
   ghost_mail_host     = "smtp.eu.mailgun.org"
   ghost_mail_port     = 465
-  ghost_mail_username = var.tikjob_ghost_mail_username
-  ghost_mail_password = var.tikjob_ghost_mail_password
+  ghost_mail_username = module.keyvault.tikjob_ghost_mail_username
+  ghost_mail_password = module.keyvault.tikjob_ghost_mail_password
 
   acme_account_key = module.common.acme_account_key
 
