@@ -27,7 +27,15 @@ variable "postgres_server_host" {
   type = string
 }
 
-variable "aux_app_plan_id" {
+variable "tikweb_app_plan_id" {
+  type = string
+}
+
+variable "tikweb_app_plan_rg_name" {
+  type = string
+}
+
+variable "tikweb_app_plan_rg_location" {
   type = string
 }
 

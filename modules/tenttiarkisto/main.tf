@@ -40,9 +40,9 @@ resource "azurerm_storage_container" "tenttiarkisto_storage_container" {
 
 resource "azurerm_linux_web_app" "tenttiarkisto" {
   name                = "tenttiarkisto-${var.env_name}-app"
-  location            = var.resource_group_location
-  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
-  service_plan_id     = var.aux_app_plan_id
+  location            = var.tikweb_app_plan_rg_location
+  resource_group_name = var.tikweb_app_plan_rg_name
+  service_plan_id     = var.tikweb_app_plan_id
 
   https_only = true
 

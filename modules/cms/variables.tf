@@ -62,3 +62,15 @@ variable "uploads_storage_account_key" {
 variable "uploads_container_name" {
   type = string
 }
+
+variable "tikweb_app_plan_id" {
+  type = string
+}
+
+variable "tikweb_rg_name" {
+  type = string
+}
+
+variable "tikweb_rg_location" {
+  type = string
+}

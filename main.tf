@@ -138,6 +138,9 @@ module "cms" {
   uploads_storage_account_name = module.frontend.storage_account_name
   uploads_storage_account_key  = module.frontend.storage_account_key
   uploads_container_name       = module.frontend.uploads_container_name
+  tikweb_app_plan_id           = module.common.tikweb_app_plan_id
+  tikweb_rg_location           = module.common.resource_group_location
+  tikweb_rg_name               = module.common.resource_group_name
 }
 
 module "ilmo" {
@@ -154,7 +157,9 @@ module "ilmo" {
   mailgun_api_key         = module.keyvault.ilmo_mailgun_api_key
   mailgun_domain          = module.keyvault.ilmo_mailgun_domain
   website_events_url      = "https://${module.frontend.fqdn}/tapahtumat"
-
+  tikweb_app_plan_id      = module.common.tikweb_app_plan_id
+  tikweb_rg_location      = module.common.resource_group_location
+  tikweb_rg_name          = module.common.resource_group_name
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "ilmo"
@@ -182,7 +187,9 @@ module "tenttiarkisto" {
   postgres_server_fqdn         = module.common.postgres_server_fqdn
   postgres_server_host         = module.common.postgres_server_host
   postgres_admin_password      = module.common.postgres_admin_password
-  aux_app_plan_id              = module.common.aux_app_plan_id
+  tikweb_app_plan_id           = module.common.tikweb_app_plan_id
+  tikweb_app_plan_rg_location  = module.common.resource_group_location
+  tikweb_app_plan_rg_name      = module.common.resource_group_name
   django_secret_key            = module.keyvault.tenttiarkisto_django_secret_key
 }
 
@@ -205,6 +212,9 @@ module "tikjob_app" {
   env_name                = "prod"
   resource_group_name     = module.tikjob_storage.resource_group_name
   resource_group_location = module.tikjob_storage.resource_group_location
+  tikweb_app_plan_id      = module.common.tikweb_app_plan_id
+  tikweb_rg_name          = module.common.resource_group_name
+  tikweb_rg_location      = module.common.resource_group_location
   ghost_front_url         = "https://rekry.tietokilta.fi"
 
   mysql_db_name  = module.tikjob_storage.mysql_db_name
@@ -226,9 +236,8 @@ module "tikjob_app" {
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "rekry"
-
-  dkim_selector = "mta"
-  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDYQLHt0gzozEScD5nNockttK0D0r6MejAOgMBj0e++DtDev9OvTJru5ZtKFlLGXxf3b7GWvV10X5kCT0D2HD/vDfaokZ+EL58lRWg7qlz10XBN/7XDTgPDbDuCBC3mH9W8DeI38omNCT+8fgzVvCjHUfYlvf3dMOn4Ow7zeAZ5yQIDAQAB"
+  dkim_selector           = "mta"
+  dkim_key                = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDYQLHt0gzozEScD5nNockttK0D0r6MejAOgMBj0e++DtDev9OvTJru5ZtKFlLGXxf3b7GWvV10X5kCT0D2HD/vDfaokZ+EL58lRWg7qlz10XBN/7XDTgPDbDuCBC3mH9W8DeI38omNCT+8fgzVvCjHUfYlvf3dMOn4Ow7zeAZ5yQIDAQAB"
 }
 
 module "forum" {

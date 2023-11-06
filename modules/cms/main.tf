@@ -21,9 +21,9 @@ resource "azurerm_service_plan" "tikweb_plan" {
 
 resource "azurerm_linux_web_app" "tikweb_cms" {
   name                = "tikweb-${var.env_name}-app-cms"
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
-  service_plan_id     = azurerm_service_plan.tikweb_plan.id
+  location            = var.tikweb_rg_location
+  resource_group_name = var.tikweb_rg_name
+  service_plan_id     = var.tikweb_app_plan_id
 
   https_only = true
 

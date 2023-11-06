@@ -90,3 +90,15 @@ variable "dkim_selector" {
 variable "dkim_key" {
   type = string
 }
+
+variable "tikweb_app_plan_id" {
+  type = string
+}
+
+variable "tikweb_rg_name" {
+  type = string
+}
+
+variable "tikweb_rg_location" {
+  type = string
+}

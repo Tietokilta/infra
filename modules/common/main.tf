@@ -7,9 +7,6 @@ terraform {
   }
 }
 
-locals {
-  pg_server_name = "tikweb-${var.env_name}-pg-server"
-}
 
 resource "azurerm_resource_group" "tikweb_rg" {
   name     = "tikweb-${var.env_name}-rg"
@@ -24,7 +21,7 @@ resource "random_password" "db_password" {
 
 # Shared Postgres server
 resource "azurerm_postgresql_server" "tikweb_pg" {
-  name                = local.pg_server_name
+  name                = "tikweb-${var.env_name}-pg-server"
   location            = azurerm_resource_group.tikweb_rg.location
   resource_group_name = azurerm_resource_group.tikweb_rg.name
 
@@ -58,6 +55,16 @@ resource "azurerm_service_plan" "aux_plan" {
 
   os_type  = "Linux"
   sku_name = "B1"
+}
+
+# Shared App Service Plan
+resource "azurerm_service_plan" "tikweb_plan" {
+  name                = "tik-${var.env_name}-app-service-plan"
+  location            = azurerm_resource_group.tikweb_rg.location
+  resource_group_name = azurerm_resource_group.tikweb_rg.name
+
+  os_type  = "Linux"
+  sku_name = "B2"
 }
 
 resource "tls_private_key" "acme_account_key" {

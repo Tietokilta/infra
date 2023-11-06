@@ -24,7 +24,7 @@ resource "azurerm_linux_web_app" "tikjob_ghost" {
   name                = "tikjob-${var.env_name}-app-ghost"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
-  service_plan_id     = azurerm_service_plan.tikjob_plan.id
+  service_plan_id     = var.tikweb_app_plan_id
 
   https_only = true
 
