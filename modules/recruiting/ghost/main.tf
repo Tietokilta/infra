@@ -22,8 +22,8 @@ resource "azurerm_service_plan" "tikjob_plan" {
 
 resource "azurerm_linux_web_app" "tikjob_ghost" {
   name                = "tikjob-${var.env_name}-app-ghost"
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  location            = var.tikweb_rg_location
+  resource_group_name = var.tikweb_rg_name
   service_plan_id     = var.tikweb_app_plan_id
 
   https_only = true
@@ -86,7 +86,7 @@ resource "azurerm_linux_web_app" "tikjob_ghost" {
 resource "azurerm_app_service_custom_hostname_binding" "tikjob_hostname_binding" {
   hostname            = local.fqdn
   app_service_name    = azurerm_linux_web_app.tikjob_ghost.name
-  resource_group_name = var.resource_group_name
+  resource_group_name = var.tikweb_rg_name
 
   lifecycle {
     ignore_changes = [ssl_state, thumbprint]
@@ -123,8 +123,8 @@ resource "acme_certificate" "tikjob_acme_cert" {
 
 resource "azurerm_app_service_certificate" "tikjob_cert" {
   name                = "tikjob-cert"
-  resource_group_name = var.resource_group_name
-  location            = var.resource_group_location
+  resource_group_name = var.tikweb_rg_name
+  location            = var.tikweb_rg_location
   pfx_blob            = acme_certificate.tikjob_acme_cert.certificate_p12
   password            = acme_certificate.tikjob_acme_cert.certificate_p12_password
 }
