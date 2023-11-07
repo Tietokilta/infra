@@ -13,11 +13,15 @@ resource "azurerm_key_vault" "keyvault" {
 
 
 }
+data "azuread_application" "CI_app_registration" {
+  display_name = "github-action-terraform"
+}
+
 
 resource "azurerm_key_vault_access_policy" "current" {
   key_vault_id = azurerm_key_vault.keyvault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = data.azurerm_client_config.current.object_id
+  object_id    = data.azuread_application.CI_app_registration.id
 
   key_permissions = [
     "Get",
@@ -128,5 +132,18 @@ data "azurerm_key_vault_secret" "tenttiarkisto_django_secret_key" {
 data "azurerm_key_vault_secret" "github_app_key" {
   name         = "github-app-key"
   key_vault_id = azurerm_key_vault.keyvault.id
+  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.current]
+}
+
+resource "azurerm_key_vault_secret" "postgres_admin_username" {
+  key_vault_id = azurerm_key_vault.keyvault.id
+  name         = "postgres-admin-username"
+  value        = var.tikweb_postgres_admin_username
+  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.current]
+}
+resource "azurerm_key_vault_secret" "postgres_admin_password" {
+  key_vault_id = azurerm_key_vault.keyvault.id
+  name         = "postgres-admin-password"
+  value        = var.tikweb_postgres_admin_password
   depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.current]
 }

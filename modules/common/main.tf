@@ -52,7 +52,13 @@ resource "azurerm_postgresql_flexible_server" "tikweb_pg_new" {
   auto_grow_enabled            = false
   zone                         = "2"
 }
-
+# very secure accesses yes
+resource "azurerm_postgresql_flexible_server_firewall_rule" "tikweb_pg_new_firewall" {
+  name             = "tikweb-${var.env_name}-pg-new"
+  server_id        = azurerm_postgresql_flexible_server.tikweb_pg_new.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
+}
 # Enable access from other Azure services
 resource "azurerm_postgresql_firewall_rule" "tikweb_pg_internal_access" {
   name                = "tikweb-${var.env_name}-pg-internal-access"
