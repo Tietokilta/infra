@@ -133,9 +133,9 @@ module "cms" {
   env_name                     = "prod"
   resource_group_name          = module.common.resource_group_name
   resource_group_location      = local.resource_group_location
-  postgres_server_name         = module.common.postgres_server_name
-  postgres_server_fqdn         = module.common.postgres_server_fqdn
-  postgres_server_host         = module.common.postgres_server_host
+  postgres_server_name         = module.common.postgres_server_new_name
+  postgres_server_fqdn         = module.common.postgres_server_new_fqdn
+  postgres_server_id           = module.common.postgres_server_new_id
   postgres_admin_password      = module.common.postgres_admin_password
   strapi_jwt_secret            = module.keyvault.strapi_jwt_secret
   strapi_admin_jwt_secret      = module.keyvault.strapi_admin_jwt_secret
@@ -148,7 +148,6 @@ module "cms" {
   tikweb_app_plan_id           = module.common.tikweb_app_plan_id
   tikweb_rg_location           = module.common.resource_group_location
   tikweb_rg_name               = module.common.resource_group_name
-  postgres_server_new_id       = module.common.postgres_server_new_id
 }
 
 module "ilmo" {
@@ -158,7 +157,7 @@ module "ilmo" {
   resource_group_location = local.resource_group_location
   postgres_server_name    = module.common.postgres_server_name
   postgres_server_fqdn    = module.common.postgres_server_fqdn
-  postgres_server_host    = module.common.postgres_server_host
+  postgres_server_host    = module.common.postgres_server_name
   postgres_admin_password = module.common.postgres_admin_password
   postgres_server_new_id  = module.common.postgres_server_new_id
   edit_token_secret       = module.keyvault.ilmo_edit_token_secret
@@ -194,7 +193,7 @@ module "tenttiarkisto" {
   resource_group_location      = local.resource_group_location
   postgres_server_name         = module.common.postgres_server_name
   postgres_server_fqdn         = module.common.postgres_server_fqdn
-  postgres_server_host         = module.common.postgres_server_host
+  postgres_server_host         = module.common.postgres_server_name
   postgres_admin_password      = module.common.postgres_admin_password
   postgres_server_new_id       = module.common.postgres_server_new_id
   tikweb_app_plan_id           = module.common.tikweb_app_plan_id

@@ -18,7 +18,7 @@ variable "postgres_server_fqdn" {
   type = string
 }
 
-variable "postgres_server_new_id" {
+variable "postgres_server_id" {
   type = string
 }
 variable "postgres_admin_password" {
@@ -43,10 +43,6 @@ variable "strapi_api_token_salt" {
 variable "strapi_app_keys" {
   type      = string
   sensitive = true
-}
-
-variable "postgres_server_host" {
-  type = string
 }
 
 variable "github_app_key" {
