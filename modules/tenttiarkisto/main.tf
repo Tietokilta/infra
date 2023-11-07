@@ -93,7 +93,7 @@ resource "azurerm_linux_web_app" "tenttiarkisto" {
 
 resource "azurerm_dns_zone" "tenttiarkisto_zone" {
   name                = "tenttiarkisto.fi"
-  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+  resource_group_name = var.tikweb_app_plan_rg_name
 }
 
 # https://github.com/hashicorp/terraform-provider-azurerm/issues/14642#issuecomment-1084728235
@@ -104,7 +104,7 @@ data "dns_a_record_set" "tenttiarkisto_dns_fetch" {
 
 resource "azurerm_dns_a_record" "tenttiarkisto_a" {
   name                = "@"
-  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+  resource_group_name = var.tikweb_app_plan_rg_name
   zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
   ttl                 = 300
   records             = data.dns_a_record_set.tenttiarkisto_dns_fetch.addrs
@@ -112,7 +112,7 @@ resource "azurerm_dns_a_record" "tenttiarkisto_a" {
 
 resource "azurerm_dns_cname_record" "tenttiarkisto_cname_www" {
   name                = "www"
-  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+  resource_group_name = var.tikweb_app_plan_rg_name
   zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
   ttl                 = 300
   record              = azurerm_linux_web_app.tenttiarkisto.default_hostname
@@ -120,7 +120,18 @@ resource "azurerm_dns_cname_record" "tenttiarkisto_cname_www" {
 
 resource "azurerm_dns_txt_record" "tenttiarkisto_txt_asuid" {
   name                = "asuid"
-  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+  resource_group_name = var.tikweb_app_plan_rg_name
+  zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
+  ttl                 = 300
+
+  record {
+    value = azurerm_linux_web_app.tenttiarkisto.custom_domain_verification_id
+  }
+}
+
+resource "azurerm_dns_txt_record" "tenttiarkisto_www_txt_asuid" {
+  name                = "asuid.www"
+  resource_group_name = var.tikweb_app_plan_rg_name
   zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
   ttl                 = 300
 
@@ -130,7 +141,7 @@ resource "azurerm_dns_txt_record" "tenttiarkisto_txt_asuid" {
 }
 
 resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_hostname_binding" {
-  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+  resource_group_name = var.tikweb_app_plan_rg_name
   app_service_name    = azurerm_linux_web_app.tenttiarkisto.name
   hostname            = "tenttiarkisto.fi"
 
@@ -139,7 +150,7 @@ resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_hostname_b
   }
 
   depends_on = [
-    azurerm_dns_txt_record.tenttiarkisto_txt_asuid
+    azurerm_dns_txt_record.tenttiarkisto_txt_asuid,
   ]
 }
 
@@ -154,7 +165,7 @@ resource "azurerm_app_service_certificate_binding" "tenttiarkisto_cert_binding" 
 }
 
 resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_www_hostname_binding" {
-  resource_group_name = azurerm_resource_group.tenttiarkisto_rg.name
+  resource_group_name = var.tikweb_app_plan_rg_name
   app_service_name    = azurerm_linux_web_app.tenttiarkisto.name
   hostname            = "www.tenttiarkisto.fi"
 
@@ -163,7 +174,8 @@ resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_www_hostna
   }
 
   depends_on = [
-    azurerm_dns_cname_record.tenttiarkisto_cname_www
+    azurerm_dns_cname_record.tenttiarkisto_cname_www,
+    azurerm_dns_txt_record.tenttiarkisto_www_txt_asuid
   ]
 }
 
