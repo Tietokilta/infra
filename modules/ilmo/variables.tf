@@ -27,6 +27,10 @@ variable "postgres_server_host" {
   type = string
 }
 
+variable "postgres_server_new_id" {
+  type = string
+}
+
 variable "edit_token_secret" {
   type      = string
   sensitive = true

@@ -11,6 +11,14 @@ resource "azurerm_postgresql_database" "ilmo_db" {
   collation           = "fi-FI"
 }
 
+resource "azurerm_postgresql_flexible_server_database" "ilmo_db_new" {
+  name      = "${local.db_name}-new"
+  server_id = var.postgres_server_new_id
+  collation = "fi_FI"
+  charset   = "utf8"
+}
+
+
 resource "azurerm_linux_web_app" "ilmo_backend" {
   name                = "tik-ilmo-${var.env_name}-app"
   location            = var.tikweb_rg_location

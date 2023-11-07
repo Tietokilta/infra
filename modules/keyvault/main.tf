@@ -17,14 +17,19 @@ resource "azurerm_key_vault" "keyvault" {
 
     key_permissions = [
       "Get",
+      "Create",
+      "Update"
     ]
 
     secret_permissions = [
       "Get",
+      "Set"
     ]
 
     storage_permissions = [
       "Get",
+      "Set",
+      "Update"
     ]
   }
 }
@@ -87,4 +92,15 @@ data "azurerm_key_vault_secret" "tenttiarkisto_django_secret_key" {
 data "azurerm_key_vault_secret" "github_app_key" {
   name         = "github-app-key"
   key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "postgres_admin_username" {
+  key_vault_id = azurerm_key_vault.keyvault.id
+  name         = "postgres-admin-username"
+  value        = var.tikweb_postgres_admin_username
+}
+resource "azurerm_key_vault_secret" "postgres_admin_password" {
+  key_vault_id = azurerm_key_vault.keyvault.id
+  name         = "postgres-admin-password"
+  value        = var.tikweb_postgres_admin_password
 }

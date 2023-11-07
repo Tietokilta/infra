@@ -44,8 +44,10 @@ module "keyvault" {
   source   = "./modules/keyvault"
   env_name = "prod"
 
-  resource_group_name     = module.common.resource_group_name
-  resource_group_location = local.resource_group_location
+  resource_group_name            = module.common.resource_group_name
+  resource_group_location        = local.resource_group_location
+  tikweb_postgres_admin_password = module.common.postgres_admin_password
+  tikweb_postgres_admin_username = module.common.postgres_admin_username
 }
 
 
@@ -141,6 +143,7 @@ module "cms" {
   tikweb_app_plan_id           = module.common.tikweb_app_plan_id
   tikweb_rg_location           = module.common.resource_group_location
   tikweb_rg_name               = module.common.resource_group_name
+  postgres_server_new_id       = module.common.postgres_server_new_id
 }
 
 module "ilmo" {
@@ -152,6 +155,7 @@ module "ilmo" {
   postgres_server_fqdn    = module.common.postgres_server_fqdn
   postgres_server_host    = module.common.postgres_server_host
   postgres_admin_password = module.common.postgres_admin_password
+  postgres_server_new_id  = module.common.postgres_server_new_id
   edit_token_secret       = module.keyvault.ilmo_edit_token_secret
   auth_jwt_secret         = module.keyvault.ilmo_auth_jwt_secret
   mailgun_api_key         = module.keyvault.ilmo_mailgun_api_key
@@ -187,6 +191,7 @@ module "tenttiarkisto" {
   postgres_server_fqdn         = module.common.postgres_server_fqdn
   postgres_server_host         = module.common.postgres_server_host
   postgres_admin_password      = module.common.postgres_admin_password
+  postgres_server_new_id       = module.common.postgres_server_new_id
   tikweb_app_plan_id           = module.common.tikweb_app_plan_id
   tikweb_app_plan_rg_location  = module.common.resource_group_location
   tikweb_app_plan_rg_name      = module.common.resource_group_name

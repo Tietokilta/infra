@@ -18,6 +18,9 @@ variable "postgres_server_fqdn" {
   type = string
 }
 
+variable "postgres_server_new_id" {
+  type = string
+}
 variable "postgres_admin_password" {
   type = string
 }

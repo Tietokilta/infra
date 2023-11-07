@@ -21,6 +21,14 @@ output "postgres_admin_password" {
   sensitive = true
 }
 
+output "postgres_admin_username" {
+  value     = azurerm_postgresql_server.tikweb_pg.administrator_login
+  sensitive = true
+}
+
+output "postgres_server_new_id" {
+  value = azurerm_postgresql_flexible_server.tikweb_pg_new.id
+}
 output "tikweb_app_plan_id" {
   value = azurerm_service_plan.tikweb_plan.id
 }

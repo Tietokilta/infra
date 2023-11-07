@@ -44,3 +44,10 @@ output "tenttiarkisto_django_secret_key" {
 output "github_app_key" {
   value = data.azurerm_key_vault_secret.github_app_key.value
 }
+output "postgres_admin_password" {
+  value = azurerm_key_vault_secret.postgres_admin_password
+}
+
+output "postgres_admin_username" {
+  value = azurerm_key_vault_secret.postgres_admin_username
+}

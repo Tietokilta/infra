@@ -26,7 +26,9 @@ variable "postgres_admin_password" {
 variable "postgres_server_host" {
   type = string
 }
-
+variable "postgres_server_new_id" {
+  type = string
+}
 variable "tikweb_app_plan_id" {
   type = string
 }

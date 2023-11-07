@@ -38,6 +38,20 @@ resource "azurerm_postgresql_server" "tikweb_pg" {
   ssl_enforcement_enabled      = true
 }
 
+resource "azurerm_postgresql_flexible_server" "tikweb_pg_new" {
+  name                         = "tikweb-${var.env_name}-pg-server-new"
+  resource_group_name          = azurerm_resource_group.tikweb_rg.name
+  location                     = azurerm_resource_group.tikweb_rg.location
+  version                      = "15"
+  administrator_login          = "tietokilta"
+  administrator_password       = random_password.db_password.result
+  storage_mb                   = 32768
+  sku_name                     = "B_Standard_B1ms"
+  backup_retention_days        = 7
+  geo_redundant_backup_enabled = false
+  auto_grow_enabled            = false
+}
+
 # Enable access from other Azure services
 resource "azurerm_postgresql_firewall_rule" "tikweb_pg_internal_access" {
   name                = "tikweb-${var.env_name}-pg-internal-access"
