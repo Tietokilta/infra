@@ -21,10 +21,6 @@ output "postgres_admin_password" {
   sensitive = true
 }
 
-output "aux_app_plan_id" {
-  value = azurerm_service_plan.aux_plan.id
-}
-
 output "tikweb_app_plan_id" {
   value = azurerm_service_plan.tikweb_plan.id
 }

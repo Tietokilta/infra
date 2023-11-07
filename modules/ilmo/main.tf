@@ -11,15 +11,6 @@ resource "azurerm_postgresql_database" "ilmo_db" {
   collation           = "fi-FI"
 }
 
-resource "azurerm_service_plan" "ilmo_backend_plan" {
-  name                = "tik-ilmo-${var.env_name}-plan"
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
-
-  os_type  = "Linux"
-  sku_name = "B1"
-}
-
 resource "azurerm_linux_web_app" "ilmo_backend" {
   name                = "tik-ilmo-${var.env_name}-app"
   location            = var.tikweb_rg_location
