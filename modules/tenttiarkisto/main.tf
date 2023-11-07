@@ -80,10 +80,10 @@ resource "azurerm_linux_web_app" "tenttiarkisto" {
     EXAM_ACCOUNT_KEY  = azurerm_storage_account.tenttiarkisto_storage_account.primary_access_key
     EXAM_CONTAINER    = azurerm_storage_container.tenttiarkisto_storage_container.name
 
-    DB_NAME     = azurerm_postgresql_database.tenttiarkisto_db.name
-    DB_USER     = "tietokilta@${var.postgres_server_host}"
+    DB_NAME     = azurerm_postgresql_flexible_server_database.tenttiarkisto_db_new.name
+    DB_USER     = "tietokilta"
     DB_PASSWORD = var.postgres_admin_password
-    DB_HOST     = var.postgres_server_fqdn
+    DB_HOST     = var.postgres_server_new_fqdn
 
     SECRET_KEY = var.django_secret_key
 
