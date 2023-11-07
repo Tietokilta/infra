@@ -13,7 +13,6 @@ resource "azurerm_postgresql_database" "tikweb_cms_db" {
 resource "azurerm_postgresql_flexible_server_database" "tikweb_cms_db_new" {
   name      = "${local.db_name}-new"
   server_id = var.postgres_server_new_id
-  collation = "fi_FI"
   charset   = "utf8"
 }
 
