@@ -55,7 +55,7 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     DB_HOST     = var.postgres_server_fqdn
     DB_SSL      = true
     DB_DATABASE = local.db_name
-    DB_USER     = "tietokilta@${var.postgres_server_host}"
+    DB_USER     = "tietokilta"
     DB_PASSWORD = var.postgres_admin_password
 
     ADMIN_REGISTRATION_ALLOWED = false

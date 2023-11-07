@@ -156,7 +156,7 @@ module "ilmo" {
   resource_group_name     = module.common.resource_group_name
   resource_group_location = local.resource_group_location
   postgres_server_name    = module.common.postgres_server_name
-  postgres_server_fqdn    = module.common.postgres_server_fqdn
+  postgres_server_fqdn    = module.common.postgres_server_new_fqdn
   postgres_server_host    = module.common.postgres_server_name
   postgres_admin_password = module.common.postgres_admin_password
   postgres_server_new_id  = module.common.postgres_server_new_id
