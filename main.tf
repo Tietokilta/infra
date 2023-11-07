@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "3.79.0"
     }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "2.45.0"
+    }
     dns = {
       source  = "hashicorp/dns"
       version = "3.2.3"
@@ -28,7 +32,8 @@ terraform {
 provider "azurerm" {
   features {}
 }
-
+provider "azuread" {
+}
 provider "dns" {
 }
 

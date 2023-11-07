@@ -50,6 +50,7 @@ resource "azurerm_postgresql_flexible_server" "tikweb_pg_new" {
   backup_retention_days        = 7
   geo_redundant_backup_enabled = false
   auto_grow_enabled            = false
+  zone                         = "2"
 }
 
 # Enable access from other Azure services
