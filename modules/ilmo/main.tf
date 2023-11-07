@@ -3,14 +3,6 @@ locals {
   fqdn    = "${var.subdomain}.${var.root_zone_name}"
 }
 
-resource "azurerm_postgresql_database" "ilmo_db" {
-  name                = local.db_name
-  resource_group_name = var.resource_group_name
-  server_name         = var.postgres_server_name
-  charset             = "UTF8"
-  collation           = "fi-FI"
-}
-
 resource "azurerm_postgresql_flexible_server_database" "ilmo_db_new" {
   name      = local.db_name
   server_id = var.postgres_server_new_id
