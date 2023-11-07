@@ -13,7 +13,7 @@ resource "azurerm_key_vault" "keyvault" {
 
 
 }
-data "azuread_application" "CI_app_registration" {
+data "azuread_service_principal" "CI_service_principal" {
   display_name = "github-action-terraform"
 }
 
@@ -21,7 +21,7 @@ data "azuread_application" "CI_app_registration" {
 resource "azurerm_key_vault_access_policy" "CI" {
   key_vault_id = azurerm_key_vault.keyvault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = data.azuread_application.CI_app_registration.id
+  object_id    = data.azuread_service_principal.CI_service_principal.id
 
   key_permissions = [
     "Get",
