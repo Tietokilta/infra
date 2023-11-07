@@ -12,7 +12,7 @@ resource "azurerm_postgresql_database" "ilmo_db" {
 }
 
 resource "azurerm_postgresql_flexible_server_database" "ilmo_db_new" {
-  name      = "${local.db_name}_new"
+  name      = local.db_name
   server_id = var.postgres_server_new_id
   charset   = "utf8"
 }

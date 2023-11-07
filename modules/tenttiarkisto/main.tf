@@ -16,7 +16,7 @@ resource "azurerm_postgresql_database" "tenttiarkisto_db" {
 }
 
 resource "azurerm_postgresql_flexible_server_database" "tenttiarkisto_db_new" {
-  name      = "${local.db_name}_new"
+  name      = local.db_name
   server_id = var.postgres_server_new_id
   charset   = "utf8"
 }
