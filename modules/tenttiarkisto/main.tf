@@ -7,17 +7,9 @@ resource "azurerm_resource_group" "tenttiarkisto_rg" {
   location = var.resource_group_location
 }
 
-resource "azurerm_postgresql_database" "tenttiarkisto_db" {
-  name                = local.db_name
-  resource_group_name = var.postgres_resource_group_name
-  server_name         = var.postgres_server_name
-  charset             = "UTF8"
-  collation           = "fi-FI"
-}
-
 resource "azurerm_postgresql_flexible_server_database" "tenttiarkisto_db_new" {
   name      = local.db_name
-  server_id = var.postgres_server_new_id
+  server_id = var.postgres_server_id
   charset   = "utf8"
 }
 
@@ -83,7 +75,7 @@ resource "azurerm_linux_web_app" "tenttiarkisto" {
     DB_NAME     = azurerm_postgresql_flexible_server_database.tenttiarkisto_db_new.name
     DB_USER     = "tietokilta"
     DB_PASSWORD = var.postgres_admin_password
-    DB_HOST     = var.postgres_server_new_fqdn
+    DB_HOST     = var.postgres_server_fqdn
 
     SECRET_KEY = var.django_secret_key
 

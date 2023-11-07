@@ -10,10 +10,6 @@ variable "resource_group_location" {
   type = string
 }
 
-variable "postgres_server_name" {
-  type = string
-}
-
 variable "postgres_server_fqdn" {
   type = string
 }

@@ -10,10 +10,6 @@ variable "resource_group_location" {
   type = string
 }
 
-variable "postgres_server_name" {
-  type = string
-}
-
 variable "postgres_server_fqdn" {
   type = string
 }
@@ -22,16 +18,10 @@ variable "postgres_admin_password" {
   type      = string
   sensitive = true
 }
+variable "postgres_server_id" {
+  type = string
+}
 
-variable "postgres_server_host" {
-  type = string
-}
-variable "postgres_server_new_id" {
-  type = string
-}
-variable "postgres_server_new_fqdn" {
-  type = string
-}
 variable "tikweb_app_plan_id" {
   type = string
 }

@@ -9,11 +9,6 @@ variable "resource_group_name" {
 variable "resource_group_location" {
   type = string
 }
-
-variable "postgres_server_name" {
-  type = string
-}
-
 variable "postgres_server_fqdn" {
   type = string
 }
@@ -23,11 +18,7 @@ variable "postgres_admin_password" {
   sensitive = true
 }
 
-variable "postgres_server_host" {
-  type = string
-}
-
-variable "postgres_server_new_id" {
+variable "postgres_server_id" {
   type = string
 }
 
