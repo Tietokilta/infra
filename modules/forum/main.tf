@@ -67,6 +67,12 @@ resource "azurerm_virtual_machine" "forum_vm" {
     managed_disk_id = data.azurerm_managed_disk.forum_disk.id
     os_type         = "Linux"
   }
+  lifecycle {
+    ignore_changes = [
+      boot_diagnostics
+    ]
+  }
+
 }
 
 // IP addresses can only be read after the VM exists; use a data source dependent on the VM
