@@ -2,14 +2,6 @@ locals {
   db_name = "${var.env_name}_cms_db"
 }
 
-resource "azurerm_postgresql_database" "tikweb_cms_db" {
-  name                = local.db_name
-  resource_group_name = var.resource_group_name
-  server_name         = var.postgres_server_name
-  charset             = "UTF8"
-  collation           = "fi-FI"
-}
-
 resource "azurerm_postgresql_flexible_server_database" "tikweb_cms_db_new" {
   name      = local.db_name
   server_id = var.postgres_server_id
