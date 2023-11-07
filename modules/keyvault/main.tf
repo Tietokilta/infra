@@ -130,16 +130,3 @@ data "azurerm_key_vault_secret" "github_app_key" {
   key_vault_id = azurerm_key_vault.keyvault.id
   depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.current]
 }
-
-resource "azurerm_key_vault_secret" "postgres_admin_username" {
-  key_vault_id = azurerm_key_vault.keyvault.id
-  name         = "postgres-admin-username"
-  value        = var.tikweb_postgres_admin_username
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.current]
-}
-resource "azurerm_key_vault_secret" "postgres_admin_password" {
-  key_vault_id = azurerm_key_vault.keyvault.id
-  name         = "postgres-admin-password"
-  value        = var.tikweb_postgres_admin_password
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.current]
-}
