@@ -24,8 +24,8 @@ resource "azurerm_linux_web_app" "tikjob_ghost" {
     always_on  = true
 
     application_stack {
-      docker_image     = "docker.io/library/ghost"
-      docker_image_tag = "5.38-alpine"
+      docker_registry_url = "https://docker.io"
+      docker_image_name   = "ghost:5.38-alpine"
     }
   }
 

@@ -23,8 +23,8 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     always_on  = true
 
     application_stack {
-      docker_image     = "ghcr.io/tietokilta/ilmomasiina"
-      docker_image_tag = "latest"
+      docker_registry_url = "https://ghcr.io"
+      docker_image_name   = "tietokilta/ilmomasiina:latest"
     }
   }
 

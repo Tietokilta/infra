@@ -21,8 +21,8 @@ resource "azurerm_linux_web_app" "tikweb_cms" {
     always_on  = true
 
     application_stack {
-      docker_image     = "ghcr.io/tietokilta/strapi-cms"
-      docker_image_tag = "latest"
+      docker_registry_url = "https://ghcr.io"
+      docker_image_name   = "tietokilta/strapi-cms:latest"
     }
   }
 
