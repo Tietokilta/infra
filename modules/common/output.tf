@@ -33,3 +33,6 @@ output "acme_account_key" {
   value     = acme_registration.acme_reg.account_key_pem
   sensitive = true
 }
+output "tiknet_virtual_network_name" {
+  value = azurerm_virtual_network.tiknet.name
+}
