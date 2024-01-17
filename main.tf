@@ -114,20 +114,6 @@ module "common" {
   resource_group_location = local.resource_group_location
 }
 
-module "frontend" {
-  source                  = "./modules/frontend"
-  env_name                = "prod"
-  resource_group_name     = module.common.resource_group_name
-  resource_group_location = local.resource_group_location
-}
-
-module "frontend_staging" {
-  source                  = "./modules/frontend"
-  env_name                = "staging"
-  resource_group_name     = module.common.resource_group_name
-  resource_group_location = local.resource_group_location
-}
-
 module "ilmo" {
   source                  = "./modules/ilmo"
   env_name                = "prod"
@@ -140,7 +126,7 @@ module "ilmo" {
   auth_jwt_secret         = module.keyvault.ilmo_auth_jwt_secret
   mailgun_api_key         = module.keyvault.ilmo_mailgun_api_key
   mailgun_domain          = module.keyvault.ilmo_mailgun_domain
-  website_events_url      = "https://${module.frontend.fqdn}/tapahtumat"
+  website_events_url      = "https://tikwebprodsa.z16.web.core.windows.net/tapahtumat" #placeholder until new one is made
   tikweb_app_plan_id      = module.common.tikweb_app_plan_id
   tikweb_rg_location      = module.common.resource_group_location
   tikweb_rg_name          = module.common.resource_group_name
