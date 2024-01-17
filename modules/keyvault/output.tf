@@ -1,19 +1,3 @@
-output "strapi_admin_jwt_secret" {
-  value = data.azurerm_key_vault_secret.strapi_admin_jwt_secret.value
-}
-
-output "strapi_jwt_secret" {
-  value = data.azurerm_key_vault_secret.strapi_jwt_secret.value
-}
-
-output "strapi_api_token_salt" {
-  value = data.azurerm_key_vault_secret.strapi_api_token_salt.value
-}
-
-output "strapi_app_keys" {
-  value = data.azurerm_key_vault_secret.strapi_app_keys.value
-}
-
 output "ilmo_auth_jwt_secret" {
   value = data.azurerm_key_vault_secret.ilmo_auth_jwt_secret.value
 }

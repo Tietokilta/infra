@@ -63,30 +63,6 @@ resource "azurerm_key_vault_access_policy" "admin" {
 
 }
 
-data "azurerm_key_vault_secret" "strapi_admin_jwt_secret" {
-  name         = "strapi-admin-jwt-secret"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
-data "azurerm_key_vault_secret" "strapi_jwt_secret" {
-  name         = "strapi-jwt-secret"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
-data "azurerm_key_vault_secret" "strapi_api_token_salt" {
-  name         = "strapi-api-token-salt"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
-data "azurerm_key_vault_secret" "strapi_app_keys" {
-  name         = "strapi-app-keys"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
 data "azurerm_key_vault_secret" "ilmo_auth_jwt_secret" {
   name         = "ilmo-auth-jwt-secret"
   key_vault_id = azurerm_key_vault.keyvault.id

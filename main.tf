@@ -128,27 +128,6 @@ module "frontend_staging" {
   resource_group_location = local.resource_group_location
 }
 
-module "cms" {
-  source                       = "./modules/cms"
-  env_name                     = "prod"
-  resource_group_name          = module.common.resource_group_name
-  resource_group_location      = local.resource_group_location
-  postgres_server_fqdn         = module.common.postgres_server_fqdn
-  postgres_server_id           = module.common.postgres_server_id
-  postgres_admin_password      = module.common.postgres_admin_password
-  strapi_jwt_secret            = module.keyvault.strapi_jwt_secret
-  strapi_admin_jwt_secret      = module.keyvault.strapi_admin_jwt_secret
-  strapi_api_token_salt        = module.keyvault.strapi_api_token_salt
-  strapi_app_keys              = module.keyvault.strapi_app_keys
-  github_app_key               = module.keyvault.github_app_key
-  uploads_storage_account_name = module.frontend.storage_account_name
-  uploads_storage_account_key  = module.frontend.storage_account_key
-  uploads_container_name       = module.frontend.uploads_container_name
-  tikweb_app_plan_id           = module.common.tikweb_app_plan_id
-  tikweb_rg_location           = module.common.resource_group_location
-  tikweb_rg_name               = module.common.resource_group_name
-}
-
 module "ilmo" {
   source                  = "./modules/ilmo"
   env_name                = "prod"
