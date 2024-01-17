@@ -2,7 +2,7 @@ terraform {
   required_providers {
     acme = {
       source  = "vancluever/acme"
-      version = "2.18.0"
+      version = "2.19.0"
     }
   }
 }
@@ -79,9 +79,9 @@ resource "azurerm_app_service_custom_hostname_binding" "tikjob_hostname_binding"
   app_service_name    = azurerm_linux_web_app.tikjob_ghost.name
   resource_group_name = var.tikweb_rg_name
 
-  lifecycle {
-    ignore_changes = [ssl_state, thumbprint]
-  }
+  # lifecycle {
+  #   ignore_changes = [ssl_state, thumbprint]
+  # }
 
   # Deletion may need manual work.
   # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231

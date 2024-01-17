@@ -2,23 +2,23 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.79.0"
+      version = "3.87.0"
     }
     azuread = {
       source  = "hashicorp/azuread"
-      version = "2.45.0"
+      version = "2.47.0"
     }
     dns = {
       source  = "hashicorp/dns"
-      version = "3.2.3"
+      version = "3.4.0"
     }
     acme = {
       source  = "vancluever/acme"
-      version = "2.18.0"
+      version = "2.19.0"
     }
     tls = {
       source  = "hashicorp/tls"
-      version = "4.0.4"
+      version = "4.0.5"
     }
   }
   backend "azurerm" {

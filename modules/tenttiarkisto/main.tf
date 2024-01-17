@@ -143,9 +143,9 @@ resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_hostname_b
   app_service_name    = azurerm_linux_web_app.tenttiarkisto.name
   hostname            = "tenttiarkisto.fi"
 
-  lifecycle {
-    ignore_changes = [ssl_state, thumbprint]
-  }
+  # lifecycle {
+  #   ignore_changes = [ssl_state, thumbprint]
+  # }
 
   depends_on = [
     azurerm_dns_txt_record.tenttiarkisto_txt_asuid,
@@ -167,9 +167,9 @@ resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_www_hostna
   app_service_name    = azurerm_linux_web_app.tenttiarkisto.name
   hostname            = "www.tenttiarkisto.fi"
 
-  lifecycle {
-    ignore_changes = [ssl_state, thumbprint]
-  }
+  # lifecycle {
+  #   ignore_changes = [ssl_state, thumbprint]
+  # }
 
   depends_on = [
     azurerm_dns_cname_record.tenttiarkisto_cname_www,
