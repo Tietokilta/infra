@@ -1,6 +1,6 @@
 // Mongo
 output "mongo_connection_string" {
-  value     = "${azurerm_cosmosdb_account.db_account.primary_mongodb_connection_string}/${azurerm_cosmosdb_mongo_database.db.name}"
+  value     = azurerm_cosmosdb_account.db_account.primary_mongodb_connection_string
   sensitive = true
 }
 
