@@ -112,25 +112,16 @@ module "common" {
   source                  = "./modules/common"
   env_name                = "prod"
   resource_group_location = local.resource_group_location
-  dns_rg_name             = module.dns_prod.resource_group_name
-  dns_private_zone_name   = module.dns_prod.private_root_zone_name
 }
 module "web_storage" {
-  source                    = "./modules/web/storage"
-  resource_group_location   = local.resource_group_location
-  resource_group_name       = module.common.resource_group_name
-  private_subnet_id         = module.common.tiknet_private_subnet_id
-  private_subnet_name       = module.common.tiknet_private_subnet_name
-  private_root_zone_name    = module.dns_prod.private_root_zone_name
-  virtual_network_id        = module.common.tiknet_virtual_network_id
-  private_storage_subnet_id = module.common.tiknet_private_storage_subnet_id
+  source                  = "./modules/web/storage"
+  resource_group_location = local.resource_group_location
+  resource_group_name     = module.common.resource_group_name
 }
 module "web" {
   source                     = "./modules/web/app"
   resource_group_location    = local.resource_group_location
   resource_group_name        = module.common.resource_group_name
-  public_subnet_id           = module.common.tiknet_public_subnet_id
-  private_subnet_id          = module.common.tiknet_private_subnet_id
   app_service_plan_id        = module.common.tikweb_app_plan_id
   acme_account_key           = module.common.acme_account_key
   root_zone_name             = module.dns_prod.root_zone_name

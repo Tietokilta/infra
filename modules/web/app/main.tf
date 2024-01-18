@@ -6,12 +6,10 @@ resource "random_password" "revalidation_key" {
   special = true
 }
 resource "azurerm_linux_web_app" "frontend" {
-  name                          = "tikweb-frontend-${terraform.workspace}"
-  location                      = var.resource_group_location
-  resource_group_name           = var.resource_group_name
-  service_plan_id               = var.app_service_plan_id
-  virtual_network_subnet_id     = var.public_subnet_id
-  public_network_access_enabled = true
+  name                = "tikweb-frontend-${terraform.workspace}"
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
+  service_plan_id     = var.app_service_plan_id
   site_config {
     application_stack {
       docker_registry_url = "https://ghcr.io"
@@ -38,12 +36,10 @@ resource "random_password" "payload_secret" {
   special = true
 }
 resource "azurerm_linux_web_app" "cms" {
-  name                          = "tikweb-cms-${terraform.workspace}"
-  location                      = var.resource_group_location
-  resource_group_name           = var.resource_group_name
-  service_plan_id               = var.app_service_plan_id
-  virtual_network_subnet_id     = var.private_subnet_id
-  public_network_access_enabled = false
+  name                = "tikweb-cms-${terraform.workspace}"
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
+  service_plan_id     = var.app_service_plan_id
   site_config {
 
     application_stack {

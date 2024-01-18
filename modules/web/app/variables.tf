@@ -28,13 +28,6 @@ variable "root_zone_name" {
 variable "app_service_plan_id" {
   type = string
 }
-variable "public_subnet_id" {
-  type = string
-}
-
-variable "private_subnet_id" {
-  type = string
-}
 variable "mongo_connection_string" {
   type      = string
   sensitive = true
