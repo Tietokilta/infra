@@ -28,16 +28,6 @@ resource "azurerm_cosmosdb_account" "db_account" {
   }
 }
 
-resource "azurerm_cosmosdb_mongo_database" "db" {
-  name                = "cms-${terraform.workspace}"
-  resource_group_name = var.resource_group_name
-  account_name        = azurerm_cosmosdb_account.db_account.name
-  autoscale_settings {
-    # CosmosDB free tier allows for a throughput of 1000 at max
-    max_throughput = 1000
-  }
-}
-
 resource "azurerm_storage_account" "tikweb_storage_account" {
   name                            = "tikwebstorage${terraform.workspace}"
   resource_group_name             = var.resource_group_name
