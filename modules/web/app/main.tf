@@ -59,6 +59,7 @@ resource "azurerm_linux_web_app" "cms" {
     PUBLIC_FRONTEND_URL             = "https://${local.fqdn}"
     PAYLOAD_MONGO_CONNECTION_STRING = var.mongo_connection_string
     PAYLOAD_SECRET                  = random_password.payload_secret.result
+    WEBSITES_PORT                   = local.payload_port
     PAYLOAD_PORT                    = local.payload_port
     AZURE_STORAGE_CONNECTION_STRING = var.storage_connection_string
     AZURE_STORAGE_CONTAINER_NAME    = var.storage_container_name
