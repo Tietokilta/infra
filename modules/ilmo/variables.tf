@@ -76,3 +76,7 @@ variable "tikweb_rg_name" {
 variable "tikweb_rg_location" {
   type = string
 }
+
+variable "acme_account_key" {
+  type = string
+}
