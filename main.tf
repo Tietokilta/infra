@@ -137,6 +137,7 @@ module "web" {
   storage_connection_string  = module.web_storage.storage_connection_string
   storage_container_name     = module.web_storage.storage_container_name
   storage_account_base_url   = module.web_storage.storage_account_base_url
+  public_ilmo_url            = "https://${module.ilmo.fqdn}"
 }
 
 module "ilmo" {

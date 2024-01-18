@@ -52,3 +52,7 @@ variable "storage_container_name" {
 variable "storage_account_base_url" {
   type = string
 }
+variable "public_ilmo_url" {
+  type = string
+
+}
