@@ -36,3 +36,16 @@ output "acme_account_key" {
 output "tiknet_virtual_network_name" {
   value = azurerm_virtual_network.tiknet.name
 }
+
+output "tiknet_public_subnet_name" {
+  value = azurerm_subnet.web-public-subnet.name
+}
+output "tiknet_public_subnet_id" {
+  value = azurerm_subnet.web-public-subnet.id
+}
+output "tiknet_private_subnet_name" {
+  value = azurerm_subnet.web-private-subnet.name
+}
+output "tiknet_private_subnet_id" {
+  value = azurerm_subnet.web-private-subnet.id
+}
