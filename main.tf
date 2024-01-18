@@ -69,6 +69,10 @@ module "dns_staging" {
   resource_group_location = local.resource_group_location
   zone_name               = "tietokila.fi"
 }
+module "dns_m0" {
+  source                  = "./modules/dns/m0"
+  resource_group_location = local.resource_group_location
+}
 
 module "mailman" {
   source = "./modules/dns/mailman"
