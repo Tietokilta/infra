@@ -60,6 +60,7 @@ resource "azurerm_linux_web_app" "cms" {
   app_settings = {
     PUBLIC_FRONTEND_URL             = "https://${local.fqdn}"
     PAYLOAD_MONGO_CONNECTION_STRING = var.mongo_connection_string
+    PAYLOAD_MONGO_DB_NAME           = var.mongo_db_name
     PAYLOAD_SECRET                  = random_password.payload_secret.result
     WEBSITES_PORT                   = local.payload_port
     PAYLOAD_PORT                    = local.payload_port

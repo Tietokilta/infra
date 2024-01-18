@@ -32,6 +32,10 @@ variable "mongo_connection_string" {
   type      = string
   sensitive = true
 }
+variable "mongo_db_name" {
+  type      = string
+  sensitive = true
+}
 variable "google_oauth_client_id" {
   type      = string
   sensitive = true
