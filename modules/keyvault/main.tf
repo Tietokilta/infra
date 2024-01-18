@@ -110,3 +110,13 @@ data "azurerm_key_vault_secret" "github_app_key" {
   key_vault_id = azurerm_key_vault.keyvault.id
   depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
 }
+data "azurerm_key_vault_secret" "google_oauth_client_id" {
+  name         = "google-oauth-client-id"
+  key_vault_id = azurerm_key_vault.keyvault.id
+  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
+}
+data "azurerm_key_vault_secret" "google_oauth_client_secret" {
+  name         = "google-oauth-client-secret"
+  key_vault_id = azurerm_key_vault.keyvault.id
+  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
+}

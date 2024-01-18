@@ -112,6 +112,36 @@ module "common" {
   source                  = "./modules/common"
   env_name                = "prod"
   resource_group_location = local.resource_group_location
+  dns_rg_name             = module.dns_prod.resource_group_name
+  dns_private_zone_name   = module.dns_prod.private_root_zone_name
+}
+module "web_storage" {
+  source                    = "./modules/web/storage"
+  resource_group_location   = local.resource_group_location
+  resource_group_name       = module.common.resource_group_name
+  private_subnet_id         = module.common.tiknet_private_subnet_id
+  private_subnet_name       = module.common.tiknet_private_subnet_name
+  private_root_zone_name    = module.dns_prod.private_root_zone_name
+  virtual_network_id        = module.common.tiknet_virtual_network_id
+  private_storage_subnet_id = module.common.tiknet_private_storage_subnet_id
+}
+module "web" {
+  source                     = "./modules/web/app"
+  resource_group_location    = local.resource_group_location
+  resource_group_name        = module.common.resource_group_name
+  public_subnet_id           = module.common.tiknet_public_subnet_id
+  private_subnet_id          = module.common.tiknet_private_subnet_id
+  app_service_plan_id        = module.common.tikweb_app_plan_id
+  acme_account_key           = module.common.acme_account_key
+  root_zone_name             = module.dns_prod.root_zone_name
+  dns_resource_group_name    = module.dns_prod.resource_group_name
+  subdomain                  = "alpha"
+  mongo_connection_string    = module.web_storage.mongo_connection_string
+  google_oauth_client_id     = module.keyvault.google_oauth_client_id
+  google_oauth_client_secret = module.keyvault.google_oauth_client_secret
+  storage_connection_string  = module.web_storage.storage_connection_string
+  storage_container_name     = module.web_storage.storage_container_name
+  storage_account_base_url   = module.web_storage.storage_account_base_url
 }
 
 module "ilmo" {
@@ -126,7 +156,7 @@ module "ilmo" {
   auth_jwt_secret         = module.keyvault.ilmo_auth_jwt_secret
   mailgun_api_key         = module.keyvault.ilmo_mailgun_api_key
   mailgun_domain          = module.keyvault.ilmo_mailgun_domain
-  website_events_url      = "https://tikwebprodsa.z16.web.core.windows.net/tapahtumat" #placeholder until new one is made
+  website_events_url      = "${module.web.fqdn}/fi/tapahtumat" # TODO: needs two paths perhaps? for both languages
   tikweb_app_plan_id      = module.common.tikweb_app_plan_id
   tikweb_rg_location      = module.common.resource_group_location
   tikweb_rg_name          = module.common.resource_group_name

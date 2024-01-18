@@ -60,10 +60,3 @@ resource "acme_registration" "acme_reg" {
   account_key_pem = tls_private_key.acme_account_key.private_key_pem
   email_address   = "admin@tietokilta.fi"
 }
-
-resource "azurerm_virtual_network" "tiknet" {
-  name                = "tiknet-${var.env_name}"
-  address_space       = ["10.1.0.0/16"]
-  location            = azurerm_resource_group.tikweb_rg.location
-  resource_group_name = azurerm_resource_group.tikweb_rg.name
-}
