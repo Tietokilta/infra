@@ -29,6 +29,7 @@ resource "azurerm_linux_web_app" "frontend" {
   }
   https_only = true
   app_settings = {
+    NODE_ENVIRONMENT      = "production"
     WEBSITES_PORT         = 3000
     PORT                  = 3000
     NEXT_REVALIDATION_KEY = random_password.revalidation_key.result
@@ -61,6 +62,7 @@ resource "azurerm_linux_web_app" "cms" {
     }
   }
   app_settings = {
+    NODE_ENVIRONMENT                = "production"
     PUBLIC_FRONTEND_URL             = "https://${local.fqdn}"
     PAYLOAD_MONGO_CONNECTION_STRING = var.mongo_connection_string
     PAYLOAD_MONGO_DB_NAME           = "cms"
