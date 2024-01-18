@@ -8,7 +8,13 @@ This Terraform has some ACME cert resources from Let's Encrypt. When those need 
 should be enough.
 
 ## Development
-
+Recommended to setup pre-commit script (runs terraform fmt --recursive on commit):
+```shell
+# see what you are about to setup to run on your computer every time you commit
+cat setup-pre-commit.sh
+# in root directory
+./setup-pre-commit.sh
+```
 **NEVER RUN `terraform apply` LOCALLY, WE HAVE A WORKFLOW FOR THAT.**
 
 Initialize terraform by running:
