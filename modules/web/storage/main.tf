@@ -9,6 +9,12 @@ resource "azurerm_cosmosdb_account" "db_account" {
   capabilities {
     name = "EnableMongo"
   }
+  capabilities {
+    name = "EnableServerless"
+  }
+  capabilities {
+    name = "EnableMongoRetryableWrites"
+  }
   consistency_policy {
     consistency_level = "Session"
   }
