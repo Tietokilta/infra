@@ -18,8 +18,7 @@ resource "azurerm_cosmosdb_account" "db_account" {
     failover_priority = 0
   }
   capacity {
-    # CosmosDB free tier allows for a throughput of 1000 at max
-    total_throughput_limit = 1000
+    total_throughput_limit = 3000
   }
   backup {
     retention_in_hours  = 168
