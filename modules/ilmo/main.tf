@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    acme = {
+      source  = "vancluever/acme"
+      version = "2.19.0"
+    }
+  }
+}
+
 locals {
   db_name = "${var.env_name}_ilmo_db"
   fqdn    = "${var.subdomain}.${var.root_zone_name}"
@@ -75,4 +84,58 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
       site_config.0.application_stack, # deployments are made outside of Terraform
     ]
   }
+}
+
+
+resource "azurerm_app_service_custom_hostname_binding" "ilmo_hostname_binding" {
+  hostname            = local.fqdn
+  app_service_name    = azurerm_linux_web_app.ilmo_backend.name
+  resource_group_name = var.resource_group_name
+
+  # Deletion may need manual work.
+  # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
+  # TODO: Add dependencies for creation
+  depends_on = [
+    azurerm_dns_a_record.ilmo_a,
+    azurerm_dns_txt_record.ilmo_asuid
+  ]
+}
+resource "random_password" "ilmo_cert_password" {
+  length  = 48
+  special = false
+}
+
+resource "acme_certificate" "ilmo_acme_cert" {
+  account_key_pem          = var.acme_account_key
+  common_name              = local.fqdn
+  key_type                 = "2048" # RSA
+  certificate_p12_password = random_password.ilmo_cert_password.result
+
+  dns_challenge {
+    provider = "azure"
+    config = {
+      AZURE_RESOURCE_GROUP = var.dns_resource_group_name
+      AZURE_ZONE_NAME      = var.root_zone_name
+    }
+  }
+}
+
+resource "azurerm_app_service_certificate" "ilmo_cert" {
+  name                = "tik-ilmo-cert-${terraform.workspace}"
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
+  pfx_blob            = acme_certificate.ilmo_acme_cert.certificate_p12
+  password            = acme_certificate.ilmo_acme_cert.certificate_p12_password
+}
+
+resource "azurerm_app_service_certificate_binding" "ilmo_cert_binding" {
+  certificate_id      = azurerm_app_service_certificate.ilmo_cert.id
+  hostname_binding_id = azurerm_app_service_custom_hostname_binding.ilmo_hostname_binding.id
+  ssl_state           = "SniEnabled"
+}
+
+# https://github.com/hashicorp/terraform-provider-azurerm/issues/14642#issuecomment-1084728235
+# Currently, the azurerm provider doesn't give us the IP address, so we need to fetch it ourselves.
+data "dns_a_record_set" "ilmo_dns_fetch" {
+  host = azurerm_linux_web_app.ilmo_backend.default_hostname
 }
