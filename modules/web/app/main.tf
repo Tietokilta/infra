@@ -13,7 +13,7 @@ resource "azurerm_linux_web_app" "frontend" {
   site_config {
     application_stack {
       docker_registry_url = "https://ghcr.io"
-      docker_image_name   = "tietokilta/web:latest"
+      docker_image_name   = "tietokilta/web:sha-a11d358"
     }
   }
   logs {
@@ -22,6 +22,9 @@ resource "azurerm_linux_web_app" "frontend" {
         retention_in_days = 7
         retention_in_mb   = 100
       }
+    }
+    application_logs {
+      file_system_level = "Verbose"
     }
   }
   https_only = true

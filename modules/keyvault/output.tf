@@ -47,3 +47,8 @@ output "google_oauth_client_secret" {
   value     = data.azurerm_key_vault_secret.google_oauth_client_secret.value
   sensitive = true
 }
+
+output "mongo_db_connection_string" {
+  value     = data.azurerm_key_vault_secret.mongo_db_connection_string.value
+  sensitive = true
+}

@@ -120,3 +120,8 @@ data "azurerm_key_vault_secret" "google_oauth_client_secret" {
   key_vault_id = azurerm_key_vault.keyvault.id
   depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
 }
+data "azurerm_key_vault_secret" "mongo_db_connection_string" {
+  name         = "mongo-db-connection-string"
+  key_vault_id = azurerm_key_vault.keyvault.id
+  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
+}
