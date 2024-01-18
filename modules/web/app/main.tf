@@ -28,7 +28,7 @@ resource "azurerm_linux_web_app" "frontend" {
     WEBSITES_PORT         = 3000
     PORT                  = 3000
     NEXT_REVALIDATION_KEY = random_password.revalidation_key.result
-    SERVER_URL            = "http://${azurerm_linux_web_app.cms.default_hostname}:${local.payload_port}"
+    SERVER_URL            = "http://${azurerm_linux_web_app.cms.default_hostname}"
   }
 }
 resource "random_password" "payload_secret" {
