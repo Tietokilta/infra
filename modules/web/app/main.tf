@@ -15,6 +15,7 @@ resource "azurerm_linux_web_app" "frontend" {
       docker_registry_url = "https://ghcr.io"
       docker_image_name   = "tietokilta/web:sha-a11d358"
     }
+
   }
   logs {
     http_logs {
@@ -24,7 +25,7 @@ resource "azurerm_linux_web_app" "frontend" {
       }
     }
     application_logs {
-      file_system_level = "Verbose"
+      file_system_level = "Information"
     }
   }
   https_only = true
@@ -53,6 +54,12 @@ resource "azurerm_linux_web_app" "cms" {
       docker_registry_url = "https://ghcr.io"
       docker_image_name   = "tietokilta/cms:latest"
     }
+    ip_restriction {
+      action      = "Allow"
+      headers     = []
+      priority    = 100
+      service_tag = "AzureCloud"
+    }
   }
   logs {
     http_logs {
@@ -60,6 +67,9 @@ resource "azurerm_linux_web_app" "cms" {
         retention_in_days = 7
         retention_in_mb   = 100
       }
+    }
+    application_logs {
+      file_system_level = "Information"
     }
   }
   app_settings = {
