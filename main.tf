@@ -151,7 +151,7 @@ module "ilmo" {
   auth_jwt_secret         = module.keyvault.ilmo_auth_jwt_secret
   mailgun_api_key         = module.keyvault.ilmo_mailgun_api_key
   mailgun_domain          = module.keyvault.ilmo_mailgun_domain
-  website_events_url      = "${module.web.fqdn}/fi/tapahtumat" # TODO: needs two paths perhaps? for both languages
+  website_events_url      = "https://${module.web.fqdn}/fi/tapahtumat"
   tikweb_app_plan_id      = module.common.tikweb_app_plan_id
   tikweb_rg_location      = module.common.resource_group_location
   tikweb_rg_name          = module.common.resource_group_name
