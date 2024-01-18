@@ -13,7 +13,7 @@ resource "azurerm_linux_web_app" "frontend" {
   site_config {
     application_stack {
       docker_registry_url = "https://ghcr.io"
-      docker_image_name   = "tietokilta/web:sha-a11d358"
+      docker_image_name   = "tietokilta/web:latest"
     }
 
   }
@@ -78,6 +78,7 @@ resource "azurerm_linux_web_app" "cms" {
     PAYLOAD_MONGO_CONNECTION_STRING = var.mongo_connection_string
     PAYLOAD_MONGO_DB_NAME           = "cms"
     PAYLOAD_SECRET                  = random_password.payload_secret.result
+    PAYLOAD_REVALIDATION_KEY        = random_password.revalidation_key.result
     WEBSITES_PORT                   = local.payload_port
     PAYLOAD_PORT                    = local.payload_port
     AZURE_STORAGE_CONNECTION_STRING = var.storage_connection_string
