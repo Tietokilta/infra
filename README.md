@@ -9,13 +9,13 @@ should be enough.
 
 ## Development
 Recommended to setup pre-commit script (runs terraform fmt --recursive on commit):
+
 ```shell
 # see what you are about to setup to run on your computer every time you commit
 cat setup-pre-commit.sh
 # in root directory
 ./setup-pre-commit.sh
 ```
-**NEVER RUN `terraform apply` LOCALLY, WE HAVE A WORKFLOW FOR THAT.**
 
 Initialize terraform by running:
 ```shell
@@ -26,19 +26,15 @@ terraform workspace select prod
 
 Run `terraform plan` to see changes. Run `terraform fmt` before committing to avoid linter errors.
 
-`terraform plan` will prompt for the input variables. If you often work locally, you may want to set up an env file
-for this (ask the Master of Digitalization for one); you can also just provide random values, ignore the irrelevant
-changes locally, and verify the final plan after making a pull request.
-
-**NEVER RUN `terraform apply` LOCALLY, WE HAVE A WORKFLOW FOR THAT.**
-
 ## Fixing collisions (importing resources)
+
+**The ACME certificate challenge to Azure doesn't seem to work if running `terraform apply` locally. Due to this and some clearer state of "what's actually deployed", it is preferred that you let the workflow run `terraform apply` for you. The workflow runs `apply` on main-branch for prod workspace, and `plan` on PRs.**
 
 Sometimes you get yourself in a situation where Terraform tries to create an already-existing resource (see below
 for examples). You have two options:
 
 - Delete the Azure resource(s) and re-run the deployment (if it's something lightweight and won't reappear too early).
-- Import the Azure resource(s) to Terraform state.
+- Import the Azure resource(s) to Terraform state (Recommended, instructions below).
 
 To import Azure resources, run:
 
