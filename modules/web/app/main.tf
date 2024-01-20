@@ -5,8 +5,8 @@ resource "random_password" "revalidation_key" {
   length  = 32
   special = true
 }
-resource "azurerm_linux_web_app" "frontend" {
-  name                = "tikweb-frontend-${terraform.workspace}"
+resource "azurerm_linux_web_app" "web" {
+  name                = "tikweb-web-${terraform.workspace}"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
   service_plan_id     = var.app_service_plan_id
@@ -16,6 +16,12 @@ resource "azurerm_linux_web_app" "frontend" {
       docker_image_name   = "tietokilta/web:latest"
     }
 
+  }
+  lifecycle {
+    // image is deployed by web-repos GHA workflow
+    ignore_changes = [
+      site_config.0.application_stack.0.docker_image_name,
+    ]
   }
   logs {
     http_logs {
@@ -58,12 +64,19 @@ resource "azurerm_linux_web_app" "cms" {
       docker_registry_url = "https://ghcr.io"
       docker_image_name   = "tietokilta/cms:latest"
     }
+
     ip_restriction {
       action      = "Allow"
       headers     = []
       priority    = 100
       service_tag = "AzureCloud"
     }
+  }
+  lifecycle {
+    // image is deployed by web-repos GHA workflow
+    ignore_changes = [
+      site_config.0.application_stack.0.docker_image_name,
+    ]
   }
   logs {
     http_logs {
@@ -111,8 +124,8 @@ resource "azurerm_cdn_endpoint" "next-cdn-endpoint" {
   is_https_allowed    = true
   # TODO: Add custom domain support
   origin {
-    name      = "tikweb-frontend-${terraform.workspace}"
-    host_name = azurerm_linux_web_app.frontend.default_hostname
+    name      = "tikweb-web-${terraform.workspace}"
+    host_name = azurerm_linux_web_app.web.default_hostname
   }
 
   global_delivery_rule {
@@ -159,7 +172,7 @@ resource "azurerm_cdn_endpoint_custom_domain" "tikweb_cdn_domain" {
 
 resource "azurerm_app_service_custom_hostname_binding" "tikweb_hostname_binding" {
   hostname            = local.fqdn
-  app_service_name    = azurerm_linux_web_app.frontend.name
+  app_service_name    = azurerm_linux_web_app.web.name
   resource_group_name = var.resource_group_name
 
   # Deletion may need manual work.

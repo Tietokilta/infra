@@ -70,7 +70,7 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
 
     ALLOW_ORIGIN = "*"
 
-    # Paths from tikweb-frontend
+    # Paths from tikweb-web
     BASE_URL          = var.website_events_url
     EVENT_DETAILS_URL = "${var.website_events_url}/{slug}"
     EDIT_SIGNUP_URL   = "${var.website_events_url}/ilmo/{id}/{editToken}"

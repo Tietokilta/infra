@@ -29,7 +29,7 @@ resource "azurerm_dns_txt_record" "tikweb_asuid" {
   ttl                 = 300
 
   record {
-    value = azurerm_linux_web_app.frontend.custom_domain_verification_id
+    value = azurerm_linux_web_app.web.custom_domain_verification_id
   }
 }
 
@@ -49,7 +49,7 @@ resource "azurerm_dns_txt_record" "tikweb_dmarc" {
 # https://github.com/hashicorp/terraform-provider-azurerm/issues/14642#issuecomment-1084728235
 # Currently, the azurerm provider doesn't give us the IP address, so we need to fetch it ourselves.
 data "dns_a_record_set" "tikweb_dns_fetch" {
-  host = azurerm_linux_web_app.frontend.default_hostname
+  host = azurerm_linux_web_app.web.default_hostname
 }
 
 resource "azurerm_dns_cname_record" "tikweb_cdn_cname_record" {
