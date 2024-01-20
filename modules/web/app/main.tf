@@ -123,11 +123,13 @@ resource "azurerm_cdn_endpoint" "next-cdn-endpoint" {
   is_http_allowed     = false
   is_https_allowed    = true
   # TODO: Add custom domain support
+  querystring_caching_behaviour = "BypassCaching"
   origin {
     name      = "tikweb-web-${terraform.workspace}"
     host_name = azurerm_linux_web_app.web.default_hostname
-  }
 
+  }
+  origin_host_header = local.fqdn
   global_delivery_rule {
     cache_expiration_action {
       behavior = "Override"
@@ -138,8 +140,7 @@ resource "azurerm_cdn_endpoint" "next-cdn-endpoint" {
   delivery_rule {
     name  = "NextStaticAssets"
     order = 1
-
-    request_uri_condition {
+    url_path_condition {
       operator = "BeginsWith"
       match_values = [
         "/_next/static/"
@@ -163,11 +164,10 @@ resource "azurerm_cdn_endpoint_custom_domain" "tikweb_cdn_domain" {
     tls_version      = "TLS12"
   }
 
-  # Deletion needs manual work. Hashicorp seems uninterested in fixing.
+  # Deletion may need manual work.
   # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
-  depends_on = [
-    azurerm_dns_cname_record.tikweb_cdn_cname_record
-  ]
+  # TODO: Add dependencies for creation
+  depends_on = [azurerm_dns_cname_record.tikweb_cdn_cname_record]
 }
 
 resource "azurerm_app_service_custom_hostname_binding" "tikweb_hostname_binding" {
