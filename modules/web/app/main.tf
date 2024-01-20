@@ -35,10 +35,14 @@ resource "azurerm_linux_web_app" "frontend" {
     WEBSITES_PORT          = 3000
     PORT                   = 3000
     NEXT_REVALIDATION_KEY  = random_password.revalidation_key.result
-    SERVER_URL             = "https://${azurerm_linux_web_app.cms.default_hostname}"
+    PUBLIC_SERVER_URL      = "https://${azurerm_linux_web_app.cms.default_hostname}"
   }
 }
 resource "random_password" "payload_secret" {
+  length  = 32
+  special = true
+}
+resource "random_password" "payload_password" {
   length  = 32
   special = true
 }
@@ -79,6 +83,8 @@ resource "azurerm_linux_web_app" "cms" {
     PAYLOAD_MONGO_DB_NAME           = "cms"
     PAYLOAD_SECRET                  = random_password.payload_secret.result
     PAYLOAD_REVALIDATION_KEY        = random_password.revalidation_key.result
+    PAYLOAD_DEFAULT_USER_EMAIL      = "root@tietokilta.fi"
+    PAYLOAD_DEFAULT_USER_PASSWORD   = random_password.payload_password.result
     WEBSITES_PORT                   = local.payload_port
     PAYLOAD_PORT                    = local.payload_port
     AZURE_STORAGE_CONNECTION_STRING = var.storage_connection_string
