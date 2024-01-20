@@ -136,7 +136,7 @@ resource "azurerm_cdn_endpoint" "next-cdn-endpoint" {
       duration = "10.00:00:00"
     }
   }
-
+  probe_path = "/next_api/health"
   delivery_rule {
     name  = "NextStaticAssets"
     order = 1
