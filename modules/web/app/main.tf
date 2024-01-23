@@ -126,8 +126,7 @@ resource "azurerm_cdn_endpoint" "next-cdn-endpoint" {
   querystring_caching_behaviour = "BypassCaching"
   origin {
     name      = "tikweb-web-${terraform.workspace}"
-    host_name = local.fqdn
-
+    host_name = azurerm_linux_web_app.web.default_hostname
   }
   origin_host_header = local.fqdn
   global_delivery_rule {
