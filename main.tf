@@ -49,10 +49,8 @@ module "keyvault" {
   source   = "./modules/keyvault"
   env_name = "prod"
 
-  resource_group_name            = module.common.resource_group_name
-  resource_group_location        = local.resource_group_location
-  tikweb_postgres_admin_password = module.common.postgres_admin_password
-  tikweb_postgres_admin_username = module.common.postgres_admin_username
+  resource_group_name     = module.common.resource_group_name
+  resource_group_location = local.resource_group_location
 }
 
 
@@ -68,10 +66,6 @@ module "dns_staging" {
   env_name                = "staging"
   resource_group_location = local.resource_group_location
   zone_name               = "tietokila.fi"
-}
-module "dns_m0" {
-  source                  = "./modules/dns/m0"
-  resource_group_location = local.resource_group_location
 }
 
 module "mailman" {
@@ -273,4 +267,22 @@ module "invoicing" {
 
   dkim_selector = "mta"
   dkim_key      = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsAjLp5HRzTjMcjGGjZ75U42hCUaopuficYZiyLL3Ail/BmTqh2K8LRxN2UrWXOzVGLEh2F9PR6MC7nqR1Vj+3yR4+5nznwfmZh0cnX4Q2asm7A76st4uVwkVk0y21Mj1wufBIz885XCk+rzeorMOCU+lDZUIehYk1sVSDcubDuBAwJ9TBLXj2EMmcrD1KmJWMca0d5I6RfB+ZD7hG97rWhpgPuKYP7gaT6/t+ekXIJn9ZJmNRoIm/5X04AdM20ywwUrVe6NzWkB8eFuVy01DZki2bI9JnPwjnjw+KgZWrZBhtaYE8umVExmwGmI9PTzrHrknaBKQ0UBrDqSlyXuWgwIDAQAB"
+}
+
+module "m0" {
+  source                       = "./modules/m0"
+  resource_group_location      = local.resource_group_location
+  acme_account_key             = module.common.acme_account_key
+  app_service_plan_id          = module.common.tikweb_app_plan_id
+  web_resource_group_name      = module.common.resource_group_name
+  mail_dns_resource_group_name = module.dns_prod.resource_group_name
+  postgres_server_fqdn         = module.common.postgres_server_fqdn
+  postgres_admin_password      = module.common.postgres_admin_password
+  postgres_server_id           = module.common.postgres_server_id
+  dkim_key                     = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Ho1FBsK9IyD0dl7gA/fh8vA1abuLrgB/e//bIrcFb8NS/Ze3W2cMUHZ7T3UvjnjlPhutWMblBX39oFBj9jp+lFpy+AwKSYBz7GZ/WCdZTsN01U6miUGiMEdfB/pOmIXKJKtkT9wHk7RJkRl9MTnUY60UgVweZFfdJbAnMXNKvulEZAEsKlE+8M5qDJDvnGNs99/wDl9nam5KyGPFLTzxeBSlsEQo6qa5qPcmn3vxbgVlwrFDt9KmbFcgAbq3wZ+W0MwwL54wPZVmHCwObi4sIptokmZVlmaXyvTwJ8eklrwJD51TLlpinwNBUpvgFGWDC62nLLt3wOHFSadtuxWCwIDAQAB"
+  dkim_selector                = "email"
+  mail_subdomain               = "m0"
+  smtp_email                   = module.keyvault.m0_smtp_email
+  smtp_password                = module.keyvault.m0_smtp_password
+  mail_dns_zone_name           = module.dns_prod.root_zone_name
 }

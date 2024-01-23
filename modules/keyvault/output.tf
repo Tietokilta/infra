@@ -52,3 +52,11 @@ output "mongo_db_connection_string" {
   value     = data.azurerm_key_vault_secret.mongo_db_connection_string.value
   sensitive = true
 }
+output "m0_smtp_email" {
+  value     = data.azurerm_key_vault_secret.m0_smtp_email.value
+  sensitive = true
+}
+output "m0_smtp_password" {
+  value     = data.azurerm_key_vault_secret.m0_smtp_password.value
+  sensitive = true
+}

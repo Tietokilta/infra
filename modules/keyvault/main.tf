@@ -125,3 +125,11 @@ data "azurerm_key_vault_secret" "mongo_db_connection_string" {
   key_vault_id = azurerm_key_vault.keyvault.id
   depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
 }
+data "azurerm_key_vault_secret" "m0_smtp_email" {
+  name         = "muistinnollaus-smtp-email"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+data "azurerm_key_vault_secret" "m0_smtp_password" {
+  name         = "muistinnollaus-smtp-password"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
