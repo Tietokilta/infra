@@ -85,6 +85,8 @@ resource "azurerm_linux_web_app" "strapi" {
     DATABASE_NAME         = local.db_name
     SMTP_USER             = var.smtp_email
     SMTP_PASSWORD         = var.smtp_password
+    SMTP_HOST             = "smtp.eu.mailgun.org"
+    SMTP_TLS              = true
     "APP_KEYS"            = "${random_string.app_keys_1.result},${random_string.app_keys_2.result},${random_string.app_keys_3.result}"
     "API_TOKEN_SALT"      = random_string.api_token_salt.result
     "ADMIN_JWT_SECRET"    = random_string.admin_jwt_secret.result
