@@ -51,11 +51,3 @@ resource "azurerm_dns_txt_record" "tikweb_dmarc" {
 data "dns_a_record_set" "tikweb_dns_fetch" {
   host = azurerm_linux_web_app.web.default_hostname
 }
-
-resource "azurerm_dns_cname_record" "tikweb_cdn_cname_record" {
-  name                = "cdn.${var.subdomain}"
-  resource_group_name = var.dns_resource_group_name
-  zone_name           = var.root_zone_name
-  ttl                 = 300
-  record              = azurerm_cdn_endpoint.next-cdn-endpoint.fqdn
-}
