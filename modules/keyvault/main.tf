@@ -133,3 +133,7 @@ data "azurerm_key_vault_secret" "m0_smtp_password" {
   name         = "muistinnollaus-smtp-password"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
+data "azurerm_key_vault_secret" "muistinnollaus_strapi_token" {
+  name         = "muistinnollaus-strapi-token"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}

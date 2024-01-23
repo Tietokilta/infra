@@ -285,4 +285,5 @@ module "m0" {
   smtp_email                   = module.keyvault.m0_smtp_email
   smtp_password                = module.keyvault.m0_smtp_password
   mail_dns_zone_name           = module.dns_prod.root_zone_name
+  strapi_token                 = module.keyvault.muistinnollaus_strapi_token
 }

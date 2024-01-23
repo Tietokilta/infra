@@ -60,3 +60,7 @@ output "m0_smtp_password" {
   value     = data.azurerm_key_vault_secret.m0_smtp_password.value
   sensitive = true
 }
+output "muistinnollaus_strapi_token" {
+  value     = data.azurerm_key_vault_secret.muistinnollaus_strapi_token.value
+  sensitive = true
+}

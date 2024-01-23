@@ -45,8 +45,8 @@ resource "azurerm_linux_web_app" "frontend" {
     # PAYTRAIL_SECRET_KEY  = "SAIPPUAKAUPPIAS"
     CALLBACK_URL = "https://${local.fqdn}/api/verifyPaymentCallback"
     # Web auth
-    #STRAPI_TOKEN = get-from-strapi
-    STRAPI_URL = "https://${azurerm_linux_web_app.strapi.default_hostname}"
+    STRAPI_TOKEN = var.strapi_token
+    STRAPI_URL   = "https://${azurerm_linux_web_app.strapi.default_hostname}"
 
   }
 }

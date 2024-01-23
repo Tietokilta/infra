@@ -51,3 +51,7 @@ variable "postgres_admin_password" {
 variable "postgres_server_id" {
   type = string
 }
+variable "strapi_token" {
+  type      = string
+  sensitive = true
+}
