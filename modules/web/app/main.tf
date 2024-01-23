@@ -126,7 +126,7 @@ resource "azurerm_cdn_endpoint" "next-cdn-endpoint" {
   querystring_caching_behaviour = "BypassCaching"
   origin {
     name      = "tikweb-web-${terraform.workspace}"
-    host_name = azurerm_linux_web_app.web.default_hostname
+    host_name = local.fqdn
 
   }
   origin_host_header = local.fqdn
@@ -138,14 +138,32 @@ resource "azurerm_cdn_endpoint" "next-cdn-endpoint" {
   }
   probe_path = "/next_api/health"
   delivery_rule {
-    name  = "NextStaticAssets"
+    name  = "CORS"
     order = 1
+    request_header_condition {
+      selector = "Origin"
+      operator = "Equal"
+      match_values = [
+        "https://${local.fqdn}"
+      ]
+    }
+
+    modify_response_header_action {
+      action = "Overwrite"
+      name   = "Access-Control-Allow-Origin"
+      value  = "https://${local.fqdn}"
+    }
+  }
+  delivery_rule {
+    name  = "NextStaticAssets"
+    order = 2
     url_path_condition {
       operator = "BeginsWith"
       match_values = [
         "/_next/static/"
       ]
     }
+
     cache_expiration_action {
       behavior = "Override"
       duration = "10.00:00:00"
