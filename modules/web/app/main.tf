@@ -143,14 +143,15 @@ resource "azurerm_cdn_endpoint" "next-cdn-endpoint" {
       selector = "Origin"
       operator = "Equal"
       match_values = [
-        "https://${local.fqdn}"
+        "https://${local.fqdn}",
+        "https://${azurerm_linux_web_app.cms.default_hostname}"
       ]
     }
 
     modify_response_header_action {
       action = "Overwrite"
       name   = "Access-Control-Allow-Origin"
-      value  = "https://${local.fqdn}"
+      value  = "https://${local.fqdn}, https://${azurerm_linux_web_app.cms.default_hostname}"
     }
   }
   delivery_rule {
