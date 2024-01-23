@@ -171,22 +171,22 @@ resource "azurerm_cdn_endpoint" "next-cdn-endpoint" {
   }
 }
 
-resource "azurerm_cdn_endpoint_custom_domain" "tikweb_cdn_domain" {
-  name            = "web-cdn-${terraform.workspace}-domain"
-  cdn_endpoint_id = azurerm_cdn_endpoint.next-cdn-endpoint.id
-  host_name       = "cdn.${var.subdomain}.${var.root_zone_name}"
+# resource "azurerm_cdn_endpoint_custom_domain" "tikweb_cdn_domain" {
+#   name            = "web-cdn-${terraform.workspace}-domain"
+#   cdn_endpoint_id = azurerm_cdn_endpoint.next-cdn-endpoint.id
+#   host_name       = "cdn.${var.subdomain}.${var.root_zone_name}"
 
-  cdn_managed_https {
-    certificate_type = "Dedicated"
-    protocol_type    = "ServerNameIndication"
-    tls_version      = "TLS12"
-  }
+#   cdn_managed_https {
+#     certificate_type = "Dedicated"
+#     protocol_type    = "ServerNameIndication"
+#     tls_version      = "TLS12"
+#   }
 
-  # Deletion may need manual work.
-  # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
-  # TODO: Add dependencies for creation
-  depends_on = [azurerm_dns_cname_record.tikweb_cdn_cname_record]
-}
+#   # Deletion may need manual work.
+#   # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
+#   # TODO: Add dependencies for creation
+#   depends_on = [azurerm_dns_cname_record.tikweb_cdn_cname_record]
+# }
 
 resource "azurerm_app_service_custom_hostname_binding" "tikweb_hostname_binding" {
   hostname            = local.fqdn
