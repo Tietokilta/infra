@@ -51,6 +51,13 @@ resource "azurerm_linux_web_app" "frontend" {
 
   }
 }
+module "storage" {
+  source                  = "../storage_container"
+  container_name          = "m0-${terraform.workspace}"
+  storage_account_name    = "m0${terraform.workspace}"
+  resource_group_name     = var.web_resource_group_name
+  resource_group_location = var.resource_group_location
+}
 resource "azurerm_linux_web_app" "strapi" {
   name                = "m0-backend-${terraform.workspace}"
   location            = var.resource_group_location
@@ -77,22 +84,25 @@ resource "azurerm_linux_web_app" "strapi" {
     }
   }
   app_settings = {
-    NODE_ENVIRONMENT      = "production"
-    DATABASE_USERNAME     = "tietokilta"
-    DATABASE_PASSWORD     = var.postgres_admin_password
-    DATABASE_HOST         = var.postgres_server_fqdn
-    DATABASE_SSL          = true
-    DATABASE_NAME         = local.db_name
-    SMTP_USER             = var.smtp_email
-    SMTP_PASSWORD         = var.smtp_password
-    SMTP_HOST             = "smtp.eu.mailgun.org"
-    SMTP_TLS              = true
-    "APP_KEYS"            = "${random_string.app_keys_1.result},${random_string.app_keys_2.result},${random_string.app_keys_3.result}"
-    "API_TOKEN_SALT"      = random_string.api_token_salt.result
-    "ADMIN_JWT_SECRET"    = random_string.admin_jwt_secret.result
-    "JWT_SECRET"          = random_string.jwt_secret.result
-    "TRANSFER_TOKEN_SALT" = random_string.transfer_token_salt.result
-
+    NODE_ENVIRONMENT       = "production"
+    DATABASE_USERNAME      = "tietokilta"
+    DATABASE_PASSWORD      = var.postgres_admin_password
+    DATABASE_HOST          = var.postgres_server_fqdn
+    DATABASE_SSL           = true
+    DATABASE_NAME          = local.db_name
+    SMTP_USER              = var.smtp_email
+    SMTP_PASSWORD          = var.smtp_password
+    SMTP_HOST              = "smtp.eu.mailgun.org"
+    SMTP_TLS               = true
+    APP_KEYS               = "${random_string.app_keys_1.result},${random_string.app_keys_2.result},${random_string.app_keys_3.result}"
+    API_TOKEN_SALT         = random_string.api_token_salt.result
+    ADMIN_JWT_SECRET       = random_string.admin_jwt_secret.result
+    JWT_SECRET             = random_string.jwt_secret.result
+    TRANSFER_TOKEN_SALT    = random_string.transfer_token_salt.result
+    STORAGE_ACCOUNT        = module.storage.storage_account_name
+    STORAGE_ACCOUNT_KEY    = module.storage.storage_access_key
+    STORAGE_URL            = module.storage.storage_account_base_url
+    STORAGE_CONTAINER_NAME = module.storage.container_name
   }
 }
 
