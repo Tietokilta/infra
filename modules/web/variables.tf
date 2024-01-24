@@ -40,18 +40,7 @@ variable "google_oauth_client_secret" {
   type      = string
   sensitive = true
 }
-variable "storage_connection_string" {
-  type      = string
-  sensitive = true
-}
 
-variable "storage_container_name" {
-  type = string
-}
-
-variable "storage_account_base_url" {
-  type = string
-}
 variable "public_ilmo_url" {
   type = string
 

@@ -1,6 +1,13 @@
 locals {
   payload_port = 3001
 }
+module "container" {
+  source                  = "../storage_container"
+  resource_group_location = var.resource_group_location
+  container_name          = "media-${terraform.workspace}"
+  resource_group_name     = var.resource_group_name
+  storage_account_name    = "tikwebstorage${terraform.workspace}"
+}
 resource "random_password" "revalidation_key" {
   length  = 32
   special = true
@@ -100,9 +107,9 @@ resource "azurerm_linux_web_app" "cms" {
     PAYLOAD_DEFAULT_USER_PASSWORD   = random_password.payload_password.result
     WEBSITES_PORT                   = local.payload_port
     PAYLOAD_PORT                    = local.payload_port
-    AZURE_STORAGE_CONNECTION_STRING = var.storage_connection_string
-    AZURE_STORAGE_CONTAINER_NAME    = var.storage_container_name
-    AZURE_STORAGE_ACCOUNT_BASEURL   = var.storage_account_base_url
+    AZURE_STORAGE_CONNECTION_STRING = module.container.storage_connection_string
+    AZURE_STORAGE_CONTAINER_NAME    = module.container.container_name
+    AZURE_STORAGE_ACCOUNT_BASEURL   = module.container.storage_account_base_url
     GOOGLE_OAUTH_CLIENT_ID          = var.google_oauth_client_id
     GOOGLE_OAUTH_CLIENT_SECRET      = var.google_oauth_client_secret
   }

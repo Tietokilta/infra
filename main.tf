@@ -111,13 +111,9 @@ module "common" {
   env_name                = "prod"
   resource_group_location = local.resource_group_location
 }
-module "web_storage" {
-  source                  = "./modules/web/storage"
-  resource_group_location = local.resource_group_location
-  resource_group_name     = module.common.resource_group_name
-}
+
 module "web" {
-  source                     = "./modules/web/app"
+  source                     = "./modules/web"
   resource_group_location    = local.resource_group_location
   resource_group_name        = module.common.resource_group_name
   app_service_plan_id        = module.common.tikweb_app_plan_id
@@ -128,9 +124,6 @@ module "web" {
   mongo_connection_string    = module.keyvault.mongo_db_connection_string
   google_oauth_client_id     = module.keyvault.google_oauth_client_id
   google_oauth_client_secret = module.keyvault.google_oauth_client_secret
-  storage_connection_string  = module.web_storage.storage_connection_string
-  storage_container_name     = module.web_storage.storage_container_name
-  storage_account_base_url   = module.web_storage.storage_account_base_url
   public_ilmo_url            = "https://${module.ilmo.fqdn}"
 }
 
