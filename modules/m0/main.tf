@@ -57,6 +57,7 @@ module "storage" {
   storage_account_name    = "m0${terraform.workspace}"
   resource_group_name     = var.web_resource_group_name
   resource_group_location = var.resource_group_location
+  container_access_type   = "blob"
 }
 resource "azurerm_linux_web_app" "strapi" {
   name                = "m0-backend-${terraform.workspace}"
