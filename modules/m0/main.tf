@@ -37,7 +37,7 @@ resource "azurerm_linux_web_app" "frontend" {
   https_only = true
   app_settings = {
     # Colors: Choose from https://tailwindcss.com/docs/customizing-colors
-    PRIMARY_COLOR   = "blue"
+    PRIMARY_COLOR   = "purple"
     SECONDARY_COLOR = "neutral"
 
 
