@@ -263,20 +263,22 @@ module "invoicing" {
 }
 
 module "m0" {
-  source                       = "./modules/m0"
-  resource_group_location      = local.resource_group_location
-  acme_account_key             = module.common.acme_account_key
-  app_service_plan_id          = module.common.tikweb_app_plan_id
-  web_resource_group_name      = module.common.resource_group_name
-  mail_dns_resource_group_name = module.dns_prod.resource_group_name
-  postgres_server_fqdn         = module.common.postgres_server_fqdn
-  postgres_admin_password      = module.common.postgres_admin_password
-  postgres_server_id           = module.common.postgres_server_id
-  dkim_key                     = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Ho1FBsK9IyD0dl7gA/fh8vA1abuLrgB/e//bIrcFb8NS/Ze3W2cMUHZ7T3UvjnjlPhutWMblBX39oFBj9jp+lFpy+AwKSYBz7GZ/WCdZTsN01U6miUGiMEdfB/pOmIXKJKtkT9wHk7RJkRl9MTnUY60UgVweZFfdJbAnMXNKvulEZAEsKlE+8M5qDJDvnGNs99/wDl9nam5KyGPFLTzxeBSlsEQo6qa5qPcmn3vxbgVlwrFDt9KmbFcgAbq3wZ+W0MwwL54wPZVmHCwObi4sIptokmZVlmaXyvTwJ8eklrwJD51TLlpinwNBUpvgFGWDC62nLLt3wOHFSadtuxWCwIDAQAB"
-  dkim_selector                = "email"
-  mail_subdomain               = "m0"
-  smtp_email                   = module.keyvault.m0_smtp_email
-  smtp_password                = module.keyvault.m0_smtp_password
-  mail_dns_zone_name           = module.dns_prod.root_zone_name
-  strapi_token                 = module.keyvault.muistinnollaus_strapi_token
+  source                              = "./modules/m0"
+  resource_group_location             = local.resource_group_location
+  acme_account_key                    = module.common.acme_account_key
+  app_service_plan_id                 = module.common.tikweb_app_plan_id
+  web_resource_group_name             = module.common.resource_group_name
+  mail_dns_resource_group_name        = module.dns_prod.resource_group_name
+  postgres_server_fqdn                = module.common.postgres_server_fqdn
+  postgres_admin_password             = module.common.postgres_admin_password
+  postgres_server_id                  = module.common.postgres_server_id
+  dkim_key                            = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Ho1FBsK9IyD0dl7gA/fh8vA1abuLrgB/e//bIrcFb8NS/Ze3W2cMUHZ7T3UvjnjlPhutWMblBX39oFBj9jp+lFpy+AwKSYBz7GZ/WCdZTsN01U6miUGiMEdfB/pOmIXKJKtkT9wHk7RJkRl9MTnUY60UgVweZFfdJbAnMXNKvulEZAEsKlE+8M5qDJDvnGNs99/wDl9nam5KyGPFLTzxeBSlsEQo6qa5qPcmn3vxbgVlwrFDt9KmbFcgAbq3wZ+W0MwwL54wPZVmHCwObi4sIptokmZVlmaXyvTwJ8eklrwJD51TLlpinwNBUpvgFGWDC62nLLt3wOHFSadtuxWCwIDAQAB"
+  dkim_selector                       = "email"
+  mail_subdomain                      = "m0"
+  smtp_email                          = module.keyvault.m0_smtp_email
+  smtp_password                       = module.keyvault.m0_smtp_password
+  mail_dns_zone_name                  = module.dns_prod.root_zone_name
+  strapi_token                        = module.keyvault.muistinnollaus_strapi_token
+  muistinnollaus_paytrail_merchant_id = module.keyvault.muistinnollaus_paytrail_merchant_id
+  muistinnollaus_paytrail_secret_key  = module.keyvault.muistinnollaus_paytrail_secret_key
 }

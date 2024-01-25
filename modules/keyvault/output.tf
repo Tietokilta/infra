@@ -64,3 +64,13 @@ output "muistinnollaus_strapi_token" {
   value     = data.azurerm_key_vault_secret.muistinnollaus_strapi_token.value
   sensitive = true
 }
+
+output "muistinnollaus_paytrail_merchant_id" {
+  value     = data.azurerm_key_vault_secret.muistinnollaus_paytrail_merchant_id.value
+  sensitive = true
+}
+
+output "muistinnollaus_paytrail_secret_key" {
+  value     = data.azurerm_key_vault_secret.muistinnollaus_paytrail_secret_key.value
+  sensitive = true
+}

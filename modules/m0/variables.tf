@@ -55,3 +55,13 @@ variable "strapi_token" {
   type      = string
   sensitive = true
 }
+
+variable "muistinnollaus_paytrail_merchant_id" {
+  type      = string
+  sensitive = true
+}
+
+variable "muistinnollaus_paytrail_secret_key" {
+  type      = string
+  sensitive = true
+}
