@@ -41,8 +41,8 @@ resource "azurerm_linux_web_app" "frontend" {
     SECONDARY_COLOR = "neutral"
 
 
-    PAYTRAIL_MERCHANT_ID = 375917
-    PAYTRAIL_SECRET_KEY  = "SAIPPUAKAUPPIAS"
+    PAYTRAIL_MERCHANT_ID = var.muistinnollaus_paytrail_merchant_id
+    PAYTRAIL_SECRET_KEY  = var.muistinnollaus_paytrail_secret_key
     CALLBACK_URL         = "https://${local.fqdn}/api/verifyPaymentCallback"
     # Web auth
     STRAPI_TOKEN   = var.strapi_token

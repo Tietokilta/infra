@@ -137,3 +137,13 @@ data "azurerm_key_vault_secret" "muistinnollaus_strapi_token" {
   name         = "muistinnollaus-strapi-token"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
+
+data "azurerm_key_vault_secret" "muistinnollaus_paytrail_merchant_id" {
+  name         = "muistinnollaus-paytrail-merchant-id"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+data "azurerm_key_vault_secret" "muistinnollaus_paytrail_secret_key" {
+  name         = "muistinnollaus-paytrail-secret-key"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
