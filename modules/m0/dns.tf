@@ -108,6 +108,18 @@ resource "azurerm_dns_txt_record" "m0_asuid" {
   }
 }
 
+# Azure verification key
+resource "azurerm_dns_txt_record" "m0_www_asuid" {
+  name                = "asuid.www"
+  resource_group_name = azurerm_resource_group.dns_rg.name
+  zone_name           = azurerm_dns_zone.m0_zone.name
+  ttl                 = 300
+
+  record {
+    value = azurerm_linux_web_app.frontend.custom_domain_verification_id
+  }
+}
+
 # https://github.com/hashicorp/terraform-provider-azurerm/issues/14642#issuecomment-1084728235
 # Currently, the azurerm provider doesn't give us the IP address, so we need to fetch it ourselves.
 data "dns_a_record_set" "m0_dns_fetch" {
