@@ -12,6 +12,7 @@ terraform {
 locals {
   fqdn = "${var.subdomain}.${var.root_zone_name}"
 }
+
 # A record for the web app
 resource "azurerm_dns_a_record" "tikweb_a" {
   name                = var.subdomain
@@ -32,7 +33,6 @@ resource "azurerm_dns_txt_record" "tikweb_asuid" {
     value = azurerm_linux_web_app.web.custom_domain_verification_id
   }
 }
-
 
 # Reporting-only DMARC policy
 resource "azurerm_dns_txt_record" "tikweb_dmarc" {
