@@ -93,7 +93,7 @@ resource "azurerm_dns_cname_record" "www_cname" {
   resource_group_name = azurerm_resource_group.dns_rg.name
   zone_name           = azurerm_dns_zone.m0_zone.name
   ttl                 = 300
-  record              = "@"
+  record              = azurerm_dns_zone.m0_zone.name
 }
 
 # Azure verification key
