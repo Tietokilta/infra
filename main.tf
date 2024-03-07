@@ -220,7 +220,7 @@ module "tikjob_app" {
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "rekry"
   dkim_selector           = "mta"
-  dkim_key                = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDrD0lG7vQ3EEYqvChvfNq8JDUVObm2Rw+5BpbYlb8Q+Q5vU+ehfUKtqX+D8Yx4hmea8ShTuy+9fx9caQ1ZJnDZrrEb6+vDTMapVKCuFPPbGUeFQ44cUvqJHoyW8rAETvuDqK19u+1xSAXEiR0/FiGCWcywsG7eQBoeqOgDwX5SVQIDAQAB"
+  dkim_key                = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDIvN+P4vQeU88WdDcISgVgZzXnGXeCZHU7h826JhE8p3UvLO4NuHJKuXuKmVcRXFcxOro4MJg2dIaU/Yei8QAVN7ZIxXXbPDLncDKJ4XEjdRajbY1oTPJAuy/KjInozSEeZeVwA2aYtbQ/Ttq4fXGwgKe2rS2uvDBVseqj4Oa6wwIDAQAB"
 }
 
 module "forum" {
