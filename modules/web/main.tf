@@ -1,12 +1,27 @@
 locals {
   payload_port = 3001
 }
-module "container" {
-  source                  = "../storage_container"
-  resource_group_location = var.resource_group_location
-  container_name          = "media-${terraform.workspace}"
-  resource_group_name     = var.resource_group_name
-  storage_account_name    = "tikwebstorage${terraform.workspace}"
+resource "azurerm_storage_account" "storage_account" {
+  name                     = "tikwebstorage${terraform.workspace}"
+  resource_group_name      = var.resource_group_name
+  location                 = var.resource_group_location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  min_tls_version          = "TLS1_2"
+}
+
+
+resource "azurerm_storage_container" "media_container" {
+  name                  = "media-${terraform.workspace}"
+  storage_account_name  = azurerm_storage_account.storage_account.name
+  container_access_type = "private"
+
+}
+resource "azurerm_storage_container" "documents_container" {
+  name                  = "documents-${terraform.workspace}"
+  storage_account_name  = azurerm_storage_account.storage_account.name
+  container_access_type = "private"
+
 }
 resource "random_password" "revalidation_key" {
   length  = 32
@@ -107,11 +122,14 @@ resource "azurerm_linux_web_app" "cms" {
     PAYLOAD_DEFAULT_USER_PASSWORD   = random_password.payload_password.result
     WEBSITES_PORT                   = local.payload_port
     PAYLOAD_PORT                    = local.payload_port
-    AZURE_STORAGE_CONNECTION_STRING = module.container.storage_connection_string
-    AZURE_STORAGE_CONTAINER_NAME    = module.container.container_name
-    AZURE_STORAGE_ACCOUNT_BASEURL   = module.container.storage_account_base_url
-    GOOGLE_OAUTH_CLIENT_ID          = var.google_oauth_client_id
-    GOOGLE_OAUTH_CLIENT_SECRET      = var.google_oauth_client_secret
+    AZURE_STORAGE_CONNECTION_STRING = azurerm_storage_account.storage_account.primary_connection_string
+    AZURE_STORAGE_ACCOUNT_BASEURL   = azurerm_storage_account.storage_account.primary_blob_endpoint
+    // TODO: remove this when we have changed the CMS to use the new environment variables
+    AZURE_STORAGE_CONTAINER_NAME           = azurerm_storage_container.media_container.name
+    AZURE_MEDIA_STORAGE_CONTAINER_NAME     = azurerm_storage_container.media_container.name
+    AZURE_DOCUMENTS_STORAGE_CONTAINER_NAME = azurerm_storage_container.documents_container.name
+    GOOGLE_OAUTH_CLIENT_ID                 = var.google_oauth_client_id
+    GOOGLE_OAUTH_CLIENT_SECRET             = var.google_oauth_client_secret
   }
 }
 
