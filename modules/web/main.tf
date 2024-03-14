@@ -112,20 +112,18 @@ resource "azurerm_linux_web_app" "cms" {
     }
   }
   app_settings = {
-    NODE_ENVIRONMENT                = "production"
-    PUBLIC_FRONTEND_URL             = "https://${local.fqdn}"
-    PAYLOAD_MONGO_CONNECTION_STRING = var.mongo_connection_string
-    PAYLOAD_MONGO_DB_NAME           = "cms"
-    PAYLOAD_SECRET                  = random_password.payload_secret.result
-    PAYLOAD_REVALIDATION_KEY        = random_password.revalidation_key.result
-    PAYLOAD_DEFAULT_USER_EMAIL      = "root@tietokilta.fi"
-    PAYLOAD_DEFAULT_USER_PASSWORD   = random_password.payload_password.result
-    WEBSITES_PORT                   = local.payload_port
-    PAYLOAD_PORT                    = local.payload_port
-    AZURE_STORAGE_CONNECTION_STRING = azurerm_storage_account.storage_account.primary_connection_string
-    AZURE_STORAGE_ACCOUNT_BASEURL   = azurerm_storage_account.storage_account.primary_blob_endpoint
-    // TODO: remove this when we have changed the CMS to use the new environment variables
-    AZURE_STORAGE_CONTAINER_NAME           = azurerm_storage_container.media_container.name
+    NODE_ENVIRONMENT                       = "production"
+    PUBLIC_FRONTEND_URL                    = "https://${local.fqdn}"
+    PAYLOAD_MONGO_CONNECTION_STRING        = var.mongo_connection_string
+    PAYLOAD_MONGO_DB_NAME                  = "cms"
+    PAYLOAD_SECRET                         = random_password.payload_secret.result
+    PAYLOAD_REVALIDATION_KEY               = random_password.revalidation_key.result
+    PAYLOAD_DEFAULT_USER_EMAIL             = "root@tietokilta.fi"
+    PAYLOAD_DEFAULT_USER_PASSWORD          = random_password.payload_password.result
+    WEBSITES_PORT                          = local.payload_port
+    PAYLOAD_PORT                           = local.payload_port
+    AZURE_STORAGE_CONNECTION_STRING        = azurerm_storage_account.storage_account.primary_connection_string
+    AZURE_STORAGE_ACCOUNT_BASEURL          = azurerm_storage_account.storage_account.primary_blob_endpoint
     AZURE_MEDIA_STORAGE_CONTAINER_NAME     = azurerm_storage_container.media_container.name
     AZURE_DOCUMENTS_STORAGE_CONTAINER_NAME = azurerm_storage_container.documents_container.name
     GOOGLE_OAUTH_CLIENT_ID                 = var.google_oauth_client_id
