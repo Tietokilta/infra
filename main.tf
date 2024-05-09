@@ -20,9 +20,6 @@ terraform {
       source  = "hashicorp/tls"
       version = "4.0.5"
     }
-    mongodbatlas = {
-      source = "mongodb/mongodbatlas"
-    }
   }
   backend "azurerm" {
     container_name       = "tfstate"
@@ -114,23 +111,6 @@ module "common" {
   source                  = "./modules/common"
   env_name                = "prod"
   resource_group_location = local.resource_group_location
-}
-
-resource "random_password" "mongodb_password" {
-  length  = 32
-  special = true
-}
-
-resource "mongodbatlas_database_user" "database_user" {
-  username           = "cms"
-  password           = random_password.mongodb_password.result
-  project_id         = module.mongodb.project_id
-  auth_database_name = "admin"
-
-  roles {
-    role_name     = "readWrite"
-    database_name = "cms"
-  }
 }
 
 module "mongodb" {
