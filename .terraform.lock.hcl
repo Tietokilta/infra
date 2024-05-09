@@ -109,6 +109,7 @@ provider "registry.terraform.io/mongodb/mongodbatlas" {
   version = "1.16.0"
   hashes = [
     "h1:IP2Gb4KrKAwmUSG5B0oqKYQOyGQjkeazVokw+TIuVcU=",
+    "h1:cWeuysKYmhgvWhf6g7kC5yKsgP7uNzTFTapcAxAHMkQ=",
     "zh:086a72493614a00fd5e38c7c0d077269f0069dd0d9d0cbfa1b0b1834278870b3",
     "zh:11489ece5a1683f65ea64898c8a4cd06300cd91ae8bebbf05631020d5b549186",
     "zh:4a45180e6d951affb27cab0320c845fb97e1e5e0396227d9f38a27f70ede113b",
