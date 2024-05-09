@@ -13,10 +13,10 @@ resource "azurerm_key_vault" "keyvault" {
 
 
 }
+
 data "azuread_service_principal" "CI_service_principal" {
   display_name = "github-action-terraform"
 }
-
 
 resource "azurerm_key_vault_access_policy" "CI" {
   key_vault_id = azurerm_key_vault.keyvault.id
@@ -35,6 +35,7 @@ resource "azurerm_key_vault_access_policy" "CI" {
   ]
 
 }
+
 resource "azuread_group" "admin" {
   display_name     = "tik_keyvault_rights"
   owners           = [data.azurerm_client_config.current.object_id]
@@ -43,6 +44,7 @@ resource "azuread_group" "admin" {
     ignore_changes = [members, owners]
   }
 }
+
 resource "azurerm_key_vault_access_policy" "admin" {
   key_vault_id = azurerm_key_vault.keyvault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
@@ -110,29 +112,29 @@ data "azurerm_key_vault_secret" "github_app_key" {
   key_vault_id = azurerm_key_vault.keyvault.id
   depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
 }
+
 data "azurerm_key_vault_secret" "google_oauth_client_id" {
   name         = "google-oauth-client-id"
   key_vault_id = azurerm_key_vault.keyvault.id
   depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
 }
+
 data "azurerm_key_vault_secret" "google_oauth_client_secret" {
   name         = "google-oauth-client-secret"
   key_vault_id = azurerm_key_vault.keyvault.id
   depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
 }
-data "azurerm_key_vault_secret" "mongo_db_connection_string" {
-  name         = "mongo-db-connection-string"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
+
 data "azurerm_key_vault_secret" "m0_smtp_email" {
   name         = "muistinnollaus-smtp-email"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
+
 data "azurerm_key_vault_secret" "m0_smtp_password" {
   name         = "muistinnollaus-smtp-password"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
+
 data "azurerm_key_vault_secret" "muistinnollaus_strapi_token" {
   name         = "muistinnollaus-strapi-token"
   key_vault_id = azurerm_key_vault.keyvault.id
@@ -145,5 +147,15 @@ data "azurerm_key_vault_secret" "muistinnollaus_paytrail_merchant_id" {
 
 data "azurerm_key_vault_secret" "muistinnollaus_paytrail_secret_key" {
   name         = "muistinnollaus-paytrail-secret-key"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+data "azurerm_key_vault_secret" "mongodb_atlas_public_key" {
+  name         = "mongodb-atlas-public-key"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+data "azurerm_key_vault_secret" "mongodb_atlas_private_key" {
+  name         = "mongodb-atlas-private-key"
   key_vault_id = azurerm_key_vault.keyvault.id
 }

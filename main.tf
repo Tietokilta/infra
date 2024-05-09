@@ -20,6 +20,9 @@ terraform {
       source  = "hashicorp/tls"
       version = "4.0.5"
     }
+    mongodbatlas = {
+      source = "mongodb/mongodbatlas"
+    }
   }
   backend "azurerm" {
     container_name       = "tfstate"
@@ -32,8 +35,10 @@ terraform {
 provider "azurerm" {
   features {}
 }
+
 provider "azuread" {
 }
+
 provider "dns" {
 }
 
@@ -52,7 +57,6 @@ module "keyvault" {
   resource_group_name     = module.common.resource_group_name
   resource_group_location = local.resource_group_location
 }
-
 
 module "dns_prod" {
   source                  = "./modules/dns/root"
@@ -112,6 +116,38 @@ module "common" {
   resource_group_location = local.resource_group_location
 }
 
+resource "random_password" "mongodb_password" {
+  length  = 32
+  special = true
+}
+
+resource "mongodbatlas_database_user" "database_user" {
+  username           = "cms"
+  password           = random_password.mongodb_password.result
+  project_id         = module.mongodb.project_id
+  auth_database_name = "admin"
+
+  roles {
+    role_name     = "readWrite"
+    database_name = "cms"
+  }
+}
+
+module "mongodb" {
+  source                    = "./modules/mongodb"
+  mongodb_atlas_public_key  = module.keyvault.mongodb_atlas_public_key
+  mongodb_atlas_private_key = module.keyvault.mongodb_atlas_private_key
+  serverless_instance_name  = "tikweb-serverless-instance"
+  project_name              = "tikweb-${terraform.workspace}"
+  atlas_region              = "EUROPE_WEST"
+}
+
+resource "azurerm_key_vault_secret" "mongo_db_connection_string" {
+  name         = "mongo-db-connection-string"
+  value        = module.mongodb.db_connection_string
+  key_vault_id = module.keyvault.keyvault_id
+}
+
 module "web" {
   source                     = "./modules/web"
   resource_group_location    = local.resource_group_location
@@ -121,7 +157,7 @@ module "web" {
   root_zone_name             = module.dns_prod.root_zone_name
   dns_resource_group_name    = module.dns_prod.resource_group_name
   subdomain                  = "alpha"
-  mongo_connection_string    = module.keyvault.mongo_db_connection_string
+  mongo_connection_string    = module.mongodb.db_connection_string
   google_oauth_client_id     = module.keyvault.google_oauth_client_id
   google_oauth_client_secret = module.keyvault.google_oauth_client_secret
   public_ilmo_url            = "https://${module.ilmo.fqdn}"
