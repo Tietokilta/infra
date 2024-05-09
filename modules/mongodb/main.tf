@@ -26,9 +26,9 @@ resource "mongodbatlas_project" "project" {
 }
 
 resource "mongodbatlas_serverless_instance" "serverless_instance" {
-  project_id = mongodbatlas_project.project.id
-  name       = var.serverless_instance_name
-
+  project_id                              = mongodbatlas_project.project.id
+  name                                    = var.serverless_instance_name
+  termination_protection_enabled          = true
   provider_settings_backing_provider_name = "AZURE"
   provider_settings_provider_name         = "SERVERLESS"
   provider_settings_region_name           = var.atlas_region
