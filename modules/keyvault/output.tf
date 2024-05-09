@@ -1,3 +1,7 @@
+output "keyvault_id" {
+  value = azurerm_key_vault.keyvault.id
+}
+
 output "ilmo_auth_jwt_secret" {
   value     = data.azurerm_key_vault_secret.ilmo_auth_jwt_secret.value
   sensitive = true
@@ -48,18 +52,16 @@ output "google_oauth_client_secret" {
   sensitive = true
 }
 
-output "mongo_db_connection_string" {
-  value     = data.azurerm_key_vault_secret.mongo_db_connection_string.value
-  sensitive = true
-}
 output "m0_smtp_email" {
   value     = data.azurerm_key_vault_secret.m0_smtp_email.value
   sensitive = true
 }
+
 output "m0_smtp_password" {
   value     = data.azurerm_key_vault_secret.m0_smtp_password.value
   sensitive = true
 }
+
 output "muistinnollaus_strapi_token" {
   value     = data.azurerm_key_vault_secret.muistinnollaus_strapi_token.value
   sensitive = true
@@ -72,5 +74,15 @@ output "muistinnollaus_paytrail_merchant_id" {
 
 output "muistinnollaus_paytrail_secret_key" {
   value     = data.azurerm_key_vault_secret.muistinnollaus_paytrail_secret_key.value
+  sensitive = true
+}
+
+output "mongodb_atlas_public_key" {
+  value     = data.azurerm_key_vault_secret.mongodb_atlas_public_key.value
+  sensitive = true
+}
+
+output "mongodb_atlas_private_key" {
+  value     = data.azurerm_key_vault_secret.mongodb_atlas_private_key.value
   sensitive = true
 }
