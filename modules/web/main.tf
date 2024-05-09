@@ -72,7 +72,7 @@ resource "random_password" "payload_secret" {
 }
 resource "random_password" "payload_password" {
   length  = 32
-  special = true
+  special = false
 }
 resource "azurerm_linux_web_app" "cms" {
   name                = "tikweb-cms-${terraform.workspace}"

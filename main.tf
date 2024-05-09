@@ -126,7 +126,11 @@ module "web" {
   google_oauth_client_secret = module.keyvault.google_oauth_client_secret
   public_ilmo_url            = "https://${module.ilmo.fqdn}"
 }
-
+resource "azurerm_key_vault_secret" "cms_password" {
+  name         = "cms-password"
+  value        = module.web.payload_password
+  key_vault_id = module.keyvault.keyvault_id
+}
 module "ilmo" {
   source                  = "./modules/ilmo"
   env_name                = "prod"
