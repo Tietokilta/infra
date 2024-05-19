@@ -45,3 +45,7 @@ variable "public_ilmo_url" {
   type = string
 
 }
+
+variable "public_legacy_url" {
+  type = string
+}
