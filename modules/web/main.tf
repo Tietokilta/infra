@@ -38,6 +38,7 @@ resource "azurerm_linux_web_app" "web" {
       docker_image_name   = "tietokilta/web:latest"
     }
 
+    http2_enabled = true
   }
   lifecycle {
     // image is deployed by web-repos GHA workflow
@@ -93,6 +94,8 @@ resource "azurerm_linux_web_app" "cms" {
       priority    = 100
       service_tag = "AzureCloud"
     }
+
+    http2_enabled = true
   }
   lifecycle {
     // image is deployed by web-repos GHA workflow
