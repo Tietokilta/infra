@@ -112,6 +112,16 @@ module "common" {
   env_name                = "prod"
   resource_group_location = local.resource_group_location
 }
+resource "azurerm_key_vault_secret" "postgres_admin_user" {
+  name         = "postgres-admin-user"
+  value        = module.common.postgres_admin_username
+  key_vault_id = module.keyvault.keyvault_id
+}
+resource "azurerm_key_vault_secret" "postgres_admin_password" {
+  name         = "postgres-admin-password"
+  value        = module.common.postgres_admin_password
+  key_vault_id = module.keyvault.keyvault_id
+}
 
 module "mongodb" {
   source                    = "./modules/mongodb"
