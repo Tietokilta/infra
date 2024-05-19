@@ -32,6 +32,7 @@ resource "mongodbatlas_serverless_instance" "serverless_instance" {
   provider_settings_backing_provider_name = "AZURE"
   provider_settings_provider_name         = "SERVERLESS"
   provider_settings_region_name           = var.atlas_region
+  continuous_backup_enabled               = true
   auto_indexing                           = true
 }
 
