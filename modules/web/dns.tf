@@ -10,7 +10,7 @@ terraform {
 }
 
 locals {
-  fqdn = "${var.subdomain}.${var.root_zone_name}"
+  fqdn = var.subdomain == "@" ? var.root_zone_name : "${var.subdomain}.${var.root_zone_name}"
 }
 
 # A record for the web app
