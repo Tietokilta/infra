@@ -141,6 +141,7 @@ module "web" {
   google_oauth_client_id     = module.keyvault.google_oauth_client_id
   google_oauth_client_secret = module.keyvault.google_oauth_client_secret
   public_ilmo_url            = "https://${module.ilmo.fqdn}"
+  public_legacy_url          = "https://tietokilta.fi"
 }
 resource "azurerm_key_vault_secret" "cms_password" {
   name         = "cms-password"
