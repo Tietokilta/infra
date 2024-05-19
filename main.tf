@@ -146,7 +146,7 @@ module "web" {
   acme_account_key           = module.common.acme_account_key
   root_zone_name             = module.dns_prod.root_zone_name
   dns_resource_group_name    = module.dns_prod.resource_group_name
-  subdomain                  = "alpha"
+  subdomain                  = "@"
   mongo_connection_string    = module.mongodb.db_connection_string
   google_oauth_client_id     = module.keyvault.google_oauth_client_id
   google_oauth_client_secret = module.keyvault.google_oauth_client_secret
