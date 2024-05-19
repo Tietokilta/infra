@@ -48,7 +48,7 @@ resource "azurerm_service_plan" "tikweb_plan" {
   resource_group_name = azurerm_resource_group.tikweb_rg.name
 
   os_type  = "Linux"
-  sku_name = "P0v3"
+  sku_name = "P1v3"
 }
 
 resource "tls_private_key" "acme_account_key" {
