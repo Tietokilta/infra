@@ -136,6 +136,15 @@ resource "azurerm_linux_web_app" "cms" {
 }
 
 
+# CNAME record for www.
+resource "azurerm_dns_cname_record" "www_cname" {
+  name                = "www"
+  resource_group_name = var.dns_resource_group_name
+  zone_name           = var.root_zone_name
+  ttl                 = 300
+  record              = azurerm_linux_web_app.web.default_hostname
+}
+
 resource "azurerm_app_service_custom_hostname_binding" "tikweb_hostname_binding" {
   hostname            = local.fqdn
   app_service_name    = azurerm_linux_web_app.web.name
@@ -149,6 +158,27 @@ resource "azurerm_app_service_custom_hostname_binding" "tikweb_hostname_binding"
     azurerm_dns_txt_record.tikweb_asuid
   ]
 }
+resource "azurerm_app_service_custom_hostname_binding" "www_hostname_binding" {
+  hostname            = "www.${local.fqdn}"
+  app_service_name    = azurerm_linux_web_app.web.name
+  resource_group_name = var.resource_group_name
+  depends_on = [
+    azurerm_dns_cname_record.www_cname,
+    azurerm_dns_txt_record.tikweb_asuid_www
+  ]
+
+}
+
+resource "azurerm_app_service_managed_certificate" "www_cert" {
+  custom_hostname_binding_id = azurerm_app_service_custom_hostname_binding.www_hostname_binding.id
+}
+
+resource "azurerm_app_service_certificate_binding" "www_cert_binding" {
+  hostname_binding_id = azurerm_app_service_custom_hostname_binding.www_hostname_binding.id
+  certificate_id      = azurerm_app_service_managed_certificate.www_cert.id
+  ssl_state           = "SniEnabled"
+}
+
 resource "random_password" "tikweb_cert_password" {
   length  = 48
   special = false
