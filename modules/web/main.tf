@@ -66,6 +66,7 @@ resource "azurerm_linux_web_app" "web" {
     NEXT_REVALIDATION_KEY  = random_password.revalidation_key.result
     PUBLIC_SERVER_URL      = "https://${azurerm_linux_web_app.cms.default_hostname}"
     PUBLIC_LEGACY_URL      = var.public_legacy_url
+    DIGITRANSIT_SUBSCRIPTION_KEY = var.digitransit_subscription_key
   }
 }
 resource "random_password" "payload_secret" {

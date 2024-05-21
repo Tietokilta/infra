@@ -49,3 +49,7 @@ variable "public_ilmo_url" {
 variable "public_legacy_url" {
   type = string
 }
+
+variable "digitransit_subscription_key" {
+    type = string
+}
