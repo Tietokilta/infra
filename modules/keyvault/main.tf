@@ -65,6 +65,12 @@ resource "azurerm_key_vault_access_policy" "admin" {
 
 }
 
+data "azurerm_key_vault_secret" "digitransit_subscription_key" {
+  name         = "digitransit-subscription-key"
+  key_vault_id = azurerm_key_vault.keyvault.id
+  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
+}
+
 data "azurerm_key_vault_secret" "ilmo_auth_jwt_secret" {
   name         = "ilmo-auth-jwt-secret"
   key_vault_id = azurerm_key_vault.keyvault.id
