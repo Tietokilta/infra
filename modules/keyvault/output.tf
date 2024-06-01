@@ -2,6 +2,11 @@ output "keyvault_id" {
   value = azurerm_key_vault.keyvault.id
 }
 
+output "digitransit_subscription_key" {
+  value     = data.azurerm_key_vault_secret.digitransit_subscription_key
+  sensitive = true
+}
+
 output "ilmo_auth_jwt_secret" {
   value     = data.azurerm_key_vault_secret.ilmo_auth_jwt_secret.value
   sensitive = true
