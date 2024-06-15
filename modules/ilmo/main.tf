@@ -72,8 +72,8 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
 
     # Paths from tikweb-web
     BASE_URL          = var.website_events_url
-    EVENT_DETAILS_URL = "${var.website_events_url}/{slug}"
-    EDIT_SIGNUP_URL   = "${var.website_events_url}/ilmo/{id}/{editToken}"
+    EVENT_DETAILS_URL = "${var.website_events_url}/events/{slug}"
+    EDIT_SIGNUP_URL   = "${var.website_events_url}/signup/{id}/{editToken}"
 
     BRANDING_MAIL_FOOTER_TEXT = "Ilmomasiina"
     BRANDING_MAIL_FOOTER_LINK = var.website_events_url
