@@ -139,19 +139,20 @@ resource "azurerm_key_vault_secret" "mongo_db_connection_string" {
 }
 
 module "web" {
-  source                     = "./modules/web"
-  resource_group_location    = local.resource_group_location
-  resource_group_name        = module.common.resource_group_name
-  app_service_plan_id        = module.common.tikweb_app_plan_id
-  acme_account_key           = module.common.acme_account_key
-  root_zone_name             = module.dns_prod.root_zone_name
-  dns_resource_group_name    = module.dns_prod.resource_group_name
-  subdomain                  = "@"
-  mongo_connection_string    = module.mongodb.db_connection_string
-  google_oauth_client_id     = module.keyvault.google_oauth_client_id
-  google_oauth_client_secret = module.keyvault.google_oauth_client_secret
-  public_ilmo_url            = "https://${module.ilmo.fqdn}"
-  public_legacy_url          = "https://tietokilta.fi"
+  source                       = "./modules/web"
+  resource_group_location      = local.resource_group_location
+  resource_group_name          = module.common.resource_group_name
+  app_service_plan_id          = module.common.tikweb_app_plan_id
+  acme_account_key             = module.common.acme_account_key
+  root_zone_name               = module.dns_prod.root_zone_name
+  dns_resource_group_name      = module.dns_prod.resource_group_name
+  subdomain                    = "@"
+  mongo_connection_string      = module.mongodb.db_connection_string
+  google_oauth_client_id       = module.keyvault.google_oauth_client_id
+  google_oauth_client_secret   = module.keyvault.google_oauth_client_secret
+  public_ilmo_url              = "https://${module.ilmo.fqdn}"
+  public_legacy_url            = "https://tietokilta.fi"
+  digitransit_subscription_key = module.keyvault.digitransit_subscription_key
 }
 resource "azurerm_key_vault_secret" "cms_password" {
   name         = "cms-password"
