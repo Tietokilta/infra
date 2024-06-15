@@ -3,7 +3,7 @@ output "keyvault_id" {
 }
 
 output "digitransit_subscription_key" {
-  value     = data.azurerm_key_vault_secret.digitransit_subscription_key
+  value     = data.azurerm_key_vault_secret.digitransit_subscription_key.value
   sensitive = true
 }
 
