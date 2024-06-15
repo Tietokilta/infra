@@ -59,13 +59,14 @@ resource "azurerm_linux_web_app" "web" {
   }
   https_only = true
   app_settings = {
-    NODE_ENVIRONMENT       = "production"
-    PUBLIC_ILMOMASIINA_URL = var.public_ilmo_url
-    WEBSITES_PORT          = 3000
-    PORT                   = 3000
-    NEXT_REVALIDATION_KEY  = random_password.revalidation_key.result
-    PUBLIC_SERVER_URL      = "https://${azurerm_linux_web_app.cms.default_hostname}"
-    PUBLIC_LEGACY_URL      = var.public_legacy_url
+    NODE_ENVIRONMENT             = "production"
+    PUBLIC_ILMOMASIINA_URL       = var.public_ilmo_url
+    WEBSITES_PORT                = 3000
+    PORT                         = 3000
+    NEXT_REVALIDATION_KEY        = random_password.revalidation_key.result
+    PUBLIC_SERVER_URL            = "https://${azurerm_linux_web_app.cms.default_hostname}"
+    PUBLIC_LEGACY_URL            = var.public_legacy_url
+    DIGITRANSIT_SUBSCRIPTION_KEY = var.digitransit_subscription_key
   }
 }
 resource "random_password" "payload_secret" {

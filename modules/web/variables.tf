@@ -50,3 +50,7 @@ variable "public_legacy_url" {
   type = string
 }
 
+variable "digitransit_subscription_key" {
+  type      = string
+  sensitive = true
+}
