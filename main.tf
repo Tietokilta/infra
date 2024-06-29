@@ -68,7 +68,15 @@ module "dns_staging" {
   resource_group_location = local.resource_group_location
   zone_name               = "tietokila.fi"
 }
+module "dns_github" {
+  source = "./modules/dns/github"
 
+  resource_group_name = module.dns_prod.resource_group_name
+  zone_name           = module.dns_prod.root_zone_name
+  challenge_name      = "_github-challenge-Tietokilta-org"
+  challenge_value     = module.keyvault.github_challenge_value
+
+}
 module "mailman" {
   source = "./modules/dns/mailman"
 

@@ -91,3 +91,8 @@ output "mongodb_atlas_private_key" {
   value     = data.azurerm_key_vault_secret.mongodb_atlas_private_key.value
   sensitive = true
 }
+
+output "github_challenge_value" {
+  value     = data.azurerm_key_vault_secret.github_challenge_value.value
+  sensitive = true
+}

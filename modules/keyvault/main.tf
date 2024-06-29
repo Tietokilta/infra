@@ -165,3 +165,8 @@ data "azurerm_key_vault_secret" "mongodb_atlas_private_key" {
   name         = "mongodb-atlas-private-key"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
+
+data "azurerm_key_vault_secret" "github_challenge_value" {
+  name         = "github-challenge-value"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
