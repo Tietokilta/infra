@@ -65,108 +65,33 @@ resource "azurerm_key_vault_access_policy" "admin" {
 
 }
 
-data "azurerm_key_vault_secret" "digitransit_subscription_key" {
-  name         = "digitransit-subscription-key"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
+locals {
+  keyvault_secrets = [
+    "digitransit-subscription-key",
+    "ilmo-auth-jwt-secret",
+    "ilmo-edit-token-secret",
+    "ilmo-mailgun-api-key",
+    "ilmo-mailgun-domain",
+    "tikjob-ghost-mail-username",
+    "tikjob-ghost-mail-password",
+    "tenttiarkisto-django-secret-key",
+    "github-app-key",
+    "google-oauth-client-id",
+    "google-oauth-client-secret",
+    "muistinnollaus-smtp-email",
+    "muistinnollaus-smtp-password",
+    "muistinnollaus-strapi-token",
+    "muistinnollaus-paytrail-merchant-id",
+    "muistinnollaus-paytrail-secret-key",
+    "mongodb-atlas-public-key",
+    "mongodb-atlas-private-key",
+    "github-challenge-value"
+  ]
 }
 
-data "azurerm_key_vault_secret" "ilmo_auth_jwt_secret" {
-  name         = "ilmo-auth-jwt-secret"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
 
-data "azurerm_key_vault_secret" "ilmo_edit_token_secret" {
-  name         = "ilmo-edit-token-secret"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
-data "azurerm_key_vault_secret" "ilmo_mailgun_api_key" {
-  name         = "ilmo-mailgun-api-key"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
-data "azurerm_key_vault_secret" "ilmo_mailgun_domain" {
-  name         = "ilmo-mailgun-domain"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
-data "azurerm_key_vault_secret" "tikjob_ghost_mail_username" {
-  name         = "tikjob-ghost-mail-username"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
-data "azurerm_key_vault_secret" "tikjob_ghost_mail_password" {
-  name         = "tikjob-ghost-mail-password"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
-data "azurerm_key_vault_secret" "tenttiarkisto_django_secret_key" {
-  name         = "tenttiarkisto-django-secret-key"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
-data "azurerm_key_vault_secret" "github_app_key" {
-  name         = "github-app-key"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
-data "azurerm_key_vault_secret" "google_oauth_client_id" {
-  name         = "google-oauth-client-id"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
-data "azurerm_key_vault_secret" "google_oauth_client_secret" {
-  name         = "google-oauth-client-secret"
-  key_vault_id = azurerm_key_vault.keyvault.id
-  depends_on   = [azurerm_key_vault_access_policy.admin, azurerm_key_vault_access_policy.CI]
-}
-
-data "azurerm_key_vault_secret" "m0_smtp_email" {
-  name         = "muistinnollaus-smtp-email"
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-data "azurerm_key_vault_secret" "m0_smtp_password" {
-  name         = "muistinnollaus-smtp-password"
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-data "azurerm_key_vault_secret" "muistinnollaus_strapi_token" {
-  name         = "muistinnollaus-strapi-token"
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-data "azurerm_key_vault_secret" "muistinnollaus_paytrail_merchant_id" {
-  name         = "muistinnollaus-paytrail-merchant-id"
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-data "azurerm_key_vault_secret" "muistinnollaus_paytrail_secret_key" {
-  name         = "muistinnollaus-paytrail-secret-key"
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-data "azurerm_key_vault_secret" "mongodb_atlas_public_key" {
-  name         = "mongodb-atlas-public-key"
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-data "azurerm_key_vault_secret" "mongodb_atlas_private_key" {
-  name         = "mongodb-atlas-private-key"
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-data "azurerm_key_vault_secret" "github_challenge_value" {
-  name         = "github-challenge-value"
+data "azurerm_key_vault_secret" "secret" {
+  for_each     = toset(local.keyvault_secrets)
+  name         = each.value
   key_vault_id = azurerm_key_vault.keyvault.id
 }

@@ -74,7 +74,7 @@ module "dns_github" {
   resource_group_name = module.dns_prod.resource_group_name
   zone_name           = module.dns_prod.root_zone_name
   challenge_name      = "_github-challenge-Tietokilta-org"
-  challenge_value     = module.keyvault.github_challenge_value
+  challenge_value     = module.keyvault.secrets["github-challenge-value"]
 
 }
 module "mailman" {
@@ -133,8 +133,8 @@ resource "azurerm_key_vault_secret" "postgres_admin_password" {
 
 module "mongodb" {
   source                    = "./modules/mongodb"
-  mongodb_atlas_public_key  = module.keyvault.mongodb_atlas_public_key
-  mongodb_atlas_private_key = module.keyvault.mongodb_atlas_private_key
+  mongodb_atlas_public_key  = module.keyvault.secrets["mongodb-atlas-public-key"]
+  mongodb_atlas_private_key = module.keyvault.secrets["mongodb-atlas-private-key"]
   serverless_instance_name  = "tikweb-serverless-instance"
   project_name              = "tikweb-${terraform.workspace}"
   atlas_region              = "EUROPE_WEST"
@@ -156,11 +156,11 @@ module "web" {
   dns_resource_group_name      = module.dns_prod.resource_group_name
   subdomain                    = "@"
   mongo_connection_string      = module.mongodb.db_connection_string
-  google_oauth_client_id       = module.keyvault.google_oauth_client_id
-  google_oauth_client_secret   = module.keyvault.google_oauth_client_secret
+  google_oauth_client_id       = module.keyvault.secrets["google-oauth-client-id"]
+  google_oauth_client_secret   = module.keyvault.secrets["google-oauth-client-secret"]
   public_ilmo_url              = "https://${module.ilmo.fqdn}"
   public_legacy_url            = "https://tietokilta.fi"
-  digitransit_subscription_key = module.keyvault.digitransit_subscription_key
+  digitransit_subscription_key = module.keyvault.secrets["digitransit-subscription-key"]
 }
 resource "azurerm_key_vault_secret" "cms_password" {
   name         = "cms-password"
@@ -175,10 +175,10 @@ module "ilmo" {
   postgres_server_fqdn    = module.common.postgres_server_fqdn
   postgres_admin_password = module.common.postgres_admin_password
   postgres_server_id      = module.common.postgres_server_id
-  edit_token_secret       = module.keyvault.ilmo_edit_token_secret
-  auth_jwt_secret         = module.keyvault.ilmo_auth_jwt_secret
-  mailgun_api_key         = module.keyvault.ilmo_mailgun_api_key
-  mailgun_domain          = module.keyvault.ilmo_mailgun_domain
+  edit_token_secret       = module.keyvault.secrets["ilmo-edit-token-secret"]
+  auth_jwt_secret         = module.keyvault.secrets["ilmo-auth-jwt-secret"]
+  mailgun_api_key         = module.keyvault.secrets["ilmo-mailgun-api-key"]
+  mailgun_domain          = module.keyvault.secrets["ilmo-mailgun-domain"]
   website_events_url      = "https://ilmo.tietokilta.fi"
   tikweb_app_plan_id      = module.common.tikweb_app_plan_id
   tikweb_rg_location      = module.common.resource_group_location
@@ -213,7 +213,7 @@ module "tenttiarkisto" {
   tikweb_app_plan_id           = module.common.tikweb_app_plan_id
   tikweb_app_plan_rg_location  = module.common.resource_group_location
   tikweb_app_plan_rg_name      = module.common.resource_group_name
-  django_secret_key            = module.keyvault.tenttiarkisto_django_secret_key
+  django_secret_key            = module.keyvault.secrets["tenttiarkisto-django-secret-key"]
 }
 
 module "voo" {
@@ -251,8 +251,8 @@ module "tikjob_app" {
 
   ghost_mail_host     = "smtp.eu.mailgun.org"
   ghost_mail_port     = 465
-  ghost_mail_username = module.keyvault.tikjob_ghost_mail_username
-  ghost_mail_password = module.keyvault.tikjob_ghost_mail_password
+  ghost_mail_username = module.keyvault.secrets["tikjob-ghost-mail-username"]
+  ghost_mail_password = module.keyvault.secrets["tikjob-ghost-mail-password"]
 
   acme_account_key = module.common.acme_account_key
 
