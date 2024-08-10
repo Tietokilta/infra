@@ -179,7 +179,7 @@ module "ilmo" {
   auth_jwt_secret         = module.keyvault.secrets["ilmo-auth-jwt-secret"]
   mailgun_api_key         = module.keyvault.secrets["ilmo-mailgun-api-key"]
   mailgun_domain          = module.keyvault.secrets["ilmo-mailgun-domain"]
-  website_events_url      = "https://ilmo.tietokilta.fi"
+  website_events_url      = "https://tietokilta.fi"
   tikweb_app_plan_id      = module.common.tikweb_app_plan_id
   tikweb_rg_location      = module.common.resource_group_location
   tikweb_rg_name          = module.common.resource_group_name
