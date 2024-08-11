@@ -43,7 +43,9 @@ resource "azurerm_linux_web_app" "invoice_generator" {
   }
   https_only = true
   app_settings = {
-    WEBSITES_PORT    = 3000 // TODO: Port is hard-coded in the application
+    PORT             = 3000
+    WEBSITES_PORT    = 3000
+    EXPOSE           = 1
     RUST_LOG         = "laskugeneraattori=debug,tower_http=debug,axum::rejection=trace"
     MAILGUN_URL      = var.mailgun_url
     MAILGUN_USER     = var.mailgun_user
