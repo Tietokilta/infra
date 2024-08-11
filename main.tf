@@ -291,8 +291,7 @@ module "mattermost" {
 }
 
 module "invoicing" {
-  source   = "./modules/invoicing"
-  env_name = "prod"
+  source = "./modules/invoicing"
 
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
@@ -300,6 +299,14 @@ module "invoicing" {
 
   dkim_selector = "mta"
   dkim_key      = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsAjLp5HRzTjMcjGGjZ75U42hCUaopuficYZiyLL3Ail/BmTqh2K8LRxN2UrWXOzVGLEh2F9PR6MC7nqR1Vj+3yR4+5nznwfmZh0cnX4Q2asm7A76st4uVwkVk0y21Mj1wufBIz885XCk+rzeorMOCU+lDZUIehYk1sVSDcubDuBAwJ9TBLXj2EMmcrD1KmJWMca0d5I6RfB+ZD7hG97rWhpgPuKYP7gaT6/t+ekXIJn9ZJmNRoIm/5X04AdM20ywwUrVe6NzWkB8eFuVy01DZki2bI9JnPwjnjw+KgZWrZBhtaYE8umVExmwGmI9PTzrHrknaBKQ0UBrDqSlyXuWgwIDAQAB"
+
+  mailgun_url             = "https://api.eu.mailgun.net/v3/laskutus.tietokilta.fi/messages"
+  mailgun_user            = "api"
+  mailgun_api_key         = module.keyvault.secrets["invoice-mailgun-api-key"]
+  resource_group_location = local.resource_group_location
+  resource_group_name     = module.common.resource_group_name
+  app_service_plan_id     = module.common.tikweb_app_plan_id
+  acme_account_key        = module.common.acme_account_key
 }
 
 # module "m0" {

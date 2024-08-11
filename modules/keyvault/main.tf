@@ -72,6 +72,7 @@ locals {
     "ilmo-edit-token-secret",
     "ilmo-mailgun-api-key",
     "ilmo-mailgun-domain",
+    "invoice-mailgun-api-key",
     "tikjob-ghost-mail-username",
     "tikjob-ghost-mail-password",
     "tenttiarkisto-django-secret-key",
