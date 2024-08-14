@@ -41,7 +41,7 @@ variable "mailgun_domain" {
   type = string
 }
 
-variable "website_url" {
+variable "website_events_url" {
   type = string
 }
 
