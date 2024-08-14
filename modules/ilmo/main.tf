@@ -76,7 +76,7 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     EDIT_SIGNUP_URL   = "${var.website_url}/fi/signups/{id}/{editToken}"
 
     BRANDING_MAIL_FOOTER_TEXT = "Ilmomasiina"
-    BRANDING_MAIL_FOOTER_LINK = var.website_events_url
+    BRANDING_MAIL_FOOTER_LINK = var.website_url
   }
 
   lifecycle {
