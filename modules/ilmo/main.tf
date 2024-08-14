@@ -76,7 +76,7 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     EDIT_SIGNUP_URL   = "${var.website_url}/{lang}/signups/{id}/{editToken}"
     ADMIN_URL         = "${local.fqdn}/admin"
 
-    ICAL_UID_DOMAIN   = "tietokilta.fi"
+    ICAL_UID_DOMAIN = "tietokilta.fi"
 
     BRANDING_ICAL_CALENDAR_NAME = "Tietokilta"
     BRANDING_MAIL_FOOTER_TEXT   = "Ilmomasiina - tietokilta.fi"
