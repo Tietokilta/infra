@@ -72,11 +72,15 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
 
     # Paths from tikweb-web
     BASE_URL          = var.website_url
-    EVENT_DETAILS_URL = "${var.website_url}/fi/events/{slug}"
-    EDIT_SIGNUP_URL   = "${var.website_url}/fi/signups/{id}/{editToken}"
+    EVENT_DETAILS_URL = "${var.website_url}/{lang}/events/{slug}"
+    EDIT_SIGNUP_URL   = "${var.website_url}/{lang}/signups/{id}/{editToken}"
+    ADMIN_URL         = "${local.fqdn}/admin"
 
-    BRANDING_MAIL_FOOTER_TEXT = "Ilmomasiina"
-    BRANDING_MAIL_FOOTER_LINK = var.website_url
+    ICAL_UID_DOMAIN   = "tietokilta.fi"
+
+    BRANDING_ICAL_CALENDAR_NAME = "Tietokilta"
+    BRANDING_MAIL_FOOTER_TEXT   = "Ilmomasiina - tietokilta.fi"
+    BRANDING_MAIL_FOOTER_LINK   = "${var.website_url}/fi/events"
   }
 
   lifecycle {
