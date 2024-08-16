@@ -43,7 +43,10 @@ variable "google_oauth_client_secret" {
 
 variable "public_ilmo_url" {
   type = string
+}
 
+variable "public_laskugeneraattori_url" {
+  type = string
 }
 
 variable "public_legacy_url" {
