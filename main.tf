@@ -159,7 +159,7 @@ module "web" {
   google_oauth_client_id       = module.keyvault.secrets["google-oauth-client-id"]
   google_oauth_client_secret   = module.keyvault.secrets["google-oauth-client-secret"]
   public_ilmo_url              = "https://${module.ilmo.fqdn}"
-  public_laskugeneraattori_url = "https://laskutus.tietokilta.fi"
+  public_laskugeneraattori_url = "https://${module.invoicing.fqdn}"
   public_legacy_url            = "https://tietokilta.fi"
   digitransit_subscription_key = module.keyvault.secrets["digitransit-subscription-key"]
 }
