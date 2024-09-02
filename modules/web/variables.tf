@@ -57,3 +57,28 @@ variable "digitransit_subscription_key" {
   type      = string
   sensitive = true
 }
+
+variable "mailgun_sender" {
+  type      = string
+  sensitive = true
+}
+
+variable "mailgun_receiver" {
+  type      = string
+  sensitive = true
+}
+
+variable "mailgun_api_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "mailgun_domain" {
+  type      = string
+  sensitive = true
+}
+
+variable "mailgun_url" {
+  type      = string
+  sensitive = true
+}

@@ -162,6 +162,11 @@ module "web" {
   public_laskugeneraattori_url = "https://${module.invoicing.fqdn}"
   public_legacy_url            = "https://old.tietokilta.fi"
   digitransit_subscription_key = module.keyvault.secrets["digitransit-subscription-key"]
+  mailgun_sender               = module.keyvault.secrets["mailgun-sender"]
+  mailgun_receiver             = module.keyvault.secrets["mailgun-receiver"]
+  mailgun_api_key              = module.keyvault.secrets["mailgun-api-key"]
+  mailgun_domain               = module.keyvault.secrets["mailgun-domain"]
+  mailgun_url                  = module.keyvault.secrets["mailgun-url"]
 }
 resource "azurerm_key_vault_secret" "cms_password" {
   name         = "cms-password"
