@@ -134,6 +134,11 @@ resource "azurerm_linux_web_app" "cms" {
     AZURE_DOCUMENTS_STORAGE_CONTAINER_NAME = azurerm_storage_container.documents_container.name
     GOOGLE_OAUTH_CLIENT_ID                 = var.google_oauth_client_id
     GOOGLE_OAUTH_CLIENT_SECRET             = var.google_oauth_client_secret
+    MAILGUN_SENDER                         = var.mailgun_sender
+    MAILGUN_RECEIVER                       = var.mailgun_receiver
+    MAILGUN_API_KEY                        = var.mailgun_api_key
+    MAILGUN_DOMAIN                         = var.mailgun_domain
+    MAILGUN_URL                            = var.mailgun_url
   }
 }
 

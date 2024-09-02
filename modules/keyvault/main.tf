@@ -86,7 +86,12 @@ locals {
     "muistinnollaus-paytrail-secret-key",
     "mongodb-atlas-public-key",
     "mongodb-atlas-private-key",
-    "github-challenge-value"
+    "github-challenge-value",
+    "mailgun-server",
+    "mailgun-receiver",
+    "mailgun-api-key",
+    "mailgun-domain",
+    "mailgun-url"
   ]
 }
 
