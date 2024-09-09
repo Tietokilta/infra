@@ -87,7 +87,7 @@ locals {
     "mongodb-atlas-public-key",
     "mongodb-atlas-private-key",
     "github-challenge-value",
-    "mailgun-server",
+    "mailgun-sender",
     "mailgun-receiver",
     "mailgun-api-key",
     "mailgun-domain",
