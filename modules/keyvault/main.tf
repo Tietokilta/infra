@@ -91,7 +91,9 @@ locals {
     "mailgun-receiver",
     "mailgun-api-key",
     "mailgun-domain",
-    "mailgun-url"
+    "mailgun-url",
+    "tikjob-tg-bot-token",
+    "tikjob-tg-ghost-hook-secret"
   ]
 }
 

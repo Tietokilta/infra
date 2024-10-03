@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.87.0"
+      version = "3.116.0"
     }
     azuread = {
       source  = "hashicorp/azuread"
@@ -267,6 +267,20 @@ module "tikjob_app" {
   subdomain               = "rekry"
   dkim_selector           = "mta"
   dkim_key                = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDIvN+P4vQeU88WdDcISgVgZzXnGXeCZHU7h826JhE8p3UvLO4NuHJKuXuKmVcRXFcxOro4MJg2dIaU/Yei8QAVN7ZIxXXbPDLncDKJ4XEjdRajbY1oTPJAuy/KjInozSEeZeVwA2aYtbQ/Ttq4fXGwgKe2rS2uvDBVseqj4Oa6wwIDAQAB"
+}
+
+module "tikjob_tg_bot" {
+  source = "./modules/recruiting/tg-bot"
+
+  env_name                   = "prod"
+  tikweb_rg_name             = module.common.resource_group_name
+  tikweb_rg_location         = local.resource_group_location
+  tikweb_app_plan_id         = module.common.tikweb_app_plan_id
+  storage_account_name       = module.tikjob_storage.storage_account_name
+  storage_account_access_key = module.tikjob_storage.storage_account_key
+  bot_token                  = module.keyvault.secrets["tikjob-tg-bot-token"]
+  ghost_hook_secret          = module.keyvault.secrets["tikjob-tg-ghost-hook-secret"]
+  channel_id                 = "-1001347398697"
 }
 
 module "forum" {
