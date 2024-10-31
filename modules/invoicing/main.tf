@@ -24,12 +24,6 @@ resource "azurerm_linux_web_app" "invoice_generator" {
 
     http2_enabled = true
   }
-  lifecycle {
-    // image is deployed by web-repos GHA workflow
-    ignore_changes = [
-      site_config.0.application_stack.0.docker_image_name,
-    ]
-  }
   logs {
     http_logs {
       file_system {
