@@ -329,6 +329,29 @@ module "invoicing" {
   acme_account_key        = module.common.acme_account_key
 }
 
+
+module "vaultwarden" {
+  source                               = "./modules/vaultwarden"
+  admin_api_key                        = module.keyvault.secrets["vaultwarden-api-key"]
+  app_service_plan_id                  = module.common.tikweb_app_plan_id
+  app_service_plan_location            = local.resource_group_location
+  app_service_plan_resource_group_name = module.common.resource_group_name
+  db_password                          = module.common.postgres_admin_password
+  db_username                          = module.common.postgres_admin_username
+  db_name                              = "vaultwarden"
+  db_host                              = module.common.postgres_server_fqdn
+  location                             = local.resource_group_location
+  smtp_host                            = "smtp.eu.mailgun.org"
+  vaultwarden_smtp_from                = "vault@tietokilta.fi"
+  vaultwarden_smtp_username            = module.keyvault.secrets["vaultwarden-smtp-username"]
+  vaultwarden_smtp_password            = module.keyvault.secrets["vaultwarden-smtp-password"]
+  dns_resource_group_name              = module.dns_prod.resource_group_name
+  acme_account_key                     = module.common.acme_account_key
+  root_zone_name                       = module.dns_prod.root_zone_name
+  subdomain                            = "vault"
+  dkim_selector                        = "s1"
+  dkim_key                             = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDI4os0RXkOmE7+FJGIYDdUFmzGlmmXPzyvvyuCRUzeOBCBiHQQKTqDULecVmbtuROXA2cVBqjZyxHPVcvLLtPOTJYEUTrZ7xpkLDJmtPUIn5iPqXDMbv7QG/XbXN1njRCC9GUPcNvHTocNXe8ZwTK92Ax/l586bLyIzfBUR+yfQQIDAQAB"
+}
 # module "m0" {
 #   source                              = "./modules/m0"
 #   resource_group_location             = local.resource_group_location

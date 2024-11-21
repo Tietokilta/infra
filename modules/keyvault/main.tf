@@ -93,7 +93,10 @@ locals {
     "mailgun-domain",
     "mailgun-url",
     "tikjob-tg-bot-token",
-    "tikjob-tg-ghost-hook-secret"
+    "tikjob-tg-ghost-hook-secret",
+    "vaultwarden-api-key",
+    "vaultwarden-smtp-username",
+    "vaultwarden-smtp-password",
   ]
 }
 
