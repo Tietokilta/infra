@@ -329,6 +329,38 @@ module "invoicing" {
   acme_account_key        = module.common.acme_account_key
 }
 
+module "vaultwarden_mailman" {
+  source = "./modules/dns/mailman"
+
+  dns_resource_group_name = module.dns_prod.resource_group_name
+  root_zone_name          = module.dns_prod.root_zone_name
+  subdomain               = "vaultwarden"
+
+  dkim_selector = "s1"
+  dkim_key      = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqMtEsg4MR4gCzUovwmok+T2MsPAKfnWl9UxVHDTXyalQ4dFzgYwHi+nRHjSucAsw5WYy8arDKsJx/jEnOBOpOJECTGg6z75jXO5E9hpKFN8oWtcV/bX1KLIKZ/XlxqEsuAIbTgVUfIvZBOLzyOP0lPKsyfQw5w/0HakJFNQ1E1Zjf+NdXMQ2FSbJB1ohcWU5uMmBQagChc6IR0Lm14+Ot+EL1ZKmVoaQ2LIoNby8/Cb/5f8knUscdkeQU2HDAmHq7V+5ZJtxQZufHnUM0XaRcQw3F7sk9A9vdxa4NKTYsYd+y9AfiEM7KAd3KuPxC2wA1sxvpIq3Y+X1tr40DgyG2wIDAQAB"
+}
+
+module "vaultwarden" {
+  source                               = "./modules/vaultwarden"
+  admin_api_key                        = module.keyvault.secrets["vaultwarden-api-key"]
+  app_service_plan_id                  = module.common.tikweb_app_plan_id
+  app_service_plan_location            = local.resource_group_location
+  app_service_plan_resource_group_name = module.common.resource_group_name
+  db_password                          = module.common.postgres_admin_username
+  db_username                          = module.common.postgres_admin_password
+  db_name                              = "vaultwarden"
+  db_host                              = module.common.postgres_server_fqdn
+  location                             = local.resource_group_location
+  smtp_host                            = "smtp.eu.mailgun.org"
+  smtp_port                            = 465
+  vaultwarden_smtp_from                = "vaultwarden@tietokilta.fi"
+  vaultwarden_smtp_username            = module.keyvault.secrets["vaultwarden-smtp-username"]
+  vaultwarden_smtp_password            = module.keyvault.secrets["vaultwarden-smtp-password"]
+  dns_resource_group_name              = module.dns_prod.resource_group_name
+  acme_account_key                     = module.common.acme_account_key
+  root_zone_name                       = module.dns_prod.root_zone_name
+  subdomain                            = "vaultwarden"
+}
 # module "m0" {
 #   source                              = "./modules/m0"
 #   resource_group_location             = local.resource_group_location
