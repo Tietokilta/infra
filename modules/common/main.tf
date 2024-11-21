@@ -14,7 +14,7 @@ resource "azurerm_resource_group" "tikweb_rg" {
 }
 
 resource "random_password" "db_password" {
-  length           = 30
+  length           = 32
   special          = true
   override_special = "_%@"
 }
