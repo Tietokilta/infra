@@ -406,7 +406,24 @@ module "vaultwarden" {
 module "github-ci-roles" {
   source = "./modules/github-ci"
   repo_app_service_map = {
-    "tietokilta/web" : [module.web.web_app_id, module.web.cms_app_id]
-    "tietokilta/laskugeneraattori" : [module.invoicing.invoicing_app_id]
+    "Tietokilta/web" : [module.web.web_app_id, module.web.cms_app_id]
+    "Tietokilta/laskugeneraattori" : [module.invoicing.invoicing_app_id]
   }
+}
+# Output Azure Client IDs for Each Repository
+output "github_actions_azure_client_ids" {
+  description = "Mapping of GitHub repositories to their AZURE_CLIENT_ID"
+  value       = module.github-ci-roles.azure_client_ids
+}
+
+# Output Azure Subscription ID
+output "github_actions_azure_subscription_id" {
+  description = "AZURE_SUBSCIPTION_ID in Github Actions"
+  value       = module.github-ci-roles.azure_subscription_id
+}
+
+# Output Azure Tenant ID
+output "github_actions_azure_tenant_id" {
+  description = "AZURE_TENANT_ID in Github Actions"
+  value       = module.github-ci-roles.azure_tenant_id
 }
