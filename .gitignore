@@ -3,3 +3,5 @@ terraform.exe
 *.tfvars
 *.tfbackend
 .idea/
+.devenv
+.direnv
