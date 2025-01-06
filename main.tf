@@ -408,6 +408,7 @@ module "github-ci-roles" {
   repo_app_service_map = {
     "Tietokilta/web" : [module.web.web_app_id, module.web.cms_app_id]
     "Tietokilta/laskugeneraattori" : [module.invoicing.invoicing_app_id]
+    "Tietokilta/ilmomasiina" : [module.ilmo.app_id]
   }
 }
 # Output Azure Client IDs for Each Repository
