@@ -28,7 +28,10 @@
     devShells =
       forEachSystem
       (system: let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
       in {
         default = devenv.lib.mkShell {
           inherit inputs pkgs;
@@ -37,6 +40,24 @@
               # https://devenv.sh/reference/options/
               packages = [pkgs.azure-cli];
               languages.terraform.enable = true;
+              devcontainer = {
+                enable = true;
+                settings = {
+                  updateContentCommand = "";
+                  customizations.vscode.extensions = [
+                    "mkhl.direnv"
+                    "4ops.terraform"
+                    "ms-azuretools.vscode-azureterraform"
+                  ];
+                };
+              };
+
+              git-hooks.hooks.terraform-fmt = {
+                enable = true;
+                name = "Terraform fmt check";
+                entry = "terraform fmt --recursive";
+                pass_filenames = false;
+              };
             }
           ];
         };
