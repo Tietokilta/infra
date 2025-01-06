@@ -21,7 +21,7 @@ data "azuread_service_principal" "CI_service_principal" {
 resource "azurerm_key_vault_access_policy" "CI" {
   key_vault_id = azurerm_key_vault.keyvault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = data.azuread_service_principal.CI_service_principal.id
+  object_id    = data.azuread_service_principal.CI_service_principal.object_id
 
   key_permissions = [
     "Get",
@@ -48,7 +48,7 @@ resource "azuread_group" "admin" {
 resource "azurerm_key_vault_access_policy" "admin" {
   key_vault_id = azurerm_key_vault.keyvault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azuread_group.admin.id
+  object_id    = azuread_group.admin.object_id
 
   key_permissions = [
     "List",
@@ -66,43 +66,11 @@ resource "azurerm_key_vault_access_policy" "admin" {
 }
 
 locals {
-  keyvault_secrets = [
-    "digitransit-subscription-key",
-    "ilmo-auth-jwt-secret",
-    "ilmo-edit-token-secret",
-    "ilmo-mailgun-api-key",
-    "ilmo-mailgun-domain",
-    "invoice-mailgun-api-key",
-    "tikjob-ghost-mail-username",
-    "tikjob-ghost-mail-password",
-    "tenttiarkisto-django-secret-key",
-    "github-app-key",
-    "google-oauth-client-id",
-    "google-oauth-client-secret",
-    "muistinnollaus-smtp-email",
-    "muistinnollaus-smtp-password",
-    "muistinnollaus-strapi-token",
-    "muistinnollaus-paytrail-merchant-id",
-    "muistinnollaus-paytrail-secret-key",
-    "mongodb-atlas-public-key",
-    "mongodb-atlas-private-key",
-    "github-challenge-value",
-    "mailgun-sender",
-    "mailgun-receiver",
-    "mailgun-api-key",
-    "mailgun-domain",
-    "mailgun-url",
-    "tikjob-tg-bot-token",
-    "tikjob-tg-ghost-hook-secret",
-    "vaultwarden-api-key",
-    "vaultwarden-smtp-username",
-    "vaultwarden-smtp-password",
-  ]
 }
 
 
 data "azurerm_key_vault_secret" "secret" {
-  for_each     = toset(local.keyvault_secrets)
+  for_each     = toset(var.keyvault_secrets)
   name         = each.value
   key_vault_id = azurerm_key_vault.keyvault.id
 }

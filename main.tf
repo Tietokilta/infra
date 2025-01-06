@@ -6,7 +6,7 @@ terraform {
     }
     azuread = {
       source  = "hashicorp/azuread"
-      version = "2.47.0"
+      version = "3.0.2"
     }
     dns = {
       source  = "hashicorp/dns"
@@ -48,11 +48,42 @@ locals {
 }
 
 module "keyvault" {
-  source   = "./modules/keyvault"
-  env_name = "prod"
-
+  source                  = "./modules/keyvault"
+  env_name                = "prod"
   resource_group_name     = module.common.resource_group_name
   resource_group_location = local.resource_group_location
+  keyvault_secrets = [
+    "digitransit-subscription-key",
+    "ilmo-auth-jwt-secret",
+    "ilmo-edit-token-secret",
+    "ilmo-mailgun-api-key",
+    "ilmo-mailgun-domain",
+    "invoice-mailgun-api-key",
+    "tikjob-ghost-mail-username",
+    "tikjob-ghost-mail-password",
+    "tenttiarkisto-django-secret-key",
+    "github-app-key",
+    "google-oauth-client-id",
+    "google-oauth-client-secret",
+    "muistinnollaus-smtp-email",
+    "muistinnollaus-smtp-password",
+    "muistinnollaus-strapi-token",
+    "muistinnollaus-paytrail-merchant-id",
+    "muistinnollaus-paytrail-secret-key",
+    "mongodb-atlas-public-key",
+    "mongodb-atlas-private-key",
+    "github-challenge-value",
+    "mailgun-sender",
+    "mailgun-receiver",
+    "mailgun-api-key",
+    "mailgun-domain",
+    "mailgun-url",
+    "tikjob-tg-bot-token",
+    "tikjob-tg-ghost-hook-secret",
+    "vaultwarden-api-key",
+    "vaultwarden-smtp-username",
+    "vaultwarden-smtp-password",
+  ]
 }
 
 module "dns_prod" {
@@ -372,3 +403,10 @@ module "vaultwarden" {
 #   muistinnollaus_paytrail_merchant_id = module.keyvault.muistinnollaus_paytrail_merchant_id
 #   muistinnollaus_paytrail_secret_key  = module.keyvault.muistinnollaus_paytrail_secret_key
 # }
+module "github-ci-roles" {
+  source = "./modules/github-ci"
+  repo_app_service_map = {
+    "tietokilta/web" : [module.web.web_app_id, module.web.cms_app_id]
+    "tietokilta/laskugeneraattori" : [module.invoicing.invoicing_app_id]
+  }
+}

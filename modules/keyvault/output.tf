@@ -4,7 +4,7 @@ output "keyvault_id" {
 
 output "secrets" {
   value = {
-    for s in local.keyvault_secrets : s => data.azurerm_key_vault_secret.secret[s].value
+    for s in var.keyvault_secrets : s => data.azurerm_key_vault_secret.secret[s].value
   }
   sensitive = true
 }
