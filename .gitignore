@@ -5,3 +5,4 @@ terraform.exe
 .idea/
 .devenv
 .direnv
+.pre-commit-config.yaml
