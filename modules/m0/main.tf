@@ -147,6 +147,7 @@ resource "acme_certificate" "m0_acme_cert" {
   key_type                  = "2048" # RSA
   certificate_p12_password  = random_password.m0_cert_password.result
   subject_alternative_names = ["www.${local.fqdn}"]
+  recursive_nameservers     = ["8.8.8.8:53"]
 
   dns_challenge {
     provider = "azure"
