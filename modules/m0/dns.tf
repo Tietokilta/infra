@@ -14,7 +14,7 @@ resource "azurerm_resource_group" "dns_rg" {
 
 resource "azurerm_dns_zone" "m0_zone" {
   name                = "muistinnollaus.fi"
-  resource_group_name = "dns-m0-rg"
+  resource_group_name = azurerm_resource_group.dns_rg.name
 }
 
 # MX records for Mailgun
