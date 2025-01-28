@@ -117,7 +117,7 @@ resource "azurerm_app_service_custom_hostname_binding" "m0_hostname_binding" {
   # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
   # TODO: Add dependencies for creation
   depends_on = [
-    azurerm_dns_a_record.m0_a,
+    # azurerm_dns_a_record.m0_a,
     azurerm_dns_txt_record.m0_asuid
   ]
 }
