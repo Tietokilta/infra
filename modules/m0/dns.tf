@@ -79,13 +79,13 @@ resource "azurerm_dns_txt_record" "m0_dmarc" {
 }
 
 #A record for the web app
-resource "azurerm_dns_a_record" "m0_a" {
-  name                = "@"
-  resource_group_name = azurerm_resource_group.dns_rg.name
-  zone_name           = azurerm_dns_zone.m0_zone.name
-  ttl                 = 300
-  records             = data.dns_a_record_set.m0_dns_fetch.addrs
-}
+#resource "azurerm_dns_a_record" "m0_a" {
+#  name                = "@"
+#  resource_group_name = azurerm_resource_group.dns_rg.name
+#  zone_name           = azurerm_dns_zone.m0_zone.name
+#  ttl                 = 300
+#  records             = data.dns_a_record_set.m0_dns_fetch.addrs
+#}
 
 # CNAME record for www.
 resource "azurerm_dns_cname_record" "www_cname" {
