@@ -389,6 +389,7 @@ module "github-ci-roles" {
     "Tietokilta/web" : [module.web.web_app_id, module.web.cms_app_id]
     "Tietokilta/laskugeneraattori" : [module.invoicing.invoicing_app_id]
     "Tietokilta/ilmomasiina" : [module.ilmo.app_id]
+    "Tietokilta/m0-ilmotunkki" : [module.m0.frontend_app_id, module.m0.strapi_app_id]
   }
 }
 # Output Azure Client IDs for Each Repository
