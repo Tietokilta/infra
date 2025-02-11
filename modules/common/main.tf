@@ -24,7 +24,7 @@ resource "azurerm_postgresql_flexible_server" "tikweb_pg_new" {
   name                         = "tikweb-${var.env_name}-pg-server-new"
   resource_group_name          = azurerm_resource_group.tikweb_rg.name
   location                     = azurerm_resource_group.tikweb_rg.location
-  version                      = "15"
+  version                      = "16"
   administrator_login          = "tietokilta"
   administrator_password       = random_password.db_password.result
   storage_mb                   = 32768
