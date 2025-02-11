@@ -42,6 +42,7 @@ resource "azurerm_linux_web_app" "invoice_generator" {
     BIND_ADDR        = "0.0.0.0"
     ALLOWED_ORIGINS  = "http://localhost:3000,https://tietokilta.fi"
     RUST_LOG         = "laskugeneraattori=debug,tower_http=debug,axum::rejection=trace"
+    RUST_LOG_STYLE   = "never"
     MAILGUN_URL      = var.mailgun_url
     MAILGUN_USER     = var.mailgun_user
     MAILGUN_PASSWORD = var.mailgun_api_key
