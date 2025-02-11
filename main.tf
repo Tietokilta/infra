@@ -360,6 +360,17 @@ module "invoicing" {
   acme_account_key        = module.common.acme_account_key
 }
 
+module "registry" {
+  source = "./modules/registry"
+
+  dns_resource_group_name = module.dns_prod.resource_group_name
+  root_zone_name          = module.dns_prod.root_zone_name
+  subdomain               = "rekisteri"
+
+  dkim_selector = "mta"
+  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDpz7YQQUpscjJYLhaXr+jcyN30EwI90CmjRmsvuN1XrsZjTJgXTxATi0WlV80FrWuTBsV2WTv8dK7F7S0xnkh515IxTBrDMau6jUp90nWNp5Oy9DkqW8fNPJUiFWiazWilOPXuARjlOgk18e8d/CvTpke0R1G/S12KXkTshO06JQIDAQAB"
+}
+
 module "vaultwarden" {
   source                               = "./modules/vaultwarden"
   admin_api_key                        = module.keyvault.secrets["vaultwarden-api-key"]
