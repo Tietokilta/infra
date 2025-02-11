@@ -367,7 +367,7 @@ module "registry" {
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "rekisteri"
 
-  dkim_selector = "mta"
+  dkim_selector = "email"
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDpz7YQQUpscjJYLhaXr+jcyN30EwI90CmjRmsvuN1XrsZjTJgXTxATi0WlV80FrWuTBsV2WTv8dK7F7S0xnkh515IxTBrDMau6jUp90nWNp5Oy9DkqW8fNPJUiFWiazWilOPXuARjlOgk18e8d/CvTpke0R1G/S12KXkTshO06JQIDAQAB"
 }
 
