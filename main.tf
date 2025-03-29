@@ -371,6 +371,19 @@ module "registry" {
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDpz7YQQUpscjJYLhaXr+jcyN30EwI90CmjRmsvuN1XrsZjTJgXTxATi0WlV80FrWuTBsV2WTv8dK7F7S0xnkh515IxTBrDMau6jUp90nWNp5Oy9DkqW8fNPJUiFWiazWilOPXuARjlOgk18e8d/CvTpke0R1G/S12KXkTshO06JQIDAQAB"
 }
 
+module "oldweb" {
+  source                  = "./modules/oldweb"
+  env_name                = "prod"
+  resource_group_name     = module.common.resource_group_name
+  resource_group_location = local.resource_group_location
+  postgres_server_fqdn    = module.common.postgres_server_fqdn
+  postgres_admin_password = module.common.postgres_admin_password
+  postgres_server_id      = module.common.postgres_server_id
+  root_zone_name          = module.dns_prod.root_zone_name
+  subdomain               = "old"
+  location                = local.resource_group_location
+}
+
 module "vaultwarden" {
   source                               = "./modules/vaultwarden"
   admin_api_key                        = module.keyvault.secrets["vaultwarden-api-key"]
