@@ -407,6 +407,18 @@ module "vaultwarden" {
   dkim_key                             = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDI4os0RXkOmE7+FJGIYDdUFmzGlmmXPzyvvyuCRUzeOBCBiHQQKTqDULecVmbtuROXA2cVBqjZyxHPVcvLLtPOTJYEUTrZ7xpkLDJmtPUIn5iPqXDMbv7QG/XbXN1njRCC9GUPcNvHTocNXe8ZwTK92Ax/l586bLyIzfBUR+yfQQIDAQAB"
 }
 
+module "status" {
+  source                               = "./modules/status"
+  app_service_plan_id                  = module.common.tikweb_app_plan_id
+  app_service_plan_location            = local.resource_group_location
+  app_service_plan_resource_group_name = module.common.resource_group_name
+  location                             = local.resource_group_location
+  dns_resource_group_name              = module.dns_prod.resource_group_name
+  acme_account_key                     = module.common.acme_account_key
+  root_zone_name                       = module.dns_prod.root_zone_name
+  subdomain                            = "status"
+}
+
 module "github-ci-roles" {
   source = "./modules/github-ci"
   repo_app_service_map = {
