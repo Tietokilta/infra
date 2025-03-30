@@ -38,7 +38,8 @@ resource "azurerm_container_registry" "acr" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   sku                 = "Basic"
-  admin_enabled       = false
+  admin_enabled       = true
+  # Admin usage is not ideal, but it hopefully works
 }
 
 # Create actual application
@@ -55,8 +56,10 @@ resource "azurerm_linux_web_app" "oldweb_backend" {
     always_on  = true
 
     application_stack {
-      docker_registry_url = "https://${azurerm_container_registry.acr.login_server}"
-      docker_image_name   = "oldweb:latest"
+      docker_registry_url      = "https://${azurerm_container_registry.acr.login_server}"
+      docker_image_name        = "oldweb:latest"
+      docker_registry_username = azurerm_container_registry.acr.admin_username
+      docker_registry_password = azurerm_container_registry.acr.admin_password
     }
   }
 
@@ -90,11 +93,5 @@ resource "azurerm_linux_web_app" "oldweb_backend" {
     DB_DATABASE = local.db_name
     DB_PORT     = 5432
 
-  }
-
-  lifecycle {
-    ignore_changes = [
-      site_config.0.application_stack, # deployments are made outside of Terraform
-    ]
   }
 }
