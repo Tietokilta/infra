@@ -61,6 +61,7 @@ resource "azurerm_linux_web_app" "web" {
   app_settings = {
     NODE_ENVIRONMENT                  = "production"
     PUBLIC_ILMOMASIINA_URL            = var.public_ilmo_url
+    NEXT_PUBLIC_ILMOMASIINA_URL       = var.public_ilmo_url
     NEXT_PUBLIC_LASKUGENERAATTORI_URL = var.public_laskugeneraattori_url
     WEBSITES_PORT                     = 3000
     PORT                              = 3000
