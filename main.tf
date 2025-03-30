@@ -381,6 +381,9 @@ module "oldweb" {
   postgres_server_id      = module.common.postgres_server_id
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "old"
+  tikweb_app_plan_id      = module.common.tikweb_app_plan_id
+  tikweb_rg_location      = module.common.resource_group_location
+  tikweb_rg_name          = module.common.resource_group_name
   location                = local.resource_group_location
 }
 
