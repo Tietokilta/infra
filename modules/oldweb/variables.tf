@@ -22,6 +22,9 @@ variable "postgres_server_id" {
   type = string
 }
 
+variable "dns_resource_group_name" {
+  type = string
+}
 
 variable "root_zone_name" {
   type = string
@@ -40,6 +43,10 @@ variable "tikweb_rg_name" {
 }
 
 variable "tikweb_rg_location" {
+  type = string
+}
+
+variable "acme_account_key" {
   type = string
 }
 

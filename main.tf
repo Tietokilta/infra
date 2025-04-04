@@ -379,8 +379,10 @@ module "oldweb" {
   postgres_server_fqdn    = module.common.postgres_server_fqdn
   postgres_admin_password = module.common.postgres_admin_password
   postgres_server_id      = module.common.postgres_server_id
+  dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "old"
+  acme_account_key        = module.common.acme_account_key
   tikweb_app_plan_id      = module.common.tikweb_app_plan_id
   tikweb_rg_location      = module.common.resource_group_location
   tikweb_rg_name          = module.common.resource_group_name
