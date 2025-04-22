@@ -1,0 +1,45 @@
+name: Build & Push status image
+on:
+  schedule:
+    - cron: "0 0 1 * *"
+  pull_request:
+  push:
+    branches:
+      - main
+    paths:
+      - status/**
+      - .github/workflows/build-status.yaml
+  workflow_dispatch:
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Generate image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/Tietokilta/tik-status
+          tags: |
+            latest
+            sha
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./status
+          platforms: linux/amd64
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

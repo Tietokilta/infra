@@ -1,0 +1,5 @@
+endpoints:
+  - name: web
+    url: "https://tietokilta.fi"
+    conditions:
+      - "[STATUS] == 200"
