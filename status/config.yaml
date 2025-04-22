@@ -3,6 +3,11 @@ alerting:
     token: "$TELEGRAM_TOKEN"
     id: "$ALERT_CHANNEL_ID"
 
+ui:
+  logo: "https://tietokilta.fi/media/TiK-logo.svg"
+  title: "Tietokilta | Status"
+  description: "A Status page for Tietokilta services"
+
 endpoints:
   - name: web
     url: "https://tietokilta.fi"
