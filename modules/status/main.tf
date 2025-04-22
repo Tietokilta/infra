@@ -43,6 +43,8 @@ resource "azurerm_linux_web_app" "status_app" {
   app_settings = {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
     WEBSITES_PORT                       = "8080"
+    TELEGRAM_TOKEN                      = var.telegram_token
+    ALERT_CHANNEL_ID                    = var.telegram_channel_id
   }
 }
 

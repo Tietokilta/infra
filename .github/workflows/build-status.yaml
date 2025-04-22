@@ -39,7 +39,6 @@ jobs:
           images: ghcr.io/Tietokilta/tik-status
           tags: |
             latest
-            sha
 
       - name: Build and push image
         uses: docker/build-push-action@v6
@@ -50,3 +49,21 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+  deploy:
+    # only run on published releases, enable this when we release
+    #if: github.event_name == 'release' && github.event.action == 'published'
+    if: github.ref == 'refs/head/main'
+    needs: build-and-push
+    name: Deploy to Azure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login via Azure CLI
+        uses: azure/login@v2
+        with:
+          client-id: ${{secrets.AZURE_CLIENT_ID}}
+          subscription-id: ${{secrets.AZURE_SUBSCRIPTION_ID}}
+          tenant-id: ${{secrets.AZURE_TENANT_ID}}
+      - uses: azure/webapps-deploy@v3
+        with:
+          app-name: tik-status-prod # TODO: if we ever setup more envs than prod, make this variable customizable
+          images: ghcr.io/Tietokilta/tik-status:sha-${{ github.sha }}"

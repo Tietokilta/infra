@@ -29,3 +29,13 @@ variable "app_service_plan_location" {
   description = "Location of the existing App Service Plan"
   type        = string
 }
+
+variable "telegram_token" {
+  description = "Telegram bot API token"
+  type        = string
+}
+
+variable "telegram_channel_id" {
+  description = "Telegram alert channel id"
+  type        = string
+}

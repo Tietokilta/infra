@@ -1,5 +1,95 @@
+alerting:
+  telegram:
+    token: "$TELEGRAM_TOKEN"
+    id: "$ALERT_CHANNEL_ID"
+
 endpoints:
   - name: web
     url: "https://tietokilta.fi"
     conditions:
       - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+
+  - name: infoscreen
+    url: "https://tietokilta.fi/infoscreen"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+
+  - name: oldweb
+    url: "https://old.tietokilta.fi"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+
+  - name: rekry
+    url: "https://rekry.tietokilta.fi"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+
+  - name: laskugeneraattori
+    url: "https://laskutus.tietokilta.fi/health"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+
+  - name: tenttiarkisto
+    url: "https://tenttiarkisto.fi"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+
+  - name: ilmomasiina
+    url: "https://ilmo.tietokilta.fi"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+
+  - name: vaultwarden
+    url: "https://vault.tietokilta.fi"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+
+  - name: vaultwarden
+    url: "https://vault.tietokilta.fi/api/alive"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+
+  - name: vaalifoorumi
+    url: "https://vaalit.tietokilta.fi"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true

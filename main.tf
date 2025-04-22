@@ -83,6 +83,8 @@ module "keyvault" {
     "vaultwarden-api-key",
     "vaultwarden-smtp-username",
     "vaultwarden-smtp-password",
+    "status-telegram-token",
+    "status-telegram-channel-id"
   ]
 }
 
@@ -419,6 +421,7 @@ module "github-ci-roles" {
     "Tietokilta/laskugeneraattori" : [module.invoicing.invoicing_app_id]
     "Tietokilta/ilmomasiina" : [module.ilmo.app_id]
     "Tietokilta/m0-ilmotunkki" : [module.m0.frontend_app_id, module.m0.strapi_app_id]
+    "Tietokilta/infra" : [module.status.app_id]
   }
 }
 # Output Azure Client IDs for Each Repository
@@ -469,5 +472,7 @@ module "status" {
   dns_resource_group_name              = module.dns_prod.resource_group_name
   acme_account_key                     = module.common.acme_account_key
   root_zone_name                       = module.dns_prod.root_zone_name
+  telegram_token                       = module.keyvault.secrets["status-telegram-token"]
+  telegram_channel_id                  = module.keyvault.secrets["status-telegram-channel-id"]
   subdomain                            = "status"
 }
