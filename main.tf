@@ -459,3 +459,15 @@ module "m0" {
   muistinnollaus_paytrail_merchant_id = module.keyvault.secrets["muistinnollaus-paytrail-merchant-id"]
   muistinnollaus_paytrail_secret_key  = module.keyvault.secrets["muistinnollaus-paytrail-secret-key"]
 }
+
+module "status" {
+  source                               = "./modules/status"
+  app_service_plan_id                  = module.common.tikweb_app_plan_id
+  app_service_plan_location            = local.resource_group_location
+  app_service_plan_resource_group_name = module.common.resource_group_name
+  location                             = local.resource_group_location
+  dns_resource_group_name              = module.dns_prod.resource_group_name
+  acme_account_key                     = module.common.acme_account_key
+  root_zone_name                       = module.dns_prod.root_zone_name
+  subdomain                            = "status"
+}
