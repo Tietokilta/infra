@@ -95,26 +95,24 @@ resource "azurerm_dns_txt_record" "root_dmarc_reports" {
 
 # Game servers (?)
 
-resource "azurerm_dns_a_record" "mc_a" {
+resource "azurerm_dns_a_record" "mc_a_record" {
   name                = "mc"
   resource_group_name = var.dns_resource_group_name
   zone_name           = var.root_zone_name
   ttl                 = 300
-  records             = ["82.130.42.53"]
+  records             = ["65.109.127.222"]
 }
 
-resource "azurerm_dns_a_record" "mcmap_a" {
-  name                = "mcmap"
+resource "azurerm_dns_srv_record" "mc_srv_record" {
+  name                = "_minecraft._tcp"
   resource_group_name = var.dns_resource_group_name
   zone_name           = var.root_zone_name
   ttl                 = 300
-  records             = ["82.130.42.53"]
-}
 
-resource "azurerm_dns_a_record" "ttt_a" {
-  name                = "ttt"
-  resource_group_name = var.dns_resource_group_name
-  zone_name           = var.root_zone_name
-  ttl                 = 300
-  records             = ["82.130.42.53"]
+  record {
+    priority = 0
+    weight   = 5
+    port     = 10015
+    target   = "mc.tietokilta.fi"
+  }
 }
