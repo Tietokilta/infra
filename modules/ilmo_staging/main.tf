@@ -52,7 +52,7 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     NEW_EDIT_TOKEN_SECRET = var.edit_token_secret
     FEATHERS_AUTH_SECRET  = var.auth_jwt_secret
 
-    MAIL_FROM       = "noreply@${var.mailgun_domain}"
+    MAIL_FROM = "noreply@${var.mailgun_domain}"
 
     ALLOW_ORIGIN = "*"
 
