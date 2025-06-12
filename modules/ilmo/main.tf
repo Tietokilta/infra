@@ -47,8 +47,6 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
   }
 
   app_settings = {
-    DOCKER_REGISTRY_SERVER_URL = "https://ghcr.io"
-
     WEBSITES_PORT = 3000
     PORT          = 3000
 
@@ -74,7 +72,7 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     BASE_URL          = var.website_url
     EVENT_DETAILS_URL = "${var.website_url}/{lang}/events/{slug}"
     EDIT_SIGNUP_URL   = "${var.website_url}/{lang}/signups/{id}/{editToken}"
-    ADMIN_URL         = "${local.fqdn}/admin"
+    ADMIN_URL         = "https://${local.fqdn}/admin"
 
     ICAL_UID_DOMAIN = "tietokilta.fi"
 
@@ -94,7 +92,7 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
 resource "azurerm_app_service_custom_hostname_binding" "ilmo_hostname_binding" {
   hostname            = local.fqdn
   app_service_name    = azurerm_linux_web_app.ilmo_backend.name
-  resource_group_name = var.resource_group_name
+  resource_group_name = var.tikweb_rg_name
 
   # Deletion may need manual work.
   # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
@@ -104,6 +102,7 @@ resource "azurerm_app_service_custom_hostname_binding" "ilmo_hostname_binding" {
     azurerm_dns_txt_record.ilmo_asuid
   ]
 }
+
 resource "random_password" "ilmo_cert_password" {
   length  = 48
   special = false
@@ -126,8 +125,8 @@ resource "acme_certificate" "ilmo_acme_cert" {
 
 resource "azurerm_app_service_certificate" "ilmo_cert" {
   name                = "tik-ilmo-cert-${terraform.workspace}"
-  resource_group_name = var.resource_group_name
-  location            = var.resource_group_location
+  resource_group_name = var.tikweb_rg_name
+  location            = var.tikweb_rg_location
   pfx_blob            = acme_certificate.ilmo_acme_cert.certificate_p12
   password            = acme_certificate.ilmo_acme_cert.certificate_p12_password
 }

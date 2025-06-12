@@ -209,8 +209,9 @@ resource "azurerm_key_vault_secret" "cms_password" {
 module "ilmo" {
   source                  = "./modules/ilmo"
   env_name                = "prod"
-  resource_group_name     = module.common.resource_group_name
-  resource_group_location = local.resource_group_location
+  tikweb_rg_name          = module.common.resource_group_name
+  tikweb_rg_location      = module.common.resource_group_location
+  tikweb_app_plan_id      = module.common.tikweb_app_plan_id
   postgres_server_fqdn    = module.common.postgres_server_fqdn
   postgres_admin_password = module.common.postgres_admin_password
   postgres_server_id      = module.common.postgres_server_id
@@ -219,9 +220,6 @@ module "ilmo" {
   mailgun_api_key         = module.keyvault.secrets["ilmo-mailgun-api-key"]
   mailgun_domain          = module.keyvault.secrets["ilmo-mailgun-domain"]
   website_url             = "https://tietokilta.fi"
-  tikweb_app_plan_id      = module.common.tikweb_app_plan_id
-  tikweb_rg_location      = module.common.resource_group_location
-  tikweb_rg_name          = module.common.resource_group_name
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "ilmo"
@@ -229,6 +227,22 @@ module "ilmo" {
 
   dkim_selector = "mg"
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDQYrVWefo+vOByb07hseOTt1Ryu47Yt5odumYka5JiEt1p/FHl/ZeeY8gehxV0Dv4PIWM91htY2JY2UZguGYFODzqq9Y9AeKjWpq1dyFKiM8nlrI6GRin0kY7SRLeSgpcVFuwNLiT74Wqy477Geq+l5/Stwho23kHu/pXiQuVUMwIDAQAB"
+}
+
+module "ilmo_staging" {
+  source                  = "./modules/ilmo_staging"
+  env_name                = "staging"
+  tikweb_rg_name          = module.common.resource_group_name
+  tikweb_rg_location      = module.common.resource_group_location
+  tikweb_app_plan_id      = module.common.tikweb_app_plan_id
+  postgres_server_fqdn    = module.common.postgres_server_fqdn
+  postgres_admin_password = module.common.postgres_admin_password
+  postgres_server_id      = module.common.postgres_server_id
+  edit_token_secret       = module.keyvault.secrets["ilmo-edit-token-secret"]
+  auth_jwt_secret         = module.keyvault.secrets["ilmo-auth-jwt-secret"]
+  mailgun_api_key         = module.keyvault.secrets["ilmo-mailgun-api-key"]
+  mailgun_domain          = module.keyvault.secrets["ilmo-mailgun-domain"]
+  website_url             = "https://tietokilta.fi"
 }
 
 module "histotik" {
