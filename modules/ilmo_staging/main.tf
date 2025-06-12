@@ -53,8 +53,6 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     FEATHERS_AUTH_SECRET  = var.auth_jwt_secret
 
     MAIL_FROM       = "noreply@${var.mailgun_domain}"
-    MAILGUN_API_KEY = var.mailgun_api_key
-    MAILGUN_DOMAIN  = var.mailgun_domain
 
     ALLOW_ORIGIN = "*"
 
