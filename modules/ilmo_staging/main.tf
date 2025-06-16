@@ -17,10 +17,10 @@ resource "azurerm_storage_account" "ilmo_profile_storage_account" {
 }
 
 resource "azurerm_storage_share" "ilmo_profile_fileshare" {
-  name               = "profiles"
-  storage_account_id = azurerm_storage_account.ilmo_profile_storage_account.id
-  access_tier        = "Hot"
-  quota              = 1
+  name                 = "profiles"
+  storage_account_name = azurerm_storage_account.ilmo_profile_storage_account.name
+  access_tier          = "Hot"
+  quota                = 1
 }
 
 resource "azurerm_linux_web_app" "ilmo_backend" {
