@@ -67,9 +67,10 @@ resource "azurerm_virtual_machine" "forum_vm" {
     managed_disk_id = data.azurerm_managed_disk.forum_disk.id
     os_type         = "Linux"
   }
+
   lifecycle {
     ignore_changes = [
-      boot_diagnostics
+      boot_diagnostics, identity
     ]
   }
 

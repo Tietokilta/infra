@@ -14,7 +14,7 @@ resource "azurerm_storage_account" "histotik_storage_account" {
   account_tier                    = "Standard"
   account_replication_type        = "LRS"
   allow_nested_items_to_be_public = true
-  enable_https_traffic_only       = true
+  https_traffic_only_enabled      = true
   min_tls_version                 = "TLS1_2"
 
   static_website {
