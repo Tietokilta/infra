@@ -2,7 +2,7 @@ locals {
   payload_port = 3001
 }
 resource "azurerm_storage_account" "storage_account" {
-  name                     = "tikwebstorage${terraform.workspace}"
+  name                     = "tikwebstorage${var.environment}"
   resource_group_name      = var.resource_group_name
   location                 = var.resource_group_location
   account_tier             = "Standard"
@@ -12,13 +12,13 @@ resource "azurerm_storage_account" "storage_account" {
 
 
 resource "azurerm_storage_container" "media_container" {
-  name                  = "media-${terraform.workspace}"
+  name                  = "media-${var.environment}"
   storage_account_name  = azurerm_storage_account.storage_account.name
   container_access_type = "private"
 
 }
 resource "azurerm_storage_container" "documents_container" {
-  name                  = "documents-${terraform.workspace}"
+  name                  = "documents-${var.environment}"
   storage_account_name  = azurerm_storage_account.storage_account.name
   container_access_type = "private"
 
@@ -28,7 +28,7 @@ resource "random_password" "revalidation_key" {
   special = true
 }
 resource "azurerm_linux_web_app" "web" {
-  name                = "tikweb-web-${terraform.workspace}"
+  name                = "tikweb-web-${var.environment}"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
   service_plan_id     = var.app_service_plan_id
@@ -80,7 +80,7 @@ resource "random_password" "payload_password" {
   special = false
 }
 resource "azurerm_linux_web_app" "cms" {
-  name                = "tikweb-cms-${terraform.workspace}"
+  name                = "tikweb-cms-${var.environment}"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
   service_plan_id     = var.app_service_plan_id
@@ -200,7 +200,7 @@ resource "acme_certificate" "tikweb_acme_cert" {
 }
 
 resource "azurerm_app_service_certificate" "tikweb_cert" {
-  name                = "tikweb-cert-${terraform.workspace}"
+  name                = "tikweb-cert-${var.environment}"
   resource_group_name = var.resource_group_name
   location            = var.resource_group_location
   pfx_blob            = acme_certificate.tikweb_acme_cert.certificate_p12

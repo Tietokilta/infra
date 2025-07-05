@@ -57,4 +57,9 @@ resource "mongodbatlas_database_user" "database_user" {
     role_name     = "readWrite"
     database_name = "cms"
   }
+
+  roles {
+    role_name     = "readWrite"
+    database_name = "payload"
+  }
 }
