@@ -1,10 +1,7 @@
-
-
 terraform {
   required_providers {
     acme = {
-      source  = "vancluever/acme"
-      version = "2.19.0"
+      source = "vancluever/acme"
     }
   }
 }
@@ -12,6 +9,7 @@ terraform {
 locals {
   fqdn         = var.subdomain == "@" ? var.root_zone_name : "${var.subdomain}.${var.root_zone_name}"
   asuid_domain = var.subdomain == "@" ? "" : ".${var.subdomain}"
+  www_domain   = var.subdomain == "@" ? "www" : "www.${var.subdomain}"
 }
 
 # A record for the web app
@@ -33,6 +31,15 @@ resource "azurerm_dns_txt_record" "tikweb_asuid" {
   record {
     value = azurerm_linux_web_app.web.custom_domain_verification_id
   }
+}
+
+# CNAME record for www.
+resource "azurerm_dns_cname_record" "www_cname" {
+  name                = local.www_domain
+  resource_group_name = var.dns_resource_group_name
+  zone_name           = var.root_zone_name
+  ttl                 = 300
+  record              = azurerm_linux_web_app.web.default_hostname
 }
 # Azure verification key for www
 resource "azurerm_dns_txt_record" "tikweb_asuid_www" {

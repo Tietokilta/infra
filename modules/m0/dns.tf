@@ -1,8 +1,7 @@
 terraform {
   required_providers {
     acme = {
-      source  = "vancluever/acme"
-      version = "2.19.0"
+      source = "vancluever/acme"
     }
   }
 }

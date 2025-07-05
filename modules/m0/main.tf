@@ -150,7 +150,7 @@ resource "acme_certificate" "m0_acme_cert" {
   recursive_nameservers     = ["8.8.8.8:53"]
 
   dns_challenge {
-    provider = "azure"
+    provider = "azuredns"
     config = {
       AZURE_RESOURCE_GROUP = azurerm_resource_group.dns_rg.name
       AZURE_ZONE_NAME      = azurerm_dns_zone.m0_zone.name

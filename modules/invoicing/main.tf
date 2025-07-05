@@ -1,8 +1,7 @@
 terraform {
   required_providers {
     acme = {
-      source  = "vancluever/acme"
-      version = "2.19.0"
+      source = "vancluever/acme"
     }
   }
 }
@@ -77,7 +76,7 @@ resource "acme_certificate" "invoice_generator_acme_cert" {
   certificate_p12_password = random_password.invoice_generator_cert_password.result
 
   dns_challenge {
-    provider = "azure"
+    provider = "azuredns"
     config = {
       AZURE_RESOURCE_GROUP = var.dns_resource_group_name
       AZURE_ZONE_NAME      = var.root_zone_name

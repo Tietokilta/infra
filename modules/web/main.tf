@@ -144,14 +144,6 @@ resource "azurerm_linux_web_app" "cms" {
 }
 
 
-# CNAME record for www.
-resource "azurerm_dns_cname_record" "www_cname" {
-  name                = "www"
-  resource_group_name = var.dns_resource_group_name
-  zone_name           = var.root_zone_name
-  ttl                 = 300
-  record              = azurerm_linux_web_app.web.default_hostname
-}
 
 resource "azurerm_app_service_custom_hostname_binding" "tikweb_hostname_binding" {
   hostname            = local.fqdn
@@ -199,7 +191,7 @@ resource "acme_certificate" "tikweb_acme_cert" {
   certificate_p12_password = random_password.tikweb_cert_password.result
 
   dns_challenge {
-    provider = "azure"
+    provider = "azuredns"
     config = {
       AZURE_RESOURCE_GROUP = var.dns_resource_group_name
       AZURE_ZONE_NAME      = var.root_zone_name
