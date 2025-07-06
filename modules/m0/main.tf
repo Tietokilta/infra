@@ -30,9 +30,6 @@ resource "azurerm_linux_web_app" "frontend" {
         retention_in_mb   = 100
       }
     }
-    application_logs {
-      file_system_level = "Information"
-    }
   }
   https_only = true
   app_settings = {
@@ -79,9 +76,6 @@ resource "azurerm_linux_web_app" "strapi" {
         retention_in_days = 7
         retention_in_mb   = 100
       }
-    }
-    application_logs {
-      file_system_level = "Information"
     }
   }
   app_settings = {

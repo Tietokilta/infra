@@ -16,15 +16,16 @@ resource "azurerm_storage_account" "histotik_storage_account" {
   allow_nested_items_to_be_public = true
   https_traffic_only_enabled      = true
   min_tls_version                 = "TLS1_2"
+}
 
-  static_website {
-    index_document = "index.html"
-  }
+resource "azurerm_storage_account_static_website" "histotik_static_webiste" {
+  storage_account_id = azurerm_storage_account.histotik_storage_account.id
+  index_document     = "index.html"
 }
 
 resource "azurerm_storage_container" "histotik_storage_container" {
   name                  = "$web"
-  storage_account_name  = azurerm_storage_account.histotik_storage_account.name
+  storage_account_id    = azurerm_storage_account.histotik_storage_account.id
   container_access_type = "blob"
 }
 

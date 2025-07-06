@@ -26,6 +26,7 @@ resource "azurerm_public_ip" "forum_ip" {
   resource_group_name = azurerm_resource_group.forum_rg.name
   location            = azurerm_resource_group.forum_rg.location
   allocation_method   = "Static"
+  sku                 = "Basic"
 }
 
 resource "azurerm_network_interface" "forum_nic" {

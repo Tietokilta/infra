@@ -36,9 +36,9 @@ resource "azurerm_storage_account" "storage_account" {
 
 # File share
 resource "azurerm_storage_share" "file_share" {
-  name                 = "oldweb-data"
-  storage_account_name = azurerm_storage_account.storage_account.name
-  quota                = 2 # GB
+  name               = "oldweb-data"
+  storage_account_id = azurerm_storage_account.storage_account.id
+  quota              = 2 # GB
 }
 
 resource "azurerm_container_registry" "acr" {

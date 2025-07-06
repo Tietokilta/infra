@@ -47,7 +47,7 @@ resource "azurerm_storage_account" "tikjob_storage_account" {
 }
 
 resource "azurerm_storage_share" "tikjob_storage_share" {
-  name                 = "ghost-content"
-  storage_account_name = azurerm_storage_account.tikjob_storage_account.name
-  quota                = 5 # Max size in GB
+  name               = "ghost-content"
+  storage_account_id = azurerm_storage_account.tikjob_storage_account.id
+  quota              = 5 # Max size in GB
 }

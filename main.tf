@@ -2,23 +2,23 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.116.0"
+      version = "~>4.35"
     }
     azuread = {
       source  = "hashicorp/azuread"
-      version = "3.0.2"
+      version = "~>3.0"
     }
     dns = {
       source  = "hashicorp/dns"
-      version = "3.4.0"
+      version = "~>3.4"
     }
     acme = {
       source  = "vancluever/acme"
-      version = "2.32.1"
+      version = "~>2.32"
     }
     tls = {
       source  = "hashicorp/tls"
-      version = "4.0.5"
+      version = "~>4.0"
     }
   }
   backend "azurerm" {
@@ -31,6 +31,7 @@ terraform {
 
 provider "azurerm" {
   features {}
+  subscription_id = "3aa1704b-82a5-478f-bc57-2cf4f0876a5e"
 }
 
 provider "azuread" {

@@ -21,9 +21,9 @@ resource "azurerm_storage_account" "storage_account" {
 }
 
 resource "azurerm_storage_share" "file_share" {
-  name                 = "vaultwarden-data"
-  storage_account_name = azurerm_storage_account.storage_account.name
-  quota                = 10 # GB
+  name               = "vaultwarden-data"
+  storage_account_id = azurerm_storage_account.storage_account.id
+  quota              = 10 # GB
 }
 
 # App Service (Linux Web App)

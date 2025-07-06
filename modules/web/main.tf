@@ -10,7 +10,7 @@ resource "azurerm_storage_account" "storage_account" {
 
 resource "azurerm_storage_container" "uploads_container" {
   name                  = "uploads-${var.environment}"
-  storage_account_name  = azurerm_storage_account.storage_account.name
+  storage_account_id    = azurerm_storage_account.storage_account.id
   container_access_type = "private"
   lifecycle {
     prevent_destroy = true
@@ -57,9 +57,6 @@ resource "azurerm_linux_web_app" "web" {
         retention_in_days = 7
         retention_in_mb   = 100
       }
-    }
-    application_logs {
-      file_system_level = "Information"
     }
   }
   https_only = true

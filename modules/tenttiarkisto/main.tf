@@ -32,7 +32,7 @@ resource "azurerm_storage_account" "tenttiarkisto_storage_account" {
 
 resource "azurerm_storage_container" "tenttiarkisto_storage_container" {
   name                  = "exams"
-  storage_account_name  = azurerm_storage_account.tenttiarkisto_storage_account.name
+  storage_account_id    = azurerm_storage_account.tenttiarkisto_storage_account.id
   container_access_type = "blob"
 }
 
@@ -64,8 +64,6 @@ resource "azurerm_linux_web_app" "tenttiarkisto" {
   }
 
   app_settings = {
-    DOCKER_REGISTRY_SERVER_URL = "https://ghcr.io"
-
     WEBSITES_PORT = 8000
 
     EXAM_ACCOUNT_NAME = azurerm_storage_account.tenttiarkisto_storage_account.name

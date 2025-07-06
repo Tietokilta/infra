@@ -30,9 +30,6 @@ resource "azurerm_linux_web_app" "invoice_generator" {
         retention_in_mb   = 100
       }
     }
-    application_logs {
-      file_system_level = "Information"
-    }
   }
   https_only = true
   app_settings = {
