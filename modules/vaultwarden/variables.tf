@@ -1,3 +1,6 @@
+variable "environment" {
+  type = string
+}
 variable "admin_api_key" {
   description = "Vaultwarden Admin API key used to access /admin page - minLength is 20"
   type        = string

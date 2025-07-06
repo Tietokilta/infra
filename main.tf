@@ -421,6 +421,7 @@ module "oldweb" {
 }
 
 module "vaultwarden" {
+  environment                          = "prod"
   source                               = "./modules/vaultwarden"
   admin_api_key                        = module.keyvault.secrets["vaultwarden-api-key"]
   app_service_plan_id                  = module.common.tikweb_app_plan_id
