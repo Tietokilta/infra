@@ -1,3 +1,3 @@
 output "fqdn" {
-  value = local.fqdn
+  value = module.tikjob_hostname.fqdn
 }

@@ -1,17 +1,5 @@
-terraform {
-  required_providers {
-    acme = {
-      source = "vancluever/acme"
-    }
-  }
-}
-
-locals {
-  fqdn = "${var.subdomain}.${var.root_zone_name}"
-}
-
 resource "azurerm_linux_web_app" "tikjob_ghost" {
-  name                = "tikjob-${var.env_name}-app-ghost"
+  name                = "tikjob-${var.environment}-app-ghost"
   location            = var.tikweb_rg_location
   resource_group_name = var.tikweb_rg_name
   service_plan_id     = var.tikweb_app_plan_id
@@ -51,7 +39,7 @@ resource "azurerm_linux_web_app" "tikjob_ghost" {
     PORT = 2368
 
     # GHOST CONFIGURATION
-    url = var.ghost_front_url
+    url = "https://${module.tikjob_hostname.fqdn}"
 
     # Database
     database__client                              = "mysql"
@@ -73,60 +61,17 @@ resource "azurerm_linux_web_app" "tikjob_ghost" {
   }
 }
 
-resource "azurerm_app_service_custom_hostname_binding" "tikjob_hostname_binding" {
-  hostname            = local.fqdn
-  app_service_name    = azurerm_linux_web_app.tikjob_ghost.name
-  resource_group_name = var.tikweb_rg_name
+module "tikjob_hostname" {
+  source = "../../app_service_hostname"
 
-  # lifecycle {
-  #   ignore_changes = [ssl_state, thumbprint]
-  # }
-
-  # Deletion may need manual work.
-  # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
-  # TODO: Add dependencies for creation
-  # depends_on = [
-  #   azurerm_dns_a_record.tikjob_a,
-  #   azurerm_dns_txt_record.tikjob_asuid
-  # ]
-}
-
-resource "random_password" "tikjob_cert_password" {
-  length  = 48
-  special = false
-}
-
-resource "acme_certificate" "tikjob_acme_cert" {
-  account_key_pem          = var.acme_account_key
-  common_name              = local.fqdn
-  key_type                 = "2048" # RSA
-  certificate_p12_password = random_password.tikjob_cert_password.result
-
-  dns_challenge {
-    provider = "azuredns"
-    config = {
-      AZURE_RESOURCE_GROUP = var.dns_resource_group_name
-      AZURE_ZONE_NAME      = var.root_zone_name
-    }
-  }
-}
-
-resource "azurerm_app_service_certificate" "tikjob_cert" {
-  name                = "tikjob-cert"
-  resource_group_name = var.tikweb_rg_name
-  location            = var.tikweb_rg_location
-  pfx_blob            = acme_certificate.tikjob_acme_cert.certificate_p12
-  password            = acme_certificate.tikjob_acme_cert.certificate_p12_password
-}
-
-resource "azurerm_app_service_certificate_binding" "tikjob_cert_binding" {
-  certificate_id      = azurerm_app_service_certificate.tikjob_cert.id
-  hostname_binding_id = azurerm_app_service_custom_hostname_binding.tikjob_hostname_binding.id
-  ssl_state           = "SniEnabled"
-}
-
-# https://github.com/hashicorp/terraform-provider-azurerm/issues/14642#issuecomment-1084728235
-# Currently, the azurerm provider doesn't give us the IP address, so we need to fetch it ourselves.
-data "dns_a_record_set" "tikjob_dns_fetch" {
-  host = azurerm_linux_web_app.tikjob_ghost.default_hostname
+  subdomain                       = var.subdomain
+  root_zone_name                  = var.root_zone_name
+  dns_resource_group_name         = var.dns_resource_group_name
+  custom_domain_verification_id   = azurerm_linux_web_app.tikjob_ghost.custom_domain_verification_id
+  app_service_name                = azurerm_linux_web_app.tikjob_ghost.name
+  app_service_resource_group_name = var.tikweb_rg_name
+  app_service_location            = var.tikweb_rg_location
+  app_service_default_hostname    = azurerm_linux_web_app.tikjob_ghost.default_hostname
+  acme_account_key                = var.acme_account_key
+  certificate_name                = "tikjob-cert"
 }

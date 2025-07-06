@@ -294,13 +294,10 @@ module "tikjob_storage" {
 module "tikjob_app" {
   source = "./modules/recruiting/ghost"
 
-  env_name                = "prod"
-  resource_group_name     = module.tikjob_storage.resource_group_name
-  resource_group_location = module.tikjob_storage.resource_group_location
-  tikweb_app_plan_id      = module.common.tikweb_app_plan_id
-  tikweb_rg_name          = module.common.resource_group_name
-  tikweb_rg_location      = module.common.resource_group_location
-  ghost_front_url         = "https://rekry.tietokilta.fi"
+  environment        = "prod"
+  tikweb_app_plan_id = module.common.tikweb_app_plan_id
+  tikweb_rg_name     = module.common.resource_group_name
+  tikweb_rg_location = module.common.resource_group_location
 
   mysql_db_name  = module.tikjob_storage.mysql_db_name
   mysql_fqdn     = module.tikjob_storage.mysql_fqdn

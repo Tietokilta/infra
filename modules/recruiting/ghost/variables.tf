@@ -1,15 +1,6 @@
-variable "env_name" {
+variable "environment" {
   type = string
 }
-
-variable "resource_group_name" {
-  type = string
-}
-
-variable "resource_group_location" {
-  type = string
-}
-
 // Certs
 
 variable "acme_account_key" {
@@ -64,10 +55,6 @@ variable "ghost_mail_username" {
 }
 
 variable "ghost_mail_password" {
-  type = string
-}
-
-variable "ghost_front_url" {
   type = string
 }
 
