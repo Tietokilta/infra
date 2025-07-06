@@ -79,7 +79,7 @@ resource "azurerm_linux_web_app" "strapi" {
     }
   }
   app_settings = {
-    NODE_ENVIRONMENT       = "production"
+    NODE_ENV               = "production"
     DATABASE_USERNAME      = "tietokilta"
     DATABASE_PASSWORD      = var.postgres_admin_password
     DATABASE_HOST          = var.postgres_server_fqdn
