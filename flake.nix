@@ -11,45 +11,54 @@
     extra-substituters = "https://devenv.cachix.org";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    devenv,
-    systems,
-    ...
-  } @ inputs: let
-    forEachSystem = nixpkgs.lib.genAttrs (import systems);
-  in {
-    packages = forEachSystem (system: {
-      devenv-up = self.devShells.${system}.default.config.procfileScript;
-      devenv-test = self.devShells.${system}.default.config.test;
-    });
-
-    devShells =
-      forEachSystem
-      (system: let
-        pkgs = import nixpkgs {
-          inherit system;
-          config.allowUnfree = true;
-        };
-      in {
-        default = devenv.lib.mkShell {
-          inherit inputs pkgs;
-          modules = [
-            {
-              # https://devenv.sh/reference/options/
-              packages = [pkgs.azure-cli];
-              languages.terraform.enable = true;
-
-              git-hooks.hooks.terraform-fmt = {
-                enable = true;
-                name = "Terraform fmt check";
-                entry = "terraform fmt --recursive";
-                pass_filenames = false;
-              };
-            }
-          ];
-        };
+  outputs =
+    {
+      self,
+      nixpkgs,
+      devenv,
+      systems,
+      ...
+    }@inputs:
+    let
+      forEachSystem = nixpkgs.lib.genAttrs (import systems);
+    in
+    {
+      packages = forEachSystem (system: {
+        devenv-up = self.devShells.${system}.default.config.procfileScript;
+        devenv-test = self.devShells.${system}.default.config.test;
       });
-  };
+
+      devShells = forEachSystem (
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+        in
+        {
+          default = devenv.lib.mkShell {
+            inherit inputs pkgs;
+            modules = [
+              {
+                # https://devenv.sh/reference/options/
+                packages = with pkgs; [
+                  (azure-cli.withExtensions [
+                    azure-cli-extensions.ssh
+                  ])
+                ];
+                languages.terraform.enable = true;
+
+                git-hooks.hooks.terraform-fmt = {
+                  enable = true;
+                  name = "Terraform fmt check";
+                  entry = "terraform fmt --recursive";
+                  pass_filenames = false;
+                };
+              }
+            ];
+          };
+        }
+      );
+    };
 }
