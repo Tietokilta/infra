@@ -4,7 +4,7 @@ alerting:
     id: "$ALERT_CHANNEL_ID"
 
 ui:
-  logo: "https://tietokilta.fi/media/TiK-logo.svg"
+  logo: "https://tietokilta.fi/api/media/file/TiK-logo.svg"
   title: "Tietokilta | Status"
   description: "A Status page for Tietokilta services"
 
