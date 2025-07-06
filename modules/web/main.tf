@@ -69,7 +69,7 @@ resource "azurerm_linux_web_app" "web" {
     PORT                              = 3000
     NEXT_REVALIDATION_KEY             = random_password.revalidation_key.result
     PUBLIC_LEGACY_URL                 = var.public_legacy_url
-    PUBLIC_FRONTEND_URL               = "https://${local.fqdn}"
+    PUBLIC_FRONTEND_URL               = "https://${module.tikweb_hostname.fqdn}"
     DIGITRANSIT_SUBSCRIPTION_KEY      = var.digitransit_subscription_key
     PAYLOAD_MONGO_CONNECTION_STRING   = var.mongo_connection_string
     PAYLOAD_SECRET                    = random_password.payload_secret.result
@@ -89,72 +89,17 @@ resource "azurerm_linux_web_app" "web" {
   }
 }
 
+module "tikweb_hostname" {
+  source = "../app_service_hostname"
 
-
-resource "azurerm_app_service_custom_hostname_binding" "tikweb_hostname_binding" {
-  hostname            = local.fqdn
-  app_service_name    = azurerm_linux_web_app.web.name
-  resource_group_name = var.resource_group_name
-
-  # Deletion may need manual work.
-  # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
-  # TODO: Add dependencies for creation
-  depends_on = [
-    azurerm_dns_a_record.tikweb_a,
-    azurerm_dns_txt_record.tikweb_asuid
-  ]
-}
-resource "azurerm_app_service_custom_hostname_binding" "www_hostname_binding" {
-  hostname            = "www.${local.fqdn}"
-  app_service_name    = azurerm_linux_web_app.web.name
-  resource_group_name = var.resource_group_name
-  depends_on = [
-    azurerm_dns_cname_record.www_cname,
-    azurerm_dns_txt_record.tikweb_asuid_www
-  ]
-
-}
-
-resource "azurerm_app_service_managed_certificate" "www_cert" {
-  custom_hostname_binding_id = azurerm_app_service_custom_hostname_binding.www_hostname_binding.id
-}
-
-resource "azurerm_app_service_certificate_binding" "www_cert_binding" {
-  hostname_binding_id = azurerm_app_service_custom_hostname_binding.www_hostname_binding.id
-  certificate_id      = azurerm_app_service_managed_certificate.www_cert.id
-  ssl_state           = "SniEnabled"
-}
-
-resource "random_password" "tikweb_cert_password" {
-  length  = 48
-  special = false
-}
-
-resource "acme_certificate" "tikweb_acme_cert" {
-  account_key_pem          = var.acme_account_key
-  common_name              = local.fqdn
-  key_type                 = "2048" # RSA
-  certificate_p12_password = random_password.tikweb_cert_password.result
-
-  dns_challenge {
-    provider = "azuredns"
-    config = {
-      AZURE_RESOURCE_GROUP = var.dns_resource_group_name
-      AZURE_ZONE_NAME      = var.root_zone_name
-    }
-  }
-}
-
-resource "azurerm_app_service_certificate" "tikweb_cert" {
-  name                = "tikweb-cert-${var.environment}"
-  resource_group_name = var.resource_group_name
-  location            = var.resource_group_location
-  pfx_blob            = acme_certificate.tikweb_acme_cert.certificate_p12
-  password            = acme_certificate.tikweb_acme_cert.certificate_p12_password
-}
-
-resource "azurerm_app_service_certificate_binding" "tikweb_cert_binding" {
-  certificate_id      = azurerm_app_service_certificate.tikweb_cert.id
-  hostname_binding_id = azurerm_app_service_custom_hostname_binding.tikweb_hostname_binding.id
-  ssl_state           = "SniEnabled"
+  subdomain                       = var.subdomain
+  root_zone_name                  = var.root_zone_name
+  dns_resource_group_name         = var.dns_resource_group_name
+  custom_domain_verification_id   = azurerm_linux_web_app.web.custom_domain_verification_id
+  app_service_name                = azurerm_linux_web_app.web.name
+  app_service_resource_group_name = var.resource_group_name
+  app_service_location            = var.resource_group_location
+  app_service_default_hostname    = azurerm_linux_web_app.web.default_hostname
+  acme_account_key                = var.acme_account_key
+  certificate_name                = "tikweb-cert-${var.environment}"
 }

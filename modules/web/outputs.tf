@@ -1,5 +1,5 @@
 output "fqdn" {
-  value = local.fqdn
+  value = module.tikweb_hostname.fqdn
 }
 output "payload_password" {
   value     = random_password.payload_password.result
