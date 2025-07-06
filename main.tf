@@ -189,12 +189,12 @@ module "web" {
   dns_resource_group_name      = module.dns_prod.resource_group_name
   subdomain                    = "@"
   environment                  = "prod"
-  mongo_connection_string      = "${module.mongodb.db_connection_string}/cms?retryWrites=true&w=majority"
+  mongo_connection_string      = "${module.mongodb.db_connection_string}/payload?retryWrites=true&w=majority"
   google_oauth_client_id       = module.keyvault.secrets["google-oauth-client-id"]
   google_oauth_client_secret   = module.keyvault.secrets["google-oauth-client-secret"]
   public_ilmo_url              = "https://${module.ilmo.fqdn}"
   public_laskugeneraattori_url = "https://${module.invoicing.fqdn}"
-  public_legacy_url            = "https://old.tietokilta.fi"
+  public_legacy_url            = "https://${module.oldweb.fqdn}"
   digitransit_subscription_key = module.keyvault.secrets["digitransit-subscription-key"]
   mailgun_sender               = module.keyvault.secrets["mailgun-sender"]
   mailgun_receiver             = module.keyvault.secrets["mailgun-receiver"]
@@ -202,30 +202,6 @@ module "web" {
   mailgun_domain               = module.keyvault.secrets["mailgun-domain"]
   mailgun_url                  = module.keyvault.secrets["mailgun-url"]
 }
-
-# module "web2" {
-#   source                       = "./modules/web"
-#   resource_group_location      = local.resource_group_location
-#   resource_group_name          = module.common.resource_group_name
-#   app_service_plan_id          = module.common.tikweb_app_plan_id
-#   acme_account_key             = module.common.acme_account_key
-#   root_zone_name               = module.dns_prod.root_zone_name
-#   dns_resource_group_name      = module.dns_prod.resource_group_name
-#   subdomain                    = "staging"
-#   environment                  = "staging"
-#   mongo_connection_string      = "${module.mongodb.db_connection_string}/payload?retryWrites=true&w=majority"
-#   google_oauth_client_id       = module.keyvault.secrets["google-oauth-client-id"]
-#   google_oauth_client_secret   = module.keyvault.secrets["google-oauth-client-secret"]
-#   public_ilmo_url              = "https://${module.ilmo.fqdn}"
-#   public_laskugeneraattori_url = "https://${module.invoicing.fqdn}"
-#   public_legacy_url            = "https://old.tietokilta.fi"
-#   digitransit_subscription_key = module.keyvault.secrets["digitransit-subscription-key"]
-#   mailgun_sender               = module.keyvault.secrets["mailgun-sender"]
-#   mailgun_receiver             = module.keyvault.secrets["mailgun-receiver"]
-#   mailgun_api_key              = module.keyvault.secrets["mailgun-api-key"]
-#   mailgun_domain               = module.keyvault.secrets["mailgun-domain"]
-#   mailgun_url                  = module.keyvault.secrets["mailgun-url"]
-# }
 
 resource "azurerm_key_vault_secret" "cms_password" {
   name         = "cms-password"
@@ -457,7 +433,7 @@ module "vaultwarden" {
 module "github-ci-roles" {
   source = "./modules/github-ci"
   repo_app_service_map = {
-    "Tietokilta/web" : [module.web.web_app_id, module.web.cms_app_id]
+    "Tietokilta/web" : [module.web.web_app_id]
     "Tietokilta/laskugeneraattori" : [module.invoicing.invoicing_app_id]
     "Tietokilta/ilmomasiina" : [module.ilmo.app_id]
     "Tietokilta/m0-ilmotunkki" : [module.m0.frontend_app_id, module.m0.strapi_app_id]

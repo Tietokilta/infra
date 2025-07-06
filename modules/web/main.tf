@@ -1,6 +1,3 @@
-locals {
-  payload_port = 3001
-}
 resource "azurerm_storage_account" "storage_account" {
   name                     = "tikwebstorage${var.environment}"
   resource_group_name      = var.resource_group_name
@@ -11,22 +8,30 @@ resource "azurerm_storage_account" "storage_account" {
 }
 
 
-resource "azurerm_storage_container" "media_container" {
-  name                  = "media-${var.environment}"
+resource "azurerm_storage_container" "uploads_container" {
+  name                  = "uploads-${var.environment}"
   storage_account_name  = azurerm_storage_account.storage_account.name
   container_access_type = "private"
-
+  lifecycle {
+    prevent_destroy = true
+  }
 }
-resource "azurerm_storage_container" "documents_container" {
-  name                  = "documents-${var.environment}"
-  storage_account_name  = azurerm_storage_account.storage_account.name
-  container_access_type = "private"
 
-}
 resource "random_password" "revalidation_key" {
   length  = 32
   special = true
 }
+
+resource "random_password" "payload_secret" {
+  length  = 32
+  special = true
+}
+
+resource "random_password" "payload_password" {
+  length  = 32
+  special = false
+}
+
 resource "azurerm_linux_web_app" "web" {
   name                = "tikweb-web-${var.environment}"
   location            = var.resource_group_location
@@ -59,87 +64,31 @@ resource "azurerm_linux_web_app" "web" {
   }
   https_only = true
   app_settings = {
-    NODE_ENVIRONMENT                  = "production"
+    NODE_ENV                          = "production"
     PUBLIC_ILMOMASIINA_URL            = var.public_ilmo_url
     NEXT_PUBLIC_ILMOMASIINA_URL       = var.public_ilmo_url
     NEXT_PUBLIC_LASKUGENERAATTORI_URL = var.public_laskugeneraattori_url
     WEBSITES_PORT                     = 3000
     PORT                              = 3000
     NEXT_REVALIDATION_KEY             = random_password.revalidation_key.result
-    PUBLIC_SERVER_URL                 = "https://${azurerm_linux_web_app.cms.default_hostname}"
     PUBLIC_LEGACY_URL                 = var.public_legacy_url
+    PUBLIC_FRONTEND_URL               = "https://${local.fqdn}"
     DIGITRANSIT_SUBSCRIPTION_KEY      = var.digitransit_subscription_key
-  }
-}
-resource "random_password" "payload_secret" {
-  length  = 32
-  special = true
-}
-resource "random_password" "payload_password" {
-  length  = 32
-  special = false
-}
-resource "azurerm_linux_web_app" "cms" {
-  name                = "tikweb-cms-${var.environment}"
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
-  service_plan_id     = var.app_service_plan_id
-  https_only          = true
-  site_config {
-
-    application_stack {
-      docker_registry_url = "https://ghcr.io"
-      docker_image_name   = "tietokilta/cms:latest"
-    }
-
-    ip_restriction {
-      action      = "Allow"
-      headers     = []
-      priority    = 100
-      service_tag = "AzureCloud"
-    }
-
-    http2_enabled = true
-  }
-  lifecycle {
-    // image is deployed by web-repos GHA workflow
-    ignore_changes = [
-      site_config.0.application_stack.0.docker_image_name,
-    ]
-  }
-  logs {
-    http_logs {
-      file_system {
-        retention_in_days = 7
-        retention_in_mb   = 100
-      }
-    }
-    application_logs {
-      file_system_level = "Information"
-    }
-  }
-  app_settings = {
-    NODE_ENVIRONMENT                       = "production"
-    PUBLIC_FRONTEND_URL                    = "https://${local.fqdn}"
-    PAYLOAD_MONGO_CONNECTION_STRING        = var.mongo_connection_string
-    PAYLOAD_MONGO_DB_NAME                  = "cms"
-    PAYLOAD_SECRET                         = random_password.payload_secret.result
-    PAYLOAD_REVALIDATION_KEY               = random_password.revalidation_key.result
-    PAYLOAD_DEFAULT_USER_EMAIL             = "root@tietokilta.fi"
-    PAYLOAD_DEFAULT_USER_PASSWORD          = random_password.payload_password.result
-    WEBSITES_PORT                          = local.payload_port
-    PAYLOAD_PORT                           = local.payload_port
-    AZURE_STORAGE_CONNECTION_STRING        = azurerm_storage_account.storage_account.primary_connection_string
-    AZURE_STORAGE_ACCOUNT_BASEURL          = azurerm_storage_account.storage_account.primary_blob_endpoint
-    AZURE_MEDIA_STORAGE_CONTAINER_NAME     = azurerm_storage_container.media_container.name
-    AZURE_DOCUMENTS_STORAGE_CONTAINER_NAME = azurerm_storage_container.documents_container.name
-    GOOGLE_OAUTH_CLIENT_ID                 = var.google_oauth_client_id
-    GOOGLE_OAUTH_CLIENT_SECRET             = var.google_oauth_client_secret
-    MAILGUN_SENDER                         = var.mailgun_sender
-    MAILGUN_RECEIVER                       = var.mailgun_receiver
-    MAILGUN_API_KEY                        = var.mailgun_api_key
-    MAILGUN_DOMAIN                         = var.mailgun_domain
-    MAILGUN_URL                            = var.mailgun_url
+    PAYLOAD_MONGO_CONNECTION_STRING   = var.mongo_connection_string
+    PAYLOAD_SECRET                    = random_password.payload_secret.result
+    PAYLOAD_REVALIDATION_KEY          = random_password.revalidation_key.result
+    PAYLOAD_DEFAULT_USER_EMAIL        = "root@tietokilta.fi"
+    PAYLOAD_DEFAULT_USER_PASSWORD     = random_password.payload_password.result
+    AZURE_STORAGE_CONNECTION_STRING   = azurerm_storage_account.storage_account.primary_connection_string
+    AZURE_STORAGE_ACCOUNT_BASEURL     = azurerm_storage_account.storage_account.primary_blob_endpoint
+    AZURE_STORAGE_CONTAINER_NAME      = azurerm_storage_container.uploads_container.name
+    GOOGLE_OAUTH_CLIENT_ID            = var.google_oauth_client_id
+    GOOGLE_OAUTH_CLIENT_SECRET        = var.google_oauth_client_secret
+    MAILGUN_SENDER                    = var.mailgun_sender
+    MAILGUN_RECEIVER                  = var.mailgun_receiver
+    MAILGUN_API_KEY                   = var.mailgun_api_key
+    MAILGUN_DOMAIN                    = var.mailgun_domain
+    MAILGUN_URL                       = var.mailgun_url
   }
 }
 
