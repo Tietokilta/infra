@@ -1,5 +1,5 @@
 output "fqdn" {
-  value = local.fqdn
+  value = module.oldweb_hostname.fqdn
 }
 
 output "web_app_id" {

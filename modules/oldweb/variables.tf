@@ -1,14 +1,11 @@
-variable "env_name" {
+variable "environment" {
   type = string
 }
 
-variable "resource_group_name" {
+variable "location" {
   type = string
 }
 
-variable "resource_group_location" {
-  type = string
-}
 variable "postgres_server_fqdn" {
   type = string
 }
@@ -48,9 +45,4 @@ variable "tikweb_rg_location" {
 
 variable "acme_account_key" {
   type = string
-}
-
-variable "location" {
-  description = "Azure location"
-  type        = string
 }

@@ -398,9 +398,7 @@ module "registry" {
 
 module "oldweb" {
   source                  = "./modules/oldweb"
-  env_name                = "prod"
-  resource_group_name     = module.common.resource_group_name
-  resource_group_location = local.resource_group_location
+  environment             = "prod"
   postgres_server_fqdn    = module.common.postgres_server_fqdn
   postgres_admin_password = module.common.postgres_admin_password
   postgres_server_id      = module.common.postgres_server_id
