@@ -87,100 +87,27 @@ resource "azurerm_linux_web_app" "tenttiarkisto" {
   }
 }
 
-resource "azurerm_dns_zone" "tenttiarkisto_zone" {
-  name                = "tenttiarkisto.fi"
-  resource_group_name = var.tikweb_app_plan_rg_name
+module "tenttiarkisto_hostname" {
+  source = "../app_service_hostname"
+
+  subdomain                       = "@"
+  dns_resource_group_name         = var.dns_resource_group_name
+  custom_domain_verification_id   = azurerm_linux_web_app.tenttiarkisto.custom_domain_verification_id
+  app_service_name                = azurerm_linux_web_app.tenttiarkisto.name
+  app_service_resource_group_name = var.tikweb_app_plan_rg_name
+  app_service_location            = var.tikweb_app_plan_rg_location
+  app_service_default_hostname    = azurerm_linux_web_app.tenttiarkisto.default_hostname
+  acme_account_key                = var.acme_account_key
+  certificate_name                = "tenttiarkisto-cert"
+  root_zone_name                  = var.root_zone_name
 }
 
-# https://github.com/hashicorp/terraform-provider-azurerm/issues/14642#issuecomment-1084728235
-# Currently, the azurerm provider doesn't give us the IP address, so we need to fetch it ourselves.
-data "dns_a_record_set" "tenttiarkisto_dns_fetch" {
-  host = azurerm_linux_web_app.tenttiarkisto.default_hostname
-}
 
-resource "azurerm_dns_a_record" "tenttiarkisto_a" {
-  name                = "@"
-  resource_group_name = var.tikweb_app_plan_rg_name
-  zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
-  ttl                 = 300
-  records             = data.dns_a_record_set.tenttiarkisto_dns_fetch.addrs
-}
 
-resource "azurerm_dns_cname_record" "tenttiarkisto_cname_www" {
-  name                = "www"
-  resource_group_name = var.tikweb_app_plan_rg_name
-  zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
-  ttl                 = 300
-  record              = azurerm_linux_web_app.tenttiarkisto.default_hostname
-}
 
-resource "azurerm_dns_txt_record" "tenttiarkisto_txt_asuid" {
-  name                = "asuid"
-  resource_group_name = var.tikweb_app_plan_rg_name
-  zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
-  ttl                 = 300
 
-  record {
-    value = azurerm_linux_web_app.tenttiarkisto.custom_domain_verification_id
-  }
-}
 
-resource "azurerm_dns_txt_record" "tenttiarkisto_www_txt_asuid" {
-  name                = "asuid.www"
-  resource_group_name = var.tikweb_app_plan_rg_name
-  zone_name           = azurerm_dns_zone.tenttiarkisto_zone.name
-  ttl                 = 300
 
-  record {
-    value = azurerm_linux_web_app.tenttiarkisto.custom_domain_verification_id
-  }
-}
 
-resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_hostname_binding" {
-  resource_group_name = var.tikweb_app_plan_rg_name
-  app_service_name    = azurerm_linux_web_app.tenttiarkisto.name
-  hostname            = "tenttiarkisto.fi"
 
-  # lifecycle {
-  #   ignore_changes = [ssl_state, thumbprint]
-  # }
 
-  depends_on = [
-    azurerm_dns_txt_record.tenttiarkisto_txt_asuid,
-  ]
-}
-
-resource "azurerm_app_service_managed_certificate" "tenttiarkisto_cert" {
-  custom_hostname_binding_id = azurerm_app_service_custom_hostname_binding.tenttiarkisto_hostname_binding.id
-}
-
-resource "azurerm_app_service_certificate_binding" "tenttiarkisto_cert_binding" {
-  hostname_binding_id = azurerm_app_service_custom_hostname_binding.tenttiarkisto_hostname_binding.id
-  certificate_id      = azurerm_app_service_managed_certificate.tenttiarkisto_cert.id
-  ssl_state           = "SniEnabled"
-}
-
-resource "azurerm_app_service_custom_hostname_binding" "tenttiarkisto_www_hostname_binding" {
-  resource_group_name = var.tikweb_app_plan_rg_name
-  app_service_name    = azurerm_linux_web_app.tenttiarkisto.name
-  hostname            = "www.tenttiarkisto.fi"
-
-  # lifecycle {
-  #   ignore_changes = [ssl_state, thumbprint]
-  # }
-
-  depends_on = [
-    azurerm_dns_cname_record.tenttiarkisto_cname_www,
-    azurerm_dns_txt_record.tenttiarkisto_www_txt_asuid
-  ]
-}
-
-resource "azurerm_app_service_managed_certificate" "tenttiarkisto_www_cert" {
-  custom_hostname_binding_id = azurerm_app_service_custom_hostname_binding.tenttiarkisto_www_hostname_binding.id
-}
-
-resource "azurerm_app_service_certificate_binding" "tenttiarkisto_www_cert_binding" {
-  hostname_binding_id = azurerm_app_service_custom_hostname_binding.tenttiarkisto_www_hostname_binding.id
-  certificate_id      = azurerm_app_service_managed_certificate.tenttiarkisto_www_cert.id
-  ssl_state           = "SniEnabled"
-}

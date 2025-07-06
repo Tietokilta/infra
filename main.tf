@@ -108,6 +108,14 @@ module "dns_m0" {
   resource_group_location = local.resource_group_location
   zone_name               = "muistinnollaus.fi"
 }
+module "tenttiarkisto_dns_zone" {
+  source                  = "./modules/dns/root"
+  env_name                = "prod"
+  resource_group_location = module.common.resource_group_location
+  # legacy due to previous setup
+  resource_group_name = module.common.resource_group_name
+  zone_name           = "tenttiarkisto.fi"
+}
 module "dns_github" {
   source = "./modules/dns/github"
 
@@ -276,6 +284,9 @@ module "tenttiarkisto" {
   tikweb_app_plan_rg_location  = module.common.resource_group_location
   tikweb_app_plan_rg_name      = module.common.resource_group_name
   django_secret_key            = module.keyvault.secrets["tenttiarkisto-django-secret-key"]
+  acme_account_key             = module.common.acme_account_key
+  dns_resource_group_name      = module.tenttiarkisto_dns_zone.resource_group_name
+  root_zone_name               = module.tenttiarkisto_dns_zone.root_zone_name
 }
 
 module "voo" {

@@ -1,5 +1,5 @@
 output "resource_group_name" {
-  value = azurerm_resource_group.dns_rg.name
+  value = local.dns_rg_name
 }
 
 output "root_zone_name" {

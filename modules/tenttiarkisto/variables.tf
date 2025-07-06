@@ -18,6 +18,7 @@ variable "postgres_admin_password" {
   type      = string
   sensitive = true
 }
+
 variable "postgres_server_id" {
   type = string
 }
@@ -37,4 +38,17 @@ variable "tikweb_app_plan_rg_location" {
 variable "django_secret_key" {
   type      = string
   sensitive = true
+}
+
+variable "acme_account_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "dns_resource_group_name" {
+  type = string
+}
+
+variable "root_zone_name" {
+  type = string
 }
