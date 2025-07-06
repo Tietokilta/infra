@@ -20,6 +20,12 @@ variable "mail_dns_resource_group_name" {
 variable "mail_dns_zone_name" {
   type = string
 }
+variable "m0_dns_resource_group_name" {
+  type = string
+}
+variable "m0_dns_zone_name" {
+  type = string
+}
 variable "dkim_selector" {
   type = string
 }
@@ -65,3 +71,4 @@ variable "muistinnollaus_paytrail_secret_key" {
   type      = string
   sensitive = true
 }
+

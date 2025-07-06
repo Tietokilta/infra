@@ -102,72 +102,17 @@ resource "azurerm_linux_web_app" "strapi" {
 }
 
 
-resource "azurerm_app_service_custom_hostname_binding" "m0_hostname_binding" {
-  hostname            = local.fqdn
-  app_service_name    = azurerm_linux_web_app.frontend.name
-  resource_group_name = var.web_resource_group_name
-
-  # Deletion may need manual work.
-  # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
-  # TODO: Add dependencies for creation
-  depends_on = [
-    # azurerm_dns_a_record.m0_a,
-    azurerm_dns_txt_record.m0_asuid
-  ]
+module "app_service_hostname" {
+  source                          = "../app_service_hostname"
+  subdomain                       = "@"
+  root_zone_name                  = local.fqdn
+  dns_resource_group_name         = var.m0_dns_resource_group_name
+  custom_domain_verification_id   = azurerm_linux_web_app.frontend.custom_domain_verification_id
+  app_service_name                = azurerm_linux_web_app.frontend.name
+  app_service_resource_group_name = var.web_resource_group_name
+  app_service_location            = var.resource_group_location
+  acme_account_key                = var.acme_account_key
+  certificate_name                = "m0-cert-${terraform.workspace}"
+  app_service_default_hostname    = azurerm_linux_web_app.frontend.default_hostname
 }
 
-resource "azurerm_app_service_custom_hostname_binding" "m0_www_hostname_binding" {
-  hostname            = "www.${local.fqdn}"
-  app_service_name    = azurerm_linux_web_app.frontend.name
-  resource_group_name = var.web_resource_group_name
-
-  # Deletion may need manual work.
-  # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
-  # TODO: Add dependencies for creation
-  depends_on = [
-    azurerm_dns_cname_record.www_cname,
-    azurerm_dns_txt_record.m0_www_asuid
-  ]
-}
-
-resource "random_password" "m0_cert_password" {
-  length  = 48
-  special = false
-}
-
-resource "acme_certificate" "m0_acme_cert" {
-  account_key_pem           = var.acme_account_key
-  common_name               = local.fqdn
-  key_type                  = "2048" # RSA
-  certificate_p12_password  = random_password.m0_cert_password.result
-  subject_alternative_names = ["www.${local.fqdn}"]
-  recursive_nameservers     = ["8.8.8.8:53"]
-
-  dns_challenge {
-    provider = "azuredns"
-    config = {
-      AZURE_RESOURCE_GROUP = azurerm_resource_group.dns_rg.name
-      AZURE_ZONE_NAME      = azurerm_dns_zone.m0_zone.name
-    }
-  }
-}
-
-resource "azurerm_app_service_certificate" "m0_cert" {
-  name                = "m0-cert-${terraform.workspace}"
-  resource_group_name = var.web_resource_group_name
-  location            = var.resource_group_location
-  pfx_blob            = acme_certificate.m0_acme_cert.certificate_p12
-  password            = acme_certificate.m0_acme_cert.certificate_p12_password
-}
-
-resource "azurerm_app_service_certificate_binding" "m0_cert_binding" {
-  certificate_id      = azurerm_app_service_certificate.m0_cert.id
-  hostname_binding_id = azurerm_app_service_custom_hostname_binding.m0_hostname_binding.id
-  ssl_state           = "SniEnabled"
-}
-
-resource "azurerm_app_service_certificate_binding" "m0_www_cert_binding" {
-  certificate_id      = azurerm_app_service_certificate.m0_cert.id
-  hostname_binding_id = azurerm_app_service_custom_hostname_binding.m0_www_hostname_binding.id
-  ssl_state           = "SniEnabled"
-}

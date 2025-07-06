@@ -102,6 +102,12 @@ module "dns_staging" {
   resource_group_location = local.resource_group_location
   zone_name               = "tietokila.fi"
 }
+module "dns_m0" {
+  source                  = "./modules/dns/root"
+  env_name                = "m0"
+  resource_group_location = local.resource_group_location
+  zone_name               = "muistinnollaus.fi"
+}
 module "dns_github" {
   source = "./modules/dns/github"
 
@@ -466,6 +472,8 @@ module "m0" {
   app_service_plan_id                 = module.common.tikweb_app_plan_id
   web_resource_group_name             = module.common.resource_group_name
   mail_dns_resource_group_name        = module.dns_prod.resource_group_name
+  m0_dns_zone_name                    = module.dns_m0.root_zone_name
+  m0_dns_resource_group_name          = module.dns_m0.resource_group_name
   postgres_server_fqdn                = module.common.postgres_server_fqdn
   postgres_admin_password             = module.common.postgres_admin_password
   postgres_server_id                  = module.common.postgres_server_id
