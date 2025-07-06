@@ -225,7 +225,7 @@ resource "azurerm_key_vault_secret" "cms_password" {
 }
 module "ilmo" {
   source                  = "./modules/ilmo"
-  env_name                = "prod"
+  environment             = "prod"
   tikweb_rg_name          = module.common.resource_group_name
   tikweb_rg_location      = module.common.resource_group_location
   tikweb_app_plan_id      = module.common.tikweb_app_plan_id
@@ -248,7 +248,7 @@ module "ilmo" {
 
 module "ilmo_staging" {
   source                  = "./modules/ilmo_staging"
-  env_name                = "staging"
+  environment             = "staging"
   tikweb_rg_name          = module.common.resource_group_name
   tikweb_rg_location      = module.common.resource_group_location
   tikweb_app_plan_id      = module.common.tikweb_app_plan_id

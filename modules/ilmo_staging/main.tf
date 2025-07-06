@@ -1,5 +1,5 @@
 locals {
-  db_name = "${var.env_name}_ilmo_db"
+  db_name = "${var.environment}_ilmo_db"
 }
 
 resource "azurerm_postgresql_flexible_server_database" "ilmo_db_new" {
@@ -10,7 +10,7 @@ resource "azurerm_postgresql_flexible_server_database" "ilmo_db_new" {
 
 
 resource "azurerm_linux_web_app" "ilmo_backend" {
-  name                = "tik-ilmo-${var.env_name}-app"
+  name                = "tik-ilmo-${var.environment}-app"
   location            = var.tikweb_rg_location
   resource_group_name = var.tikweb_rg_name
   service_plan_id     = var.tikweb_app_plan_id
@@ -60,7 +60,7 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     BASE_URL          = var.website_url
     EVENT_DETAILS_URL = "${var.website_url}/{lang}/events/{slug}"
     EDIT_SIGNUP_URL   = "${var.website_url}/{lang}/signups/{id}/{editToken}"
-    ADMIN_URL         = "https://tik-ilmo-${var.env_name}-app.azurewebsites.net/admin"
+    ADMIN_URL         = "https://tik-ilmo-${var.environment}-app.azurewebsites.net/admin"
 
     ICAL_UID_DOMAIN = "tietokilta.fi"
 
