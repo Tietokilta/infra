@@ -22,7 +22,7 @@ resource "azurerm_subnet" "forum_subnet" {
 }
 
 resource "azurerm_public_ip" "forum_ip" {
-  name                = "vaalit-${var.env_name}-ip"
+  name                = "vaalit-${var.env_name}-ip-2"
   resource_group_name = azurerm_resource_group.forum_rg.name
   location            = azurerm_resource_group.forum_rg.location
   allocation_method   = "Static"
@@ -75,10 +75,4 @@ resource "azurerm_virtual_machine" "forum_vm" {
     ]
   }
 
-}
-
-// IP addresses can only be read after the VM exists; use a data source dependent on the VM
-data "azurerm_public_ip" "forum_ip" {
-  name                = azurerm_public_ip.forum_ip.name
-  resource_group_name = azurerm_virtual_machine.forum_vm.resource_group_name
 }

@@ -4,7 +4,7 @@ resource "azurerm_dns_a_record" "forum_a" {
   resource_group_name = var.dns_resource_group_name
   zone_name           = var.root_zone_name
   ttl                 = 300
-  records             = [data.azurerm_public_ip.forum_ip.ip_address]
+  records             = [azurerm_public_ip.forum_ip.ip_address]
 }
 
 # MX records for Mailgun
