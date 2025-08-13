@@ -39,14 +39,15 @@ resource "azurerm_linux_web_app" "isopistekortti" {
 
   https_only = true
   app_settings = {
-    PORT         = 3000
-    BIND_ADDRESS = "0.0.0.0"
-    JWT_SECRET   = random_password.jwt_secret.result
-    NODE_ENV     = "production"
-    DB_URL       = var.postgres_server_fqdn
-    DB_USER      = var.postgres_admin_username
-    DB_PASSWORD  = var.postgres_admin_password
-    DB_DATABASE  = local.postgres_db_name
+    WEBSITES_PORT = 3000
+    PORT          = 3000
+    BIND_ADDRESS  = "0.0.0.0"
+    JWT_SECRET    = random_password.jwt_secret.result
+    NODE_ENV      = "production"
+    DB_URL        = var.postgres_server_fqdn
+    DB_USER       = var.postgres_admin_username
+    DB_PASSWORD   = var.postgres_admin_password
+    DB_DATABASE   = local.postgres_db_name
   }
 
   lifecycle {
