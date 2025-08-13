@@ -2,8 +2,8 @@
 output "azure_client_ids" {
   description = "Mapping of GitHub repositories to their Azure AD Application Client IDs."
   value = {
-    for repo, app in azuread_application_registration.github_oidc :
-    repo => app.client_id
+    for repo, role_module in module.role :
+    repo => role_module.client_id
   }
 }
 
