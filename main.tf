@@ -450,6 +450,7 @@ module "github-ci-roles" {
     "Tietokilta/web" : [module.web.web_app_id]
     "Tietokilta/laskugeneraattori" : [module.invoicing.invoicing_app_id]
     "Tietokilta/ilmomasiina" : [module.ilmo.app_id]
+    "Tietokilta/ISOpistekortti" : [module.isopistekortti.app_id]
     "Tietokilta/m0-ilmotunkki" : [module.m0.frontend_app_id, module.m0.strapi_app_id]
     "Tietokilta/infra" : [module.status.app_id]
   }
@@ -507,4 +508,20 @@ module "status" {
   telegram_token                       = module.keyvault.secrets["status-telegram-token"]
   telegram_channel_id                  = module.keyvault.secrets["status-telegram-channel-id"]
   subdomain                            = "status"
+}
+
+module "isopistekortti" {
+  source                  = "./modules/isopistekortti"
+  resource_group_location = local.resource_group_location
+  resource_group_name     = module.common.resource_group_name
+  app_service_plan_id     = module.common.tikweb_app_plan_id
+  postgres_server_id      = module.common.postgres_server_id
+  postgres_server_fqdn    = module.common.postgres_server_fqdn
+  postgres_admin_username = module.common.postgres_admin_username
+  postgres_admin_password = module.common.postgres_admin_password
+  subdomain               = "iso"
+  environment             = "prod"
+  root_zone_name          = module.dns_prod.root_zone_name
+  dns_resource_group_name = module.dns_prod.resource_group_name
+  acme_account_key        = module.common.acme_account_key
 }
