@@ -452,6 +452,7 @@ module "github-ci-roles" {
     "Tietokilta/ilmomasiina" : [module.ilmo.app_id]
     "Tietokilta/ISOpistekortti" : [module.isopistekortti.app_id]
     "Tietokilta/m0-ilmotunkki" : [module.m0.frontend_app_id, module.m0.strapi_app_id]
+    "Tietokilta/juvusivu" : [module.juvusivu.juvusivu_app_id]
     "Tietokilta/infra" : [module.status.app_id]
   }
 }
@@ -494,6 +495,18 @@ module "m0" {
   strapi_token                        = module.keyvault.secrets["muistinnollaus-strapi-token"]
   muistinnollaus_paytrail_merchant_id = module.keyvault.secrets["muistinnollaus-paytrail-merchant-id"]
   muistinnollaus_paytrail_secret_key  = module.keyvault.secrets["muistinnollaus-paytrail-secret-key"]
+}
+
+module "juvusivu" {
+  source                               = "./modules/juvusivu"
+  environment                          = "prod"
+  app_service_plan_id                  = module.common.tikweb_app_plan_id
+  app_service_plan_location            = local.resource_group_location
+  app_service_plan_resource_group_name = module.common.resource_group_name
+  location                             = local.resource_group_location
+  postgres_server_fqdn                 = module.common.postgres_server_fqdn
+  postgres_admin_password              = module.common.postgres_admin_password
+  postgres_server_id                   = module.common.postgres_server_id
 }
 
 module "status" {
