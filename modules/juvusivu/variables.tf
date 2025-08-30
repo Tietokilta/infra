@@ -31,3 +31,17 @@ variable "postgres_admin_password" {
 variable "postgres_server_id" {
   type = string
 }
+
+// DNS
+variable "acme_account_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "dns_resource_group_name" {
+  type = string
+}
+
+variable "root_zone_name" {
+  type = string
+}
