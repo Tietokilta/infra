@@ -89,3 +89,18 @@ resource "azurerm_linux_web_app" "juvusivu" {
     DB_PORT     = 5432
   }
 }
+
+module "juvusivu_hostname" {
+  source = "../app_service_hostname"
+
+  subdomain                       = "@"
+  dns_resource_group_name         = var.dns_resource_group_name
+  custom_domain_verification_id   = azurerm_linux_web_app.juvusivu.custom_domain_verification_id
+  app_service_name                = azurerm_linux_web_app.juvusivu.name
+  app_service_resource_group_name = var.app_service_plan_resource_group_name
+  app_service_location            = var.app_service_plan_location
+  app_service_default_hostname    = azurerm_linux_web_app.juvusivu.default_hostname
+  acme_account_key                = var.acme_account_key
+  certificate_name                = "juvusivu-cert"
+  root_zone_name                  = var.root_zone_name
+}

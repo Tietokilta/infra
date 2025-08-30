@@ -513,6 +513,9 @@ module "juvusivu" {
   postgres_server_fqdn                 = module.common.postgres_server_fqdn
   postgres_admin_password              = module.common.postgres_admin_password
   postgres_server_id                   = module.common.postgres_server_id
+  acme_account_key                     = module.common.acme_account_key
+  dns_resource_group_name              = module.dns_juvusivu.resource_group_name
+  root_zone_name                       = module.dns_juvusivu.root_zone_name
 }
 
 module "status" {
