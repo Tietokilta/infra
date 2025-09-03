@@ -108,6 +108,12 @@ module "dns_m0" {
   resource_group_location = local.resource_group_location
   zone_name               = "muistinnollaus.fi"
 }
+module "dns_juvusivu" {
+  source                  = "./modules/dns/root"
+  env_name                = "prod"
+  resource_group_location = local.resource_group_location
+  zone_name               = "juhlavuosi.fi"
+}
 module "tenttiarkisto_dns_zone" {
   source                  = "./modules/dns/root"
   env_name                = "prod"
