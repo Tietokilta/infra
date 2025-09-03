@@ -110,7 +110,7 @@ module "dns_m0" {
 }
 module "dns_juvusivu" {
   source                  = "./modules/dns/root"
-  env_name                = "prod"
+  env_name                = "juvu"
   resource_group_location = local.resource_group_location
   zone_name               = "juhlavuosi.fi"
 }
