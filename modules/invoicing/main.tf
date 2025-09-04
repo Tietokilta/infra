@@ -33,6 +33,12 @@ resource "azurerm_linux_web_app" "invoice_generator" {
     MAILGUN_TO       = "Rahastonhoitaja <rahastonhoitaja@tietokilta.fi>"
     MAILGUN_FROM     = "noreply@laskutus.tietokilta.fi"
   }
+  lifecycle {
+    // image is deployed by web-repos GHA workflow
+    ignore_changes = [
+      site_config.0.application_stack.0.docker_image_name,
+    ]
+  }
 }
 
 module "app_service_hostname" {
