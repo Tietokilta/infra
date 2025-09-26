@@ -3,6 +3,11 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
+resource "random_password" "guild-room-infoscreen-token" {
+  length  = 32
+  special = false
+}
+
 # App Service (Linux Web App)
 resource "azurerm_linux_web_app" "status_app" {
   name                = "tik-status-${terraform.workspace}"
@@ -32,6 +37,7 @@ resource "azurerm_linux_web_app" "status_app" {
     WEBSITES_PORT                       = "8080"
     TELEGRAM_TOKEN                      = var.telegram_token
     ALERT_CHANNEL_ID                    = var.telegram_channel_id
+    INFOSCREEN_TOKEN                    = random_password.guild-room-infoscreen-token.result
   }
 }
 
