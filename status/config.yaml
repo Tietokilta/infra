@@ -98,3 +98,10 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
+
+  - name: guild-room-infoscreen
+    token: "$INFOSCREEN_TOKEN"
+    interval: 2m
+    alerts:
+      - type: telegram
+        send-on-resolved: true
