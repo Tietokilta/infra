@@ -87,6 +87,8 @@ resource "azurerm_linux_web_app" "juvusivu" {
     DB_HOST     = var.postgres_server_fqdn
     DB_NAME     = local.db_name
     DB_PORT     = 5432
+
+    PRIMARY_DOMAIN = var.root_zone_name // For m0 redirect
   }
 }
 
