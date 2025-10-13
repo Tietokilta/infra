@@ -516,6 +516,8 @@ module "juvusivu" {
   acme_account_key                     = module.common.acme_account_key
   dns_resource_group_name              = module.dns_juvusivu.resource_group_name
   root_zone_name                       = module.dns_juvusivu.root_zone_name
+  m0_dns_resource_group_name           = module.dns_m0.resource_group_name
+  m0_dns_zone_name                     = module.dns_m0.root_zone_name
 }
 
 module "status" {

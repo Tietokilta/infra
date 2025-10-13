@@ -45,3 +45,11 @@ variable "dns_resource_group_name" {
 variable "root_zone_name" {
   type = string
 }
+
+// M0 dns
+variable "m0_dns_resource_group_name" {
+  type = string
+}
+variable "m0_dns_zone_name" {
+  type = string
+}

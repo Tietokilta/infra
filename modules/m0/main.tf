@@ -100,19 +100,3 @@ resource "azurerm_linux_web_app" "strapi" {
     STORAGE_CONTAINER_NAME = module.storage.container_name
   }
 }
-
-
-module "app_service_hostname" {
-  source                          = "../app_service_hostname"
-  subdomain                       = "@"
-  root_zone_name                  = local.fqdn
-  dns_resource_group_name         = var.m0_dns_resource_group_name
-  custom_domain_verification_id   = azurerm_linux_web_app.frontend.custom_domain_verification_id
-  app_service_name                = azurerm_linux_web_app.frontend.name
-  app_service_resource_group_name = var.web_resource_group_name
-  app_service_location            = var.resource_group_location
-  acme_account_key                = var.acme_account_key
-  certificate_name                = "m0-cert-${terraform.workspace}"
-  app_service_default_hostname    = azurerm_linux_web_app.frontend.default_hostname
-}
-
