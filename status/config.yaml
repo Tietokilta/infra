@@ -120,7 +120,8 @@ endpoints:
 external-endpoints:
   - name: guild-room-infoscreen
     token: "$INFOSCREEN_TOKEN"
-    interval: 2m
+    heartbeat: 
+      interval: 5m
     alerts:
       - type: telegram
         send-on-resolved: true
