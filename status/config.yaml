@@ -81,6 +81,24 @@ endpoints:
       - type: telegram
         send-on-resolved: true
 
+  - name: muistinnollaus
+    url: "https://muistinnollaus.fi"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+
+  - name: juvusivu
+    url: "https://juhlavuosi.fi"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+
   - name: vaultwarden
     url: "https://vault.tietokilta.fi/api/alive"
     conditions:
