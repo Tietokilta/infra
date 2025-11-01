@@ -384,6 +384,24 @@ module "mattermost" {
   mattermost_ip = module.forum.forum_ip
 }
 
+module "discourse" {
+  source = "./modules/discourse"
+
+  dns_resource_group_name = module.dns_prod.resource_group_name
+  root_zone_name          = module.dns_prod.root_zone_name
+  subdomain               = "vaalit.staging"
+  discourse_ip            = "46.62.222.17"
+}
+
+module "tikpannu" {
+  source = "./modules/tikpannu"
+
+  dns_resource_group_name = module.dns_prod.resource_group_name
+  root_zone_name          = module.dns_prod.root_zone_name
+  subdomain               = "pannu"
+  tikpannu_ip             = "46.62.222.17"
+}
+
 module "invoicing" {
   source = "./modules/invoicing"
 
