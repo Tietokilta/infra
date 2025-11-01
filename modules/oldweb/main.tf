@@ -8,11 +8,22 @@ resource "azurerm_resource_group" "rg" {
 }
 
 # Create postgres database
-resource "azurerm_postgresql_flexible_server_database" "oldweb_db" {
-  name      = local.db_name
-  server_id = var.postgres_server_id
-  charset   = "utf8"
+module "service_database" {
+  source = "../service_database"
+
+  db_name                 = local.db_name
+  postgres_server_id      = var.postgres_server_id
+  postgres_admin_username = var.postgres_admin_username
+  postgres_admin_password = var.postgres_admin_password
+  postgres_server_fqdn    = var.postgres_server_fqdn
 }
+
+# Database configuration moved to separate module
+moved {
+  from = azurerm_postgresql_flexible_server_database.oldweb_db
+  to   = module.service_database.azurerm_postgresql_flexible_server_database.database
+}
+
 
 # Storage account
 resource "azurerm_storage_account" "storage_account" {
@@ -86,10 +97,10 @@ resource "azurerm_linux_web_app" "oldweb_backend" {
     WEBSITES_PORT = 3000
     PORT          = 3000
 
-    DB_USERNAME = "tietokilta"
-    DB_PASSWORD = var.postgres_admin_password
+    DB_USERNAME = module.service_database.db_user
+    DB_PASSWORD = module.service_database.db_password
     DB_HOST     = var.postgres_server_fqdn
-    DB_DATABASE = local.db_name
+    DB_DATABASE = module.service_database.db_name
     DB_PORT     = 5432
 
   }
