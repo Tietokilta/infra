@@ -85,7 +85,10 @@ module "keyvault" {
     "vaultwarden-smtp-username",
     "vaultwarden-smtp-password",
     "status-telegram-token",
-    "status-telegram-channel-id"
+    "status-telegram-channel-id",
+    "registry-mailgun-api-key",
+    "registry-stripe-api-key",
+    "registry-stripe-webhook-secret"
   ]
 }
 
@@ -166,6 +169,7 @@ module "dns_misc_prod" {
     module.invoicing.fqdn,
     module.forum.fqdn,
     module.mattermost.fqdn,
+    module.registry.fqdn,
   ]
 }
 
@@ -400,14 +404,26 @@ module "invoicing" {
 }
 
 module "registry" {
-  source = "./modules/registry"
-
+  source                  = "./modules/registry"
+  resource_group_location = local.resource_group_location
+  resource_group_name     = module.common.resource_group_name
+  app_service_plan_id     = module.common.tikweb_app_plan_id
+  postgres_server_id      = module.common.postgres_server_id
+  postgres_server_fqdn    = module.common.postgres_server_fqdn
+  postgres_admin_username = module.common.postgres_admin_username
+  postgres_admin_password = module.common.postgres_admin_password
+  environment             = "prod"
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "rekisteri"
-
-  dkim_selector = "email"
-  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDpz7YQQUpscjJYLhaXr+jcyN30EwI90CmjRmsvuN1XrsZjTJgXTxATi0WlV80FrWuTBsV2WTv8dK7F7S0xnkh515IxTBrDMau6jUp90nWNp5Oy9DkqW8fNPJUiFWiazWilOPXuARjlOgk18e8d/CvTpke0R1G/S12KXkTshO06JQIDAQAB"
+  acme_account_key        = module.common.acme_account_key
+  mailgun_url             = "https://api.eu.mailgun.net"
+  mailgun_domain          = "rekisteri.tietokilta.fi"
+  mailgun_api_key         = module.keyvault.secrets["registry-mailgun-api-key"]
+  stripe_api_key          = module.keyvault.secrets["registry-stripe-api-key"]
+  stripe_webhook_secret   = module.keyvault.secrets["registry-stripe-webhook-secret"]
+  dkim_selector           = "email"
+  dkim_key                = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDpz7YQQUpscjJYLhaXr+jcyN30EwI90CmjRmsvuN1XrsZjTJgXTxATi0WlV80FrWuTBsV2WTv8dK7F7S0xnkh515IxTBrDMau6jUp90nWNp5Oy9DkqW8fNPJUiFWiazWilOPXuARjlOgk18e8d/CvTpke0R1G/S12KXkTshO06JQIDAQAB"
 }
 
 module "oldweb" {
@@ -461,6 +477,7 @@ module "github-ci-roles" {
     "Tietokilta/m0-ilmotunkki" : [module.m0.frontend_app_id, module.m0.strapi_app_id]
     "Tietokilta/juvusivu" : [module.juvusivu.juvusivu_app_id]
     "Tietokilta/infra" : [module.status.app_id]
+    "Tietokilta/rekisteri" : [module.registry.registry_app_id]
   }
 }
 # Output Azure Client IDs for Each Repository
