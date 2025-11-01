@@ -117,10 +117,19 @@ endpoints:
       - type: telegram
         send-on-resolved: true
 
+  - name: rekisteri
+    url: "https://rekisteri.tietokilta.fi"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+
 external-endpoints:
   - name: guild-room-infoscreen
     token: "$INFOSCREEN_TOKEN"
-    heartbeat: 
+    heartbeat:
       interval: 5m
     alerts:
       - type: telegram
