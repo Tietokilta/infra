@@ -33,7 +33,6 @@ resource "postgresql_grant" "db_role" {
 resource "postgresql_grant" "tables_access" {
   provider    = postgresql.admin
   database    = azurerm_postgresql_flexible_server_database.database.name
-  schema      = "public"
   object_type = "table"
   objects     = ["*"]
   privileges  = ["ALL"]
@@ -44,7 +43,6 @@ resource "postgresql_grant" "tables_access" {
 resource "postgresql_default_privileges" "tables_access_future" {
   provider    = postgresql.admin
   database    = azurerm_postgresql_flexible_server_database.database.name
-  schema      = "public"
   object_type = "table"
   privileges  = ["ALL"]
   role        = postgresql_role.db_user.name
