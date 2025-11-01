@@ -41,10 +41,13 @@ resource "azurerm_linux_web_app" "registry" {
   app_settings = {
     NODE_ENV = "production"
 
-    DB_URL      = var.postgres_server_fqdn
-    DB_USER     = module.service_database.db_user
-    DB_PASSWORD = module.service_database.db_password
-    DB_DATABASE = module.service_database.db_name
+    DATABASE_URL = format(
+      "postgres://%s:%s@%s:5432/%s",
+      module.service_database.db_user,
+      urlencode(module.service_database.db_password),
+      var.postgres_server_fqdn,
+      local.postgres_db_name
+    )
 
     MAILGUN_SENDER  = "noreply@${var.mailgun_domain}"
     MAILGUN_API_KEY = var.mailgun_api_key
