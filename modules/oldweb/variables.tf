@@ -15,6 +15,10 @@ variable "postgres_admin_password" {
   sensitive = true
 }
 
+variable "postgres_admin_username" {
+  type = string
+}
+
 variable "postgres_server_id" {
   type = string
 }
