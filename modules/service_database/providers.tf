@@ -9,10 +9,11 @@ terraform {
 
 # Configure aliased provider to connect as the Postgres administrator
 provider "postgresql" {
-  alias    = "admin"
-  host     = var.postgres_server_fqdn
-  port     = 5432
-  username = var.postgres_admin_username
-  password = var.postgres_admin_password
-  sslmode  = "require"
+  alias     = "admin"
+  host      = var.postgres_server_fqdn
+  port      = 5432
+  username  = var.postgres_admin_username
+  password  = var.postgres_admin_password
+  sslmode   = "require"
+  superuser = false
 }
