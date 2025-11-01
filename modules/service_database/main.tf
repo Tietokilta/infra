@@ -29,22 +29,14 @@ resource "postgresql_grant" "db_role" {
   object_type = "database"
 }
 
-# Grant access to existing tables
-resource "postgresql_grant" "tables_access" {
-  provider    = postgresql.admin
-  database    = azurerm_postgresql_flexible_server_database.database.name
-  object_type = "table"
-  objects     = ["*"]
-  privileges  = ["ALL"]
-  role        = postgresql_role.db_user.name
-}
+# Make created user the owner of the database
+resource "postgresql_database" "service_db_owner" {
+  provider = postgresql.admin
+  name     = azurerm_postgresql_flexible_server_database.database.name
+  owner    = postgresql_role.db_user.name
 
-# Default access to future tables
-resource "postgresql_default_privileges" "tables_access_future" {
-  provider    = postgresql.admin
-  database    = azurerm_postgresql_flexible_server_database.database.name
-  object_type = "table"
-  privileges  = ["ALL"]
-  role        = postgresql_role.db_user.name
-  owner       = postgresql_role.db_user.name
+  depends_on = [
+    azurerm_postgresql_flexible_server_database.database,
+    postgresql_role.db_user
+  ]
 }
