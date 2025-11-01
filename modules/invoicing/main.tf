@@ -12,6 +12,9 @@ resource "azurerm_linux_web_app" "invoice_generator" {
     http2_enabled = true
   }
   logs {
+    application_logs {
+      file_system_level = "Information"
+    }
     http_logs {
       file_system {
         retention_in_days = 7
