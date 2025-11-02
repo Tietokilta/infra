@@ -3,10 +3,20 @@ locals {
   db_name = "m0_${terraform.workspace}"
 }
 
-resource "azurerm_postgresql_flexible_server_database" "m0_db" {
-  name      = local.db_name
-  server_id = var.postgres_server_id
-  charset   = "utf8"
+module "service_database" {
+  source = "../service_database"
+
+  db_name                 = local.db_name
+  postgres_server_id      = var.postgres_server_id
+  postgres_admin_username = var.postgres_admin_username
+  postgres_admin_password = var.postgres_admin_password
+  postgres_server_fqdn    = var.postgres_server_fqdn
+}
+
+# Database configuration moved to separate module
+moved {
+  from = azurerm_postgresql_flexible_server_database.m0_db
+  to   = module.service_database.azurerm_postgresql_flexible_server_database.database
 }
 
 
@@ -86,8 +96,8 @@ resource "azurerm_linux_web_app" "strapi" {
   }
   app_settings = {
     NODE_ENV               = "production"
-    DATABASE_USERNAME      = "tietokilta"
-    DATABASE_PASSWORD      = var.postgres_admin_password
+    DATABASE_USERNAME      = module.service_database.db_user
+    DATABASE_PASSWORD      = module.service_database.db_password
     DATABASE_HOST          = var.postgres_server_fqdn
     DATABASE_SSL           = true
     DATABASE_NAME          = local.db_name
