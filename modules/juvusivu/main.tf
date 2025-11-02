@@ -8,10 +8,20 @@ resource "azurerm_resource_group" "rg" {
 }
 
 # Create postgres database
-resource "azurerm_postgresql_flexible_server_database" "juvusivu_db" {
-  name      = local.db_name
-  server_id = var.postgres_server_id
-  charset   = "utf8"
+module "service_database" {
+  source = "../service_database"
+
+  db_name                 = local.db_name
+  postgres_server_id      = var.postgres_server_id
+  postgres_admin_username = var.postgres_admin_username
+  postgres_admin_password = var.postgres_admin_password
+  postgres_server_fqdn    = var.postgres_server_fqdn
+}
+
+# Database configuration moved to separate module
+moved {
+  from = azurerm_postgresql_flexible_server_database.juvusivu_db
+  to   = module.service_database.azurerm_postgresql_flexible_server_database.database
 }
 
 resource "azurerm_storage_account" "storage_account" {
