@@ -3,6 +3,11 @@ resource "azurerm_postgresql_flexible_server_database" "database" {
   name      = var.db_name
   server_id = var.postgres_server_id
   charset   = "utf8"
+
+  # Prevent accidental deletion of the database ":D"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Generate a password for the application database user that will only have access to this DB
