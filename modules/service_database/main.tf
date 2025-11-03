@@ -43,3 +43,13 @@ resource "postgresql_grant" "tables_all" {
   privileges  = ["ALL"]
   role        = postgresql_role.db_user.name
 }
+
+# Grant all privileges on the public schema so the user can create types, tables, etc.
+resource "postgresql_grant" "schema_all" {
+  provider    = postgresql.admin
+  database    = azurerm_postgresql_flexible_server_database.database.name
+  schema      = "public"
+  object_type = "schema"
+  privileges  = ["ALL"]
+  role        = postgresql_role.db_user.name
+}
