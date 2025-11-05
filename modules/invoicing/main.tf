@@ -35,6 +35,8 @@ resource "azurerm_linux_web_app" "invoice_generator" {
     MAILGUN_PASSWORD = var.mailgun_api_key
     MAILGUN_TO       = "Rahastonhoitaja <rahastonhoitaja@tietokilta.fi>"
     MAILGUN_FROM     = "noreply@laskutus.tietokilta.fi"
+    # https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/headers.md
+    IP_EXTRACTOR_HEADER = "X-Client-IP"
   }
   lifecycle {
     // image is deployed by web-repos GHA workflow
