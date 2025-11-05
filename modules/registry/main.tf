@@ -49,7 +49,10 @@ resource "azurerm_linux_web_app" "registry" {
       local.postgres_db_name
     )
 
-    MAILGUN_SENDER  = "noreply@${var.mailgun_domain}"
+    ADDRESS_HEADER = "X-Client-IP" # See: https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/headers.md
+    PUBLIC_URL     = "https://${module.app_service_hostname.fqdn}"
+
+    MAILGUN_SENDER  = "TiK-rekisteri <noreply@${var.mailgun_domain}>"
     MAILGUN_API_KEY = var.mailgun_api_key
     MAILGUN_DOMAIN  = var.mailgun_domain
     MAILGUN_URL     = var.mailgun_url
