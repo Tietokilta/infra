@@ -59,6 +59,11 @@ resource "azurerm_linux_web_app" "registry" {
 
     STRIPE_API_KEY        = var.stripe_api_key
     STRIPE_WEBHOOK_SECRET = var.stripe_webhook_secret
+
+    # Passkey/WebAuthn Configuration
+    RP_NAME   = "Tietokilta Rekisteri"
+    RP_ID     = module.app_service_hostname.fqdn
+    RP_ORIGIN = "https://${module.app_service_hostname.fqdn}"
   }
 
   lifecycle {
