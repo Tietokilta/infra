@@ -4,6 +4,10 @@
     systems.url = "github:nix-systems/default";
     devenv.url = "github:cachix/devenv";
     devenv.inputs.nixpkgs.follows = "nixpkgs";
+    tikbots = {
+      url = "github:Tietokilta/tikbots";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -32,7 +36,10 @@
         devenv-test = self.devShells.${system}.default.config.test;
       });
 
-      nixosConfigurations.tikpannu = import ./tikpannu-nixos-config { inherit inputs; };
+      nixosConfigurations.tikpannu = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [ ./tikpannu-nixos-config/configuration.nix ];
+      };
 
       devShells = forEachSystem (
         system:
@@ -52,6 +59,7 @@
                   (azure-cli.withExtensions [
                     azure-cli-extensions.ssh
                   ])
+                  sops
                 ];
                 languages.terraform.enable = true;
 

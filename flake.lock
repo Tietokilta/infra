@@ -204,7 +204,8 @@
         "devenv": "devenv",
         "nixpkgs": "nixpkgs",
         "sops-nix": "sops-nix",
-        "systems": "systems"
+        "systems": "systems",
+        "tikbots": "tikbots"
       }
     },
     "sops-nix": {
@@ -239,6 +240,26 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "tikbots": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1763745013,
+        "narHash": "sha256-VMXjXEUA+clMdqDZVQySZVufX6+J+NeOYs49f+BQ8JI=",
+        "owner": "Tietokilta",
+        "repo": "tikbots",
+        "rev": "2fbea5a57b0228b578d211d8c414b49d596efbab",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Tietokilta",
+        "repo": "tikbots",
         "type": "github"
       }
     }
