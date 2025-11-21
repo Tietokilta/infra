@@ -240,6 +240,7 @@ module "ilmo" {
   tikweb_rg_location      = module.common.resource_group_location
   tikweb_app_plan_id      = module.common.tikweb_app_plan_id
   postgres_server_fqdn    = module.common.postgres_server_fqdn
+  postgres_admin_username = module.common.postgres_admin_username
   postgres_admin_password = module.common.postgres_admin_password
   postgres_server_id      = module.common.postgres_server_id
   edit_token_secret       = module.keyvault.secrets["ilmo-edit-token-secret"]
@@ -263,6 +264,7 @@ module "ilmo_staging" {
   tikweb_rg_location      = module.common.resource_group_location
   tikweb_app_plan_id      = module.common.tikweb_app_plan_id
   postgres_server_fqdn    = module.common.postgres_server_fqdn
+  postgres_admin_username = module.common.postgres_admin_username
   postgres_admin_password = module.common.postgres_admin_password
   postgres_server_id      = module.common.postgres_server_id
   edit_token_secret       = module.keyvault.secrets["ilmo-edit-token-secret"]
@@ -288,6 +290,7 @@ module "tenttiarkisto" {
   postgres_resource_group_name = module.common.resource_group_name
   resource_group_location      = local.resource_group_location
   postgres_server_fqdn         = module.common.postgres_server_fqdn
+  postgres_admin_username      = module.common.postgres_admin_username
   postgres_admin_password      = module.common.postgres_admin_password
   postgres_server_id           = module.common.postgres_server_id
   tikweb_app_plan_id           = module.common.tikweb_app_plan_id
@@ -526,6 +529,7 @@ module "m0" {
   m0_dns_zone_name                    = module.dns_m0.root_zone_name
   m0_dns_resource_group_name          = module.dns_m0.resource_group_name
   postgres_server_fqdn                = module.common.postgres_server_fqdn
+  postgres_admin_username             = module.common.postgres_admin_username
   postgres_admin_password             = module.common.postgres_admin_password
   postgres_server_id                  = module.common.postgres_server_id
   dkim_key                            = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Ho1FBsK9IyD0dl7gA/fh8vA1abuLrgB/e//bIrcFb8NS/Ze3W2cMUHZ7T3UvjnjlPhutWMblBX39oFBj9jp+lFpy+AwKSYBz7GZ/WCdZTsN01U6miUGiMEdfB/pOmIXKJKtkT9wHk7RJkRl9MTnUY60UgVweZFfdJbAnMXNKvulEZAEsKlE+8M5qDJDvnGNs99/wDl9nam5KyGPFLTzxeBSlsEQo6qa5qPcmn3vxbgVlwrFDt9KmbFcgAbq3wZ+W0MwwL54wPZVmHCwObi4sIptokmZVlmaXyvTwJ8eklrwJD51TLlpinwNBUpvgFGWDC62nLLt3wOHFSadtuxWCwIDAQAB"
