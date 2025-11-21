@@ -1,0 +1,75 @@
+name: Build & Deploy tikpannu
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    paths:
+      - */*.nix
+      - tikpannu-nixos-config/*
+      - .github/workflows/deploy-pannu.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v24
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Build NixOS Configuration
+        run: |
+          nixos-rebuild build \
+            --flake .#tikpannu
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v24
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          
+          cat >> ~/.ssh/config <<EOF
+          Host pannu.tietokilta.fi
+            IdentityFile ~/.ssh/deploy_key
+            User deploy
+          EOF
+
+      - name: Build and Deploy NixOS Configuration
+        run: |
+          nix copy .#nixosConfigurations.tikpannu.config.system.build.toplevel \
+            --to ssh://pannu.tietokilta.fi
+
+          ssh pannu.tietokilta.fi '$(realpath $(which rebuild-from-infra)) "$GITHUB_SHA"'
+
+      - name: Verify Deployment
+        run: |
+          ssh pannu.tietokilta.fi "nixos-version"
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f ~/.ssh/deploy_key
