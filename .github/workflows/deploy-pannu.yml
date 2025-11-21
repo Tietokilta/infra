@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - */*.nix
+      - "**/*.nix"
       - tikpannu-nixos-config/*
       - .github/workflows/deploy-pannu.yml
   workflow_dispatch:
@@ -16,32 +16,33 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v24
+        uses: cachix/install-nix-action@v31
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
+          extra-nix-config: |
+            experimental-features = nix-command flakes
 
       - name: Build NixOS Configuration
         run: |
-          nixos-rebuild build \
-            --flake .#tikpannu
+          nix build .#nixosConfigurations.tikpannu.config.system.build.toplevel -L
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v24
+        uses: cachix/install-nix-action@v31
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
+          extra-nix-config: |
+            experimental-features = nix-command flakes
 
       - name: Configure SSH
         env:
@@ -51,6 +52,8 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
           
           cat >> ~/.ssh/config <<EOF
           Host pannu.tietokilta.fi
@@ -63,7 +66,7 @@ jobs:
           nix copy .#nixosConfigurations.tikpannu.config.system.build.toplevel \
             --to ssh://pannu.tietokilta.fi
 
-          ssh pannu.tietokilta.fi '$(realpath $(which rebuild-from-infra)) "$GITHUB_SHA"'
+          ssh pannu.tietokilta.fi 'sudo $(realpath $(which rebuild-from-infra)) "$GITHUB_SHA"'
 
       - name: Verify Deployment
         run: |

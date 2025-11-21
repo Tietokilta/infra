@@ -12,7 +12,7 @@ in
 {
   users = {
     users.deploy = {
-      isSystemUser = true;
+      isNormalUser = true; # Needs a login shell and home dir for `nix copy` to work
       openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIByE/o9xtWGDllsqcw3ki5LD7r3lQOmlRPHYnsuflWnA"
       ];
