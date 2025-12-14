@@ -34,22 +34,13 @@ resource "postgresql_grant" "db_role" {
   object_type = "database"
 }
 
-# Grant access to existing tables
-resource "postgresql_grant" "tables_all" {
+# Grant access to various database objects
+resource "postgresql_grant" "object_permissions" {
+  for_each    = toset(["function", "procedure", "routine", "schema", "sequence", "table"])
   provider    = postgresql.admin
   database    = azurerm_postgresql_flexible_server_database.database.name
   schema      = "public"
-  object_type = "table"
-  privileges  = ["ALL"]
-  role        = postgresql_role.db_user.name
-}
-
-# Grant all privileges on the public schema so the user can create types, tables, etc.
-resource "postgresql_grant" "schema_all" {
-  provider    = postgresql.admin
-  database    = azurerm_postgresql_flexible_server_database.database.name
-  schema      = "public"
-  object_type = "schema"
+  object_type = each.key
   privileges  = ["ALL"]
   role        = postgresql_role.db_user.name
 }
