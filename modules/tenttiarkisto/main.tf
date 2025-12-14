@@ -7,13 +7,20 @@ resource "azurerm_resource_group" "tenttiarkisto_rg" {
   location = var.resource_group_location
 }
 
-resource "azurerm_postgresql_flexible_server_database" "tenttiarkisto_db_new" {
-  name      = local.db_name
-  server_id = var.postgres_server_id
-  charset   = "utf8"
-  lifecycle {
-    prevent_destroy = true
-  }
+module "service_database" {
+  source = "../service_database"
+
+  db_name                 = local.db_name
+  postgres_server_id      = var.postgres_server_id
+  postgres_admin_username = var.postgres_admin_username
+  postgres_admin_password = var.postgres_admin_password
+  postgres_server_fqdn    = var.postgres_server_fqdn
+}
+
+# Database configuration moved to separate module
+moved {
+  from = azurerm_postgresql_flexible_server_database.tenttiarkisto_db_new
+  to   = module.service_database.azurerm_postgresql_flexible_server_database.database
 }
 
 resource "azurerm_storage_account" "tenttiarkisto_storage_account" {
@@ -76,9 +83,9 @@ resource "azurerm_linux_web_app" "tenttiarkisto" {
     EXAM_ACCOUNT_KEY  = azurerm_storage_account.tenttiarkisto_storage_account.primary_access_key
     EXAM_CONTAINER    = azurerm_storage_container.tenttiarkisto_storage_container.name
 
-    DB_NAME     = azurerm_postgresql_flexible_server_database.tenttiarkisto_db_new.name
-    DB_USER     = "tietokilta"
-    DB_PASSWORD = var.postgres_admin_password
+    DB_NAME     = module.service_database.db_name
+    DB_USER     = module.service_database.db_user
+    DB_PASSWORD = module.service_database.db_password
     DB_HOST     = var.postgres_server_fqdn
 
     SECRET_KEY = var.django_secret_key
