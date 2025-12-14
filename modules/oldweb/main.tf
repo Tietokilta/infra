@@ -34,6 +34,9 @@ resource "azurerm_storage_account" "storage_account" {
   account_replication_type = "GRS" # Zone redundant https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy
   account_kind             = "StorageV2"
   access_tier              = "Hot"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # File share

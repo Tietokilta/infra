@@ -16,6 +16,9 @@ resource "azurerm_storage_account" "histotik_storage_account" {
   allow_nested_items_to_be_public = true
   https_traffic_only_enabled      = true
   min_tls_version                 = "TLS1_2"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_storage_account_static_website" "histotik_static_webiste" {

@@ -11,6 +11,9 @@ resource "azurerm_postgresql_flexible_server_database" "tenttiarkisto_db_new" {
   name      = local.db_name
   server_id = var.postgres_server_id
   charset   = "utf8"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_storage_account" "tenttiarkisto_storage_account" {
@@ -27,6 +30,9 @@ resource "azurerm_storage_account" "tenttiarkisto_storage_account" {
     delete_retention_policy {
       days = 14
     }
+  }
+  lifecycle {
+    prevent_destroy = true
   }
 }
 
