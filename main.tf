@@ -240,6 +240,7 @@ module "ilmo" {
   tikweb_rg_location      = module.common.resource_group_location
   tikweb_app_plan_id      = module.common.tikweb_app_plan_id
   postgres_server_fqdn    = module.common.postgres_server_fqdn
+  postgres_admin_username = module.common.postgres_admin_username
   postgres_admin_password = module.common.postgres_admin_password
   postgres_server_id      = module.common.postgres_server_id
   edit_token_secret       = module.keyvault.secrets["ilmo-edit-token-secret"]
