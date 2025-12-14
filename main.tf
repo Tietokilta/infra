@@ -290,6 +290,7 @@ module "tenttiarkisto" {
   postgres_resource_group_name = module.common.resource_group_name
   resource_group_location      = local.resource_group_location
   postgres_server_fqdn         = module.common.postgres_server_fqdn
+  postgres_admin_username      = module.common.postgres_admin_username
   postgres_admin_password      = module.common.postgres_admin_password
   postgres_server_id           = module.common.postgres_server_id
   tikweb_app_plan_id           = module.common.tikweb_app_plan_id
