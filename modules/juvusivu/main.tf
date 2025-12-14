@@ -95,10 +95,10 @@ resource "azurerm_linux_web_app" "juvusivu" {
     AZURE_STORAGE_ACCOUNT_BASEURL   = azurerm_storage_account.storage_account.primary_blob_endpoint
     AZURE_STORAGE_CONTAINER_NAME    = azurerm_storage_container.uploads_container.name
 
-    DB_USER     = "tietokilta"
-    DB_PASSWORD = var.postgres_admin_password
+    DB_USER     = module.service_database.db_user
+    DB_PASSWORD = module.service_database.db_password
     DB_HOST     = var.postgres_server_fqdn
-    DB_NAME     = local.db_name
+    DB_NAME     = module.service_database.db_name
     DB_PORT     = 5432
 
     PRIMARY_DOMAIN = var.root_zone_name // For m0 redirect
