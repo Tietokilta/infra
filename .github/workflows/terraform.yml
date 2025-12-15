@@ -6,9 +6,11 @@ on:
       - main
     paths-ignore:
       - "**.md"
+      - "tikpannu-nixos-config/**"
   pull_request:
     paths-ignore:
       - "**.md"
+      - "tikpannu-nixos-config/**"
   workflow_dispatch:
 
 # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
