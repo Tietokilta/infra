@@ -22,6 +22,10 @@ in
     groups.deploy = { };
   };
 
+  # The deploy user needs to be a trusted user to be able to
+  # copy over the coniguration it builds
+  nix.settings.trusted-users = [ "deploy" ];
+
   security.sudo.extraRules = [
     {
       users = [ "deploy" ];
