@@ -6,3 +6,6 @@ terraform.exe
 .devenv
 .direnv
 .pre-commit-config.yaml
+
+result
+*.qcow2
