@@ -4,7 +4,7 @@
 }:
 {
   sops.secrets.summer-body-bot-envFile = {
-    sopsFile = ../../secrets/summer-body-bot.yaml;
+    sopsFile = ../secrets/summer-body-bot.yaml;
     owner = config.services.tikbots.summer-body-bot.user;
   };
 

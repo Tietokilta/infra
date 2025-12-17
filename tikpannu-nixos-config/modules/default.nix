@@ -1,5 +1,6 @@
 {
   imports = [
+    ./secrets/sops.nix
     ./discourse
     ./tikbots
     ./deployment.nix
