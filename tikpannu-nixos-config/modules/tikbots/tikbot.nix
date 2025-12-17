@@ -4,7 +4,7 @@
 }:
 {
   sops.secrets.tikbot-envFile = {
-    sopsFile = ../../secrets/tikbot.yaml;
+    sopsFile = ../secrets/tikbot.yaml;
     owner = config.services.tikbots.tikbot.user;
   };
 
