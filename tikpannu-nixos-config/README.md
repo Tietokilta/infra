@@ -9,6 +9,10 @@ and SummerBodyBot. The configuration also defines the aforementioned services th
 unless you really know what you're doing. `./configuration.nix` has general configuration
 of the system.
 
+> [!Note]  
+> Any imports of third party modules (ie. don't come from Nixpkgs) must be imported in
+> [./third-party-imports.nix](./third-party-imports.nix) so that the NixOS tests can run
+
 ### Secrets
 Secrets are managed using [sops-nix](https://github.com/Mic92/sops-nix), which itself
 uses [sops](https://github.com/getsops/sops). The `sops` CLI tool is required to manage
@@ -68,13 +72,28 @@ nixos-rebuild switch \
   --flake ..#tikpannu
 ```
 
-## Testing the config
+## Testing
+### NixOS tests
+[NixOS tests](https://nixos.org/manual/nixos/stable/#sec-nixos-tests) are a way
+to write tests that start NixOS virtual machines and run commands on those VMs.
+You can see some examples in [./tests](./tests), or look at tests defined for
+[Nixpkgs NixOS modules](https://github.com/NixOS/nixpkgs/tree/master/nixos/tests).
+
+[./tests/base-pannu-config.nix](./tests/base-pannu-config.nix) can be imported
+into a node (with `inputs` passed) to simulate the real configuration. Remember
+to add your test into [./tests/default.nix](./tests/default.nix).
+> [!Note]  
+> The VMs get only 1 core and 1024 MiB of memory by default, which may not be
+> enough. You can use `virtualisation.{memorySize,cores}` to tweak the amount
+> allocated.
+
+### Manual testing in a VM
 [./modules/test-vm.nix](./modules/test-vm.nix) defines options that will only be
 used when building a virtual machine with `nixos-rebuild build-vm` and equivalents,
 and are thus not taken into account for the actual config deployed to the server.
 
-The VM has a very minimalistic window manager that can be started by running
-`startx` in the tty, as well as Firefox.
+The VM has a minimalistic window manager and Firefox. The WM can be started
+by running `startx` in the tty.
 
 > [!Note]  
 > There is nothing special about the file itself, just that options defined
@@ -94,12 +113,8 @@ instead of the real address.
 > [!Note]  
 > If you want to test the Telegram bots, make sure you aren't on Aalto WiFi,
 > as it has blocked the Telegram API  
->
-> The Discourse service also takes a while to start, follow its logs with
-> `journalctl -efu discourse.service`
 
-
-The VM does not have access to the real secrets and thus they just have temp (:D)
+The VM does not have access to the real secrets and thus they have temp (:D)
 values in their place. The Discourse instance should run OOTB, but the Telegram bots
 need to be given a real [token](https://core.telegram.org/bots/tutorial#obtain-your-bot-token)
 for testing. See the beginning of [./modules/test-vm.nix](./modules/test-vm.nix) to

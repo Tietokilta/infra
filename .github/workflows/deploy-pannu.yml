@@ -27,6 +27,10 @@ jobs:
           extra-nix-config: |
             experimental-features = nix-command flakes
 
+      - name: Run NixOS tests
+        run: |
+          nix flake check --impure
+
       - name: Build NixOS Configuration
         run: |
           nix build .#nixosConfigurations.tikpannu.config.system.build.toplevel -L
@@ -43,6 +47,10 @@ jobs:
         with:
           extra-nix-config: |
             experimental-features = nix-command flakes
+
+      - name: Run NixOS tests
+        run: |
+          nix flake check --impure
 
       - name: Configure SSH
         env:
