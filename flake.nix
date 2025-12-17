@@ -61,7 +61,7 @@
         pkgs.treefmt.withConfig {
           runtimeInputs = with pkgs; [
             nixfmt
-            terraform
+            opentofu
             yamlfmt
           ];
 
@@ -71,7 +71,7 @@
               includes = [ "*.nix" ];
             };
             terraform = {
-              command = "terraform";
+              command = "tofu";
               options = [ "fmt" ];
               includes = [ "*.tf" ];
             };
@@ -93,7 +93,7 @@
               azure-cli-extensions.ssh
             ])
             sops
-            terraform
+            opentofu
           ];
 
           shellHook = ''
