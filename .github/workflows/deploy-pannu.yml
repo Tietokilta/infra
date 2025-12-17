@@ -29,7 +29,7 @@ jobs:
 
       - name: Run NixOS tests
         run: |
-          nix flake check --impure
+          nix flake check -L
 
       - name: Build NixOS Configuration
         run: |
@@ -50,7 +50,7 @@ jobs:
 
       - name: Run NixOS tests
         run: |
-          nix flake check --impure
+          nix flake check -L
 
       - name: Configure SSH
         env:
