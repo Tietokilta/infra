@@ -14,12 +14,23 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       systems,
       ...
     }@inputs:
     let
-      forEachSystem = nixpkgs.lib.genAttrs (import systems);
+      forAllSystems =
+        f:
+        nixpkgs.lib.genAttrs (import systems) (
+          system:
+          f (
+            import nixpkgs {
+              inherit system;
+              config.allowUnfree = true;
+            }
+          )
+        );
     in
     {
       nixosConfigurations.tikpannu = nixpkgs.lib.nixosSystem {
@@ -27,39 +38,70 @@
         modules = [ ./tikpannu-nixos-config/configuration.nix ];
       };
 
-      checks = forEachSystem (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-          import ./tikpannu-nixos-config/tests { inherit pkgs inputs; }
+      checks = forAllSystems (
+        pkgs:
+        {
+          formatting =
+            pkgs.runCommand "fmt-check"
+              {
+                nativeBuildInputs = [ self.formatter.${pkgs.stdenv.hostPlatform.system} ];
+              }
+              ''
+                cp -r ${self} repo
+                chmod -R +w repo/
+                treefmt --ci --tree-root repo
+                touch $out
+              '';
+        }
+        // (import ./tikpannu-nixos-config/tests { inherit pkgs inputs; })
       );
 
-      devShells = forEachSystem (
-        system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
-        in
-        {
-          default = pkgs.mkShellNoCC {
-            packages = with pkgs; [
-              (azure-cli.withExtensions [
-                azure-cli-extensions.ssh
-              ])
-              sops
-              terraform
-            ];
+      formatter = forAllSystems (
+        pkgs:
+        pkgs.treefmt.withConfig {
+          runtimeInputs = with pkgs; [
+            nixfmt
+            terraform
+            yamlfmt
+          ];
 
-            shellHook = ''
-              if [ ! -x .git/hooks/pre-commit ] ; then
-                ./setup-pre-commit.sh
-              fi
-            '';
+          settings.formatter = {
+            nix = {
+              command = "nixfmt";
+              includes = [ "*.nix" ];
+            };
+            terraform = {
+              command = "terraform";
+              options = [ "fmt" ];
+              includes = [ "*.tf" ];
+            };
+            yaml = {
+              command = "yamlfmt";
+              includes = [
+                "*.yaml"
+                "*.yml"
+              ];
+            };
           };
         }
       );
+
+      devShells = forAllSystems (pkgs: {
+        default = pkgs.mkShellNoCC {
+          packages = with pkgs; [
+            (azure-cli.withExtensions [
+              azure-cli-extensions.ssh
+            ])
+            sops
+            terraform
+          ];
+
+          shellHook = ''
+            if ! cmp --silent .git/hooks/pre-commit .pre-commit-hook.sh ; then
+              ./setup-pre-commit.sh
+            fi
+          '';
+        };
+      });
     };
 }
