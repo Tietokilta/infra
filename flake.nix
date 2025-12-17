@@ -41,6 +41,14 @@
         modules = [ ./tikpannu-nixos-config/configuration.nix ];
       };
 
+      checks = forEachSystem (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+          import ./tikpannu-nixos-config/tests { inherit pkgs inputs; }
+      );
+
       devShells = forEachSystem (
         system:
         let
