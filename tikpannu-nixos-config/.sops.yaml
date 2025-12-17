@@ -1,9 +1,11 @@
 keys:
   - &pannu age1lp4pv3x95n2z4dh024f0ev05gnwrwf7n67z0c75cxa2vtus704msxgv700
   - &langsjo age1yezgssun7zpwt9g629dwjp8q3wddc8xp5k990ms7jtv6xku9yunq802pze
+  - &lajp age1yubikey1qf7f3cx2fstyv8m0p6mns038swdq6q3un9cv3833m2rh3l0klwud27qazw3
 creation_rules:
   - path_regex: secrets/[^/]+.yaml$
     key_groups:
       - age:
           - *pannu
           - *langsjo
+          - *lajp
