@@ -2,8 +2,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
-    devenv.url = "github:cachix/devenv";
-    devenv.inputs.nixpkgs.follows = "nixpkgs";
     tikbots = {
       url = "github:Tietokilta/tikbots";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -14,16 +12,9 @@
     };
   };
 
-  nixConfig = {
-    extra-trusted-public-keys = "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=";
-    extra-substituters = "https://devenv.cachix.org";
-  };
-
   outputs =
     {
-      self,
       nixpkgs,
-      devenv,
       systems,
       ...
     }@inputs:
@@ -31,11 +22,6 @@
       forEachSystem = nixpkgs.lib.genAttrs (import systems);
     in
     {
-      packages = forEachSystem (system: {
-        devenv-up = self.devShells.${system}.default.config.procfileScript;
-        devenv-test = self.devShells.${system}.default.config.test;
-      });
-
       nixosConfigurations.tikpannu = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [ ./tikpannu-nixos-config/configuration.nix ];
@@ -58,27 +44,20 @@
           };
         in
         {
-          default = devenv.lib.mkShell {
-            inherit inputs pkgs;
-            modules = [
-              {
-                # https://devenv.sh/reference/options/
-                packages = with pkgs; [
-                  (azure-cli.withExtensions [
-                    azure-cli-extensions.ssh
-                  ])
-                  sops
-                ];
-                languages.terraform.enable = true;
-
-                git-hooks.hooks.terraform-fmt = {
-                  enable = true;
-                  name = "Terraform fmt check";
-                  entry = "terraform fmt --recursive";
-                  pass_filenames = false;
-                };
-              }
+          default = pkgs.mkShellNoCC {
+            packages = with pkgs; [
+              (azure-cli.withExtensions [
+                azure-cli-extensions.ssh
+              ])
+              sops
+              terraform
             ];
+
+            shellHook = ''
+              if [ ! -x .git/hooks/pre-commit ] ; then
+                ./setup-pre-commit.sh
+              fi
+            '';
           };
         }
       );
