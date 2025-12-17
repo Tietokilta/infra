@@ -1,5 +1,4 @@
 name: "Terraform"
-
 on:
   push:
     branches:
@@ -12,71 +11,57 @@ on:
       - "**.md"
       - "tikpannu-nixos-config/**"
   workflow_dispatch:
-
 # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
 defaults:
   run:
     shell: bash
-
 jobs:
   plan:
     name: Plan
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-
     steps:
       # Checkout the repository
       - name: Checkout
         uses: actions/checkout@v3
-
       # Install the latest version of Terraform CLI
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-
       # Initialize Terraform working directory
       - name: Initialize Terraform
         run: |
           terraform init
           terraform workspace select prod
-
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Check formatting
         run: terraform fmt -check -recursive
-
       # Generates an execution plan for Terraform (not necessary when running apply immediately after)
       - name: Terraform Plan
         run: terraform plan -input=false
-
   apply:
     name: Apply
     runs-on: ubuntu-latest
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     environment: production
-
     steps:
       # Checkout the repository
       - name: Checkout
         uses: actions/checkout@v3
-
       # Install the latest version of Terraform CLI
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-
       # Initialize Terraform working directory
       - name: Initialize Terraform
         run: |
           terraform init
           terraform workspace select prod
-
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Check formatting
         run: terraform fmt -check -recursive
-
       # On push to main, build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
         run: terraform apply -input=false -auto-approve
-
 env:
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}

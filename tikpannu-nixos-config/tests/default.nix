@@ -4,7 +4,8 @@
 }:
 let
   lib = pkgs.lib;
-  runTest = testPath:
+  runTest =
+    testPath:
     pkgs.testers.runNixOSTest {
       imports = [
         (lib.modules.importApply testPath { inherit inputs; })
