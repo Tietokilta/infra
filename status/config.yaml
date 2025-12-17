@@ -2,12 +2,10 @@ alerting:
   telegram:
     token: "$TELEGRAM_TOKEN"
     id: "$ALERT_CHANNEL_ID"
-
 ui:
   logo: "https://tietokilta.fi/api/media/file/TiK-logo.svg"
   title: "Tietokilta | Status"
   description: "A Status page for Tietokilta services"
-
 endpoints:
   - name: web
     url: "https://tietokilta.fi"
@@ -17,7 +15,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
   - name: infoscreen
     url: "https://tietokilta.fi/infoscreen"
     conditions:
@@ -26,7 +23,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
   - name: oldweb
     url: "https://old.tietokilta.fi"
     conditions:
@@ -35,7 +31,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
   - name: rekry
     url: "https://rekry.tietokilta.fi"
     conditions:
@@ -44,7 +39,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
   - name: laskugeneraattori
     url: "https://laskutus.tietokilta.fi/health"
     conditions:
@@ -53,7 +47,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
   - name: tenttiarkisto
     url: "https://tenttiarkisto.fi"
     conditions:
@@ -62,7 +55,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
   - name: ilmomasiina
     url: "https://ilmo.tietokilta.fi"
     conditions:
@@ -71,7 +63,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
   - name: isopistekortti
     url: "https://iso.tietokilta.fi"
     conditions:
@@ -80,7 +71,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
   - name: muistinnollaus
     url: "https://muistinnollaus.fi"
     conditions:
@@ -89,7 +79,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
   - name: juvusivu
     url: "https://juhlavuosi.fi"
     conditions:
@@ -98,7 +87,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
   - name: vaultwarden
     url: "https://vault.tietokilta.fi/api/alive"
     conditions:
@@ -107,7 +95,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
   - name: vaalifoorumi
     url: "https://vaalit.tietokilta.fi"
     conditions:
@@ -116,7 +103,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
   - name: rekisteri
     url: "https://rekisteri.tietokilta.fi"
     conditions:
@@ -125,7 +111,6 @@ endpoints:
     alerts:
       - type: telegram
         send-on-resolved: true
-
 external-endpoints:
   - name: guild-room-infoscreen
     token: "$INFOSCREEN_TOKEN"
