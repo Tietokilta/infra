@@ -18,6 +18,20 @@ moved {
   to   = module.service_database.azurerm_postgresql_flexible_server_database.database
 }
 
+resource "azurerm_storage_account" "ilmo_profile_storage_account" {
+  name                     = "ilmo${var.env_name}profsa"
+  resource_group_name      = var.tikweb_rg_name
+  location                 = var.tikweb_rg_location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_share" "ilmo_profile_fileshare" {
+  name                 = "profiles"
+  storage_account_name = azurerm_storage_account.ilmo_profile_storage_account.name
+  access_tier          = "Hot"
+  quota                = 1
+}
 
 resource "azurerm_linux_web_app" "ilmo_backend" {
   name                = "tik-ilmo-${var.environment}-app"
@@ -46,9 +60,20 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     }
   }
 
+  storage_account {
+    name         = azurerm_storage_account.ilmo_profile_storage_account.name
+    account_name = azurerm_storage_account.ilmo_profile_storage_account.name
+    access_key   = azurerm_storage_account.ilmo_profile_storage_account.primary_access_key
+    type         = "AzureFiles"
+    share_name   = azurerm_storage_share.ilmo_profile_fileshare.name
+    mount_path   = "/mnt"
+  }
+
   app_settings = {
     WEBSITES_PORT = 3000
     PORT          = 3000
+
+    DEBUG = "app:*"
 
     DB_DIALECT  = "postgres"
     DB_HOST     = var.postgres_server_fqdn
