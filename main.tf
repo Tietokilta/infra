@@ -571,7 +571,7 @@ module "status" {
   acme_account_key                     = module.common.acme_account_key
   root_zone_name                       = module.dns_prod.root_zone_name
   telegram_token                       = module.keyvault.secrets["status-telegram-token"]
-  telegram_channel_id                  = module.keyvault.secrets["status-telegram-channel-id"]
+  telegram_channel_id                  = "-1003648545192"
   subdomain                            = "status"
 }
 
