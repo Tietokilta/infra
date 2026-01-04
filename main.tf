@@ -90,6 +90,19 @@ module "keyvault" {
     "registry-stripe-api-key",
     "registry-stripe-webhook-secret"
   ]
+  managed_identity_principals = {
+    web               = module.web.managed_identity
+    ilmo              = module.ilmo.managed_identity
+    ilmo_staging      = module.ilmo_staging.managed_identity
+    invoicing         = module.invoicing.managed_identity
+    registry          = module.registry.managed_identity
+    tenttiarkisto     = module.tenttiarkisto.managed_identity
+    vaultwarden       = module.vaultwarden.managed_identity
+    status            = module.status.managed_identity
+    tikjob_ghost      = module.tikjob_app.managed_identity
+    m0_frontend       = module.m0.frontend_managed_identity
+    m0_strapi         = module.m0.strapi_managed_identity
+  }
 }
 
 module "dns_prod" {
@@ -589,93 +602,4 @@ module "isopistekortti" {
   root_zone_name          = module.dns_prod.root_zone_name
   dns_resource_group_name = module.dns_prod.resource_group_name
   acme_account_key        = module.common.acme_account_key
-}
-
-# Key Vault access policies for web app managed identities
-resource "azurerm_key_vault_access_policy" "web_managed_identity" {
-  key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = module.web.managed_identity.tenant_id
-  object_id    = module.web.managed_identity.principal_id
-
-  secret_permissions = ["Get"]
-}
-
-resource "azurerm_key_vault_access_policy" "ilmo_managed_identity" {
-  key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = module.ilmo.managed_identity.tenant_id
-  object_id    = module.ilmo.managed_identity.principal_id
-
-  secret_permissions = ["Get"]
-}
-
-resource "azurerm_key_vault_access_policy" "ilmo_staging_managed_identity" {
-  key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = module.ilmo_staging.managed_identity.tenant_id
-  object_id    = module.ilmo_staging.managed_identity.principal_id
-
-  secret_permissions = ["Get"]
-}
-
-resource "azurerm_key_vault_access_policy" "invoicing_managed_identity" {
-  key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = module.invoicing.managed_identity.tenant_id
-  object_id    = module.invoicing.managed_identity.principal_id
-
-  secret_permissions = ["Get"]
-}
-
-resource "azurerm_key_vault_access_policy" "registry_managed_identity" {
-  key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = module.registry.managed_identity.tenant_id
-  object_id    = module.registry.managed_identity.principal_id
-
-  secret_permissions = ["Get"]
-}
-
-resource "azurerm_key_vault_access_policy" "tenttiarkisto_managed_identity" {
-  key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = module.tenttiarkisto.managed_identity.tenant_id
-  object_id    = module.tenttiarkisto.managed_identity.principal_id
-
-  secret_permissions = ["Get"]
-}
-
-resource "azurerm_key_vault_access_policy" "vaultwarden_managed_identity" {
-  key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = module.vaultwarden.managed_identity.tenant_id
-  object_id    = module.vaultwarden.managed_identity.principal_id
-
-  secret_permissions = ["Get"]
-}
-
-resource "azurerm_key_vault_access_policy" "status_managed_identity" {
-  key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = module.status.managed_identity.tenant_id
-  object_id    = module.status.managed_identity.principal_id
-
-  secret_permissions = ["Get"]
-}
-
-resource "azurerm_key_vault_access_policy" "tikjob_ghost_managed_identity" {
-  key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = module.tikjob_app.managed_identity.tenant_id
-  object_id    = module.tikjob_app.managed_identity.principal_id
-
-  secret_permissions = ["Get"]
-}
-
-resource "azurerm_key_vault_access_policy" "m0_frontend_managed_identity" {
-  key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = module.m0.frontend_managed_identity.tenant_id
-  object_id    = module.m0.frontend_managed_identity.principal_id
-
-  secret_permissions = ["Get"]
-}
-
-resource "azurerm_key_vault_access_policy" "m0_strapi_managed_identity" {
-  key_vault_id = module.keyvault.keyvault_id
-  tenant_id    = module.m0.strapi_managed_identity.tenant_id
-  object_id    = module.m0.strapi_managed_identity.principal_id
-
-  secret_permissions = ["Get"]
 }
