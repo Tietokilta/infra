@@ -68,6 +68,17 @@ resource "azurerm_key_vault_access_policy" "admin" {
 
 }
 
+resource "azurerm_key_vault_access_policy" "managed_identities" {
+  for_each     = var.managed_identity_principals
+  key_vault_id = azurerm_key_vault.keyvault.id
+  tenant_id    = each.value.tenant_id
+  object_id    = each.value.principal_id
+
+  secret_permissions = [
+    "Get",
+  ]
+}
+
 locals {
 }
 

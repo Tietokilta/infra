@@ -4,6 +4,10 @@ resource "azurerm_linux_web_app" "tikjob_ghost" {
   resource_group_name = var.tikweb_rg_name
   service_plan_id     = var.tikweb_app_plan_id
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   https_only = true
 
   site_config {

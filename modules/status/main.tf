@@ -15,6 +15,10 @@ resource "azurerm_linux_web_app" "status_app" {
   resource_group_name = var.app_service_plan_resource_group_name
   service_plan_id     = var.app_service_plan_id
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   site_config {
     ftps_state = "Disabled"
     always_on  = false

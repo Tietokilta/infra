@@ -25,6 +25,11 @@ resource "azurerm_linux_web_app" "frontend" {
   location            = var.resource_group_location
   resource_group_name = var.web_resource_group_name
   service_plan_id     = var.app_service_plan_id
+
+  identity {
+    type = "SystemAssigned"
+  }
+
   site_config {
     application_stack {
       docker_registry_url = "https://ghcr.io"
@@ -74,7 +79,12 @@ resource "azurerm_linux_web_app" "strapi" {
   location            = var.resource_group_location
   resource_group_name = var.web_resource_group_name
   service_plan_id     = var.app_service_plan_id
-  https_only          = true
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  https_only = true
   site_config {
 
     application_stack {

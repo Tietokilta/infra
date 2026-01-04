@@ -55,6 +55,10 @@ resource "azurerm_linux_web_app" "tenttiarkisto" {
   resource_group_name = var.tikweb_app_plan_rg_name
   service_plan_id     = var.tikweb_app_plan_id
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   https_only = true
 
   site_config {

@@ -131,7 +131,7 @@ module "dns_github" {
   resource_group_name = module.dns_prod.resource_group_name
   zone_name           = module.dns_prod.root_zone_name
   challenge_name      = "_github-challenge-Tietokilta-org"
-  challenge_value     = module.keyvault.secrets["github-challenge-value"]
+  challenge_value     = module.keyvault.secret_references["github-challenge-value"]
 
 }
 module "mailman" {
@@ -191,8 +191,8 @@ resource "azurerm_key_vault_secret" "postgres_admin_password" {
 
 module "mongodb" {
   source                    = "./modules/mongodb"
-  mongodb_atlas_public_key  = module.keyvault.secrets["mongodb-atlas-public-key"]
-  mongodb_atlas_private_key = module.keyvault.secrets["mongodb-atlas-private-key"]
+  mongodb_atlas_public_key  = module.keyvault.secret_references["mongodb-atlas-public-key"]
+  mongodb_atlas_private_key = module.keyvault.secret_references["mongodb-atlas-private-key"]
   serverless_instance_name  = "tikweb-serverless-instance"
   project_name              = "tikweb-${terraform.workspace}"
   atlas_region              = "EUROPE_WEST"
@@ -215,17 +215,17 @@ module "web" {
   subdomain                    = "@"
   environment                  = "prod"
   mongo_connection_string      = "${module.mongodb.db_connection_string}/payload?retryWrites=true&w=majority"
-  google_oauth_client_id       = module.keyvault.secrets["google-oauth-client-id"]
-  google_oauth_client_secret   = module.keyvault.secrets["google-oauth-client-secret"]
+  google_oauth_client_id       = module.keyvault.secret_references["google-oauth-client-id"]
+  google_oauth_client_secret   = module.keyvault.secret_references["google-oauth-client-secret"]
   public_ilmo_url              = "https://${module.ilmo.fqdn}"
   public_laskugeneraattori_url = "https://${module.invoicing.fqdn}"
   public_legacy_url            = "https://${module.oldweb.fqdn}"
-  digitransit_subscription_key = module.keyvault.secrets["digitransit-subscription-key"]
-  mailgun_sender               = module.keyvault.secrets["mailgun-sender"]
-  mailgun_receiver             = module.keyvault.secrets["mailgun-receiver"]
-  mailgun_api_key              = module.keyvault.secrets["mailgun-api-key"]
-  mailgun_domain               = module.keyvault.secrets["mailgun-domain"]
-  mailgun_url                  = module.keyvault.secrets["mailgun-url"]
+  digitransit_subscription_key = module.keyvault.secret_references["digitransit-subscription-key"]
+  mailgun_sender               = module.keyvault.secret_references["mailgun-sender"]
+  mailgun_receiver             = module.keyvault.secret_references["mailgun-receiver"]
+  mailgun_api_key              = module.keyvault.secret_references["mailgun-api-key"]
+  mailgun_domain               = module.keyvault.secret_references["mailgun-domain"]
+  mailgun_url                  = module.keyvault.secret_references["mailgun-url"]
 }
 
 resource "azurerm_key_vault_secret" "cms_password" {
@@ -243,10 +243,10 @@ module "ilmo" {
   postgres_admin_username = module.common.postgres_admin_username
   postgres_admin_password = module.common.postgres_admin_password
   postgres_server_id      = module.common.postgres_server_id
-  edit_token_secret       = module.keyvault.secrets["ilmo-edit-token-secret"]
-  auth_jwt_secret         = module.keyvault.secrets["ilmo-auth-jwt-secret"]
-  mailgun_api_key         = module.keyvault.secrets["ilmo-mailgun-api-key"]
-  mailgun_domain          = module.keyvault.secrets["ilmo-mailgun-domain"]
+  edit_token_secret       = module.keyvault.secret_references["ilmo-edit-token-secret"]
+  auth_jwt_secret         = module.keyvault.secret_references["ilmo-auth-jwt-secret"]
+  mailgun_api_key         = module.keyvault.secret_references["ilmo-mailgun-api-key"]
+  mailgun_domain          = module.keyvault.secret_references["ilmo-mailgun-domain"]
   website_url             = "https://tietokilta.fi"
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
@@ -267,10 +267,10 @@ module "ilmo_staging" {
   postgres_admin_username = module.common.postgres_admin_username
   postgres_admin_password = module.common.postgres_admin_password
   postgres_server_id      = module.common.postgres_server_id
-  edit_token_secret       = module.keyvault.secrets["ilmo-edit-token-secret"]
-  auth_jwt_secret         = module.keyvault.secrets["ilmo-auth-jwt-secret"]
-  mailgun_api_key         = module.keyvault.secrets["ilmo-mailgun-api-key"]
-  mailgun_domain          = module.keyvault.secrets["ilmo-mailgun-domain"]
+  edit_token_secret       = module.keyvault.secret_references["ilmo-edit-token-secret"]
+  auth_jwt_secret         = module.keyvault.secret_references["ilmo-auth-jwt-secret"]
+  mailgun_api_key         = module.keyvault.secret_references["ilmo-mailgun-api-key"]
+  mailgun_domain          = module.keyvault.secret_references["ilmo-mailgun-domain"]
   website_url             = "https://tietokilta.fi"
 }
 
@@ -296,7 +296,7 @@ module "tenttiarkisto" {
   tikweb_app_plan_id           = module.common.tikweb_app_plan_id
   tikweb_app_plan_rg_location  = module.common.resource_group_location
   tikweb_app_plan_rg_name      = module.common.resource_group_name
-  django_secret_key            = module.keyvault.secrets["tenttiarkisto-django-secret-key"]
+  django_secret_key            = module.keyvault.secret_references["tenttiarkisto-django-secret-key"]
   acme_account_key             = module.common.acme_account_key
   dns_resource_group_name      = module.tenttiarkisto_dns_zone.resource_group_name
   root_zone_name               = module.tenttiarkisto_dns_zone.root_zone_name
@@ -334,8 +334,8 @@ module "tikjob_app" {
 
   ghost_mail_host     = "smtp.eu.mailgun.org"
   ghost_mail_port     = 465
-  ghost_mail_username = module.keyvault.secrets["tikjob-ghost-mail-username"]
-  ghost_mail_password = module.keyvault.secrets["tikjob-ghost-mail-password"]
+  ghost_mail_username = module.keyvault.secret_references["tikjob-ghost-mail-username"]
+  ghost_mail_password = module.keyvault.secret_references["tikjob-ghost-mail-password"]
 
   acme_account_key = module.common.acme_account_key
 
@@ -355,8 +355,8 @@ module "tikjob_tg_bot" {
   tikweb_app_plan_id         = module.common.tikweb_app_plan_id
   storage_account_name       = module.tikjob_storage.storage_account_name
   storage_account_access_key = module.tikjob_storage.storage_account_key
-  bot_token                  = module.keyvault.secrets["tikjob-tg-bot-token"]
-  ghost_hook_secret          = module.keyvault.secrets["tikjob-tg-ghost-hook-secret"]
+  bot_token                  = module.keyvault.secret_references["tikjob-tg-bot-token"]
+  ghost_hook_secret          = module.keyvault.secret_references["tikjob-tg-ghost-hook-secret"]
   channel_id                 = "-1001347398697"
 }
 
@@ -417,7 +417,7 @@ module "invoicing" {
 
   mailgun_url             = "https://api.eu.mailgun.net/v3/laskutus.tietokilta.fi/messages"
   mailgun_user            = "api"
-  mailgun_api_key         = module.keyvault.secrets["invoice-mailgun-api-key"]
+  mailgun_api_key         = module.keyvault.secret_references["invoice-mailgun-api-key"]
   resource_group_location = local.resource_group_location
   resource_group_name     = module.common.resource_group_name
   app_service_plan_id     = module.common.tikweb_app_plan_id
@@ -440,9 +440,9 @@ module "registry" {
   acme_account_key        = module.common.acme_account_key
   mailgun_url             = "https://api.eu.mailgun.net"
   mailgun_domain          = "rekisteri.tietokilta.fi"
-  mailgun_api_key         = module.keyvault.secrets["registry-mailgun-api-key"]
-  stripe_api_key          = module.keyvault.secrets["registry-stripe-api-key"]
-  stripe_webhook_secret   = module.keyvault.secrets["registry-stripe-webhook-secret"]
+  mailgun_api_key         = module.keyvault.secret_references["registry-mailgun-api-key"]
+  stripe_api_key          = module.keyvault.secret_references["registry-stripe-api-key"]
+  stripe_webhook_secret   = module.keyvault.secret_references["registry-stripe-webhook-secret"]
   dkim_selector           = "email"
   dkim_key                = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDpz7YQQUpscjJYLhaXr+jcyN30EwI90CmjRmsvuN1XrsZjTJgXTxATi0WlV80FrWuTBsV2WTv8dK7F7S0xnkh515IxTBrDMau6jUp90nWNp5Oy9DkqW8fNPJUiFWiazWilOPXuARjlOgk18e8d/CvTpke0R1G/S12KXkTshO06JQIDAQAB"
 }
@@ -467,7 +467,7 @@ module "oldweb" {
 module "vaultwarden" {
   environment                          = "prod"
   source                               = "./modules/vaultwarden"
-  admin_api_key                        = module.keyvault.secrets["vaultwarden-api-key"]
+  admin_api_key                        = module.keyvault.secret_references["vaultwarden-api-key"]
   app_service_plan_id                  = module.common.tikweb_app_plan_id
   app_service_plan_location            = local.resource_group_location
   app_service_plan_resource_group_name = module.common.resource_group_name
@@ -478,8 +478,8 @@ module "vaultwarden" {
   location                             = local.resource_group_location
   smtp_host                            = "smtp.eu.mailgun.org"
   vaultwarden_smtp_from                = "vault@tietokilta.fi"
-  vaultwarden_smtp_username            = module.keyvault.secrets["vaultwarden-smtp-username"]
-  vaultwarden_smtp_password            = module.keyvault.secrets["vaultwarden-smtp-password"]
+  vaultwarden_smtp_username            = module.keyvault.secret_references["vaultwarden-smtp-username"]
+  vaultwarden_smtp_password            = module.keyvault.secret_references["vaultwarden-smtp-password"]
   dns_resource_group_name              = module.dns_prod.resource_group_name
   acme_account_key                     = module.common.acme_account_key
   root_zone_name                       = module.dns_prod.root_zone_name
@@ -535,12 +535,12 @@ module "m0" {
   dkim_key                            = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Ho1FBsK9IyD0dl7gA/fh8vA1abuLrgB/e//bIrcFb8NS/Ze3W2cMUHZ7T3UvjnjlPhutWMblBX39oFBj9jp+lFpy+AwKSYBz7GZ/WCdZTsN01U6miUGiMEdfB/pOmIXKJKtkT9wHk7RJkRl9MTnUY60UgVweZFfdJbAnMXNKvulEZAEsKlE+8M5qDJDvnGNs99/wDl9nam5KyGPFLTzxeBSlsEQo6qa5qPcmn3vxbgVlwrFDt9KmbFcgAbq3wZ+W0MwwL54wPZVmHCwObi4sIptokmZVlmaXyvTwJ8eklrwJD51TLlpinwNBUpvgFGWDC62nLLt3wOHFSadtuxWCwIDAQAB"
   dkim_selector                       = "email"
   mail_subdomain                      = "m0"
-  smtp_email                          = module.keyvault.secrets["muistinnollaus-smtp-email"]
-  smtp_password                       = module.keyvault.secrets["muistinnollaus-smtp-password"]
+  smtp_email                          = module.keyvault.secret_references["muistinnollaus-smtp-email"]
+  smtp_password                       = module.keyvault.secret_references["muistinnollaus-smtp-password"]
   mail_dns_zone_name                  = module.dns_prod.root_zone_name
-  strapi_token                        = module.keyvault.secrets["muistinnollaus-strapi-token"]
-  muistinnollaus_paytrail_merchant_id = module.keyvault.secrets["muistinnollaus-paytrail-merchant-id"]
-  muistinnollaus_paytrail_secret_key  = module.keyvault.secrets["muistinnollaus-paytrail-secret-key"]
+  strapi_token                        = module.keyvault.secret_references["muistinnollaus-strapi-token"]
+  muistinnollaus_paytrail_merchant_id = module.keyvault.secret_references["muistinnollaus-paytrail-merchant-id"]
+  muistinnollaus_paytrail_secret_key  = module.keyvault.secret_references["muistinnollaus-paytrail-secret-key"]
 }
 
 module "juvusivu" {
@@ -570,8 +570,8 @@ module "status" {
   dns_resource_group_name              = module.dns_prod.resource_group_name
   acme_account_key                     = module.common.acme_account_key
   root_zone_name                       = module.dns_prod.root_zone_name
-  telegram_token                       = module.keyvault.secrets["status-telegram-token"]
-  telegram_channel_id                  = module.keyvault.secrets["status-telegram-channel-id"]
+  telegram_token                       = module.keyvault.secret_references["status-telegram-token"]
+  telegram_channel_id                  = module.keyvault.secret_references["status-telegram-channel-id"]
   subdomain                            = "status"
 }
 
@@ -589,4 +589,93 @@ module "isopistekortti" {
   root_zone_name          = module.dns_prod.root_zone_name
   dns_resource_group_name = module.dns_prod.resource_group_name
   acme_account_key        = module.common.acme_account_key
+}
+
+# Key Vault access policies for web app managed identities
+resource "azurerm_key_vault_access_policy" "web_managed_identity" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = module.web.managed_identity.tenant_id
+  object_id    = module.web.managed_identity.principal_id
+
+  secret_permissions = ["Get"]
+}
+
+resource "azurerm_key_vault_access_policy" "ilmo_managed_identity" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = module.ilmo.managed_identity.tenant_id
+  object_id    = module.ilmo.managed_identity.principal_id
+
+  secret_permissions = ["Get"]
+}
+
+resource "azurerm_key_vault_access_policy" "ilmo_staging_managed_identity" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = module.ilmo_staging.managed_identity.tenant_id
+  object_id    = module.ilmo_staging.managed_identity.principal_id
+
+  secret_permissions = ["Get"]
+}
+
+resource "azurerm_key_vault_access_policy" "invoicing_managed_identity" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = module.invoicing.managed_identity.tenant_id
+  object_id    = module.invoicing.managed_identity.principal_id
+
+  secret_permissions = ["Get"]
+}
+
+resource "azurerm_key_vault_access_policy" "registry_managed_identity" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = module.registry.managed_identity.tenant_id
+  object_id    = module.registry.managed_identity.principal_id
+
+  secret_permissions = ["Get"]
+}
+
+resource "azurerm_key_vault_access_policy" "tenttiarkisto_managed_identity" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = module.tenttiarkisto.managed_identity.tenant_id
+  object_id    = module.tenttiarkisto.managed_identity.principal_id
+
+  secret_permissions = ["Get"]
+}
+
+resource "azurerm_key_vault_access_policy" "vaultwarden_managed_identity" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = module.vaultwarden.managed_identity.tenant_id
+  object_id    = module.vaultwarden.managed_identity.principal_id
+
+  secret_permissions = ["Get"]
+}
+
+resource "azurerm_key_vault_access_policy" "status_managed_identity" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = module.status.managed_identity.tenant_id
+  object_id    = module.status.managed_identity.principal_id
+
+  secret_permissions = ["Get"]
+}
+
+resource "azurerm_key_vault_access_policy" "tikjob_ghost_managed_identity" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = module.tikjob_app.managed_identity.tenant_id
+  object_id    = module.tikjob_app.managed_identity.principal_id
+
+  secret_permissions = ["Get"]
+}
+
+resource "azurerm_key_vault_access_policy" "m0_frontend_managed_identity" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = module.m0.frontend_managed_identity.tenant_id
+  object_id    = module.m0.frontend_managed_identity.principal_id
+
+  secret_permissions = ["Get"]
+}
+
+resource "azurerm_key_vault_access_policy" "m0_strapi_managed_identity" {
+  key_vault_id = module.keyvault.keyvault_id
+  tenant_id    = module.m0.strapi_managed_identity.tenant_id
+  object_id    = module.m0.strapi_managed_identity.principal_id
+
+  secret_permissions = ["Get"]
 }
