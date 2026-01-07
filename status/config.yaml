@@ -9,113 +9,63 @@ ui:
 endpoints:
   - name: web
     url: "https://tietokilta.fi"
-    conditions:
+    conditions: &default_conditions
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
+    alerts: &default_alerts
       - type: telegram
         send-on-resolved: true
   - name: infoscreen
     url: "https://tietokilta.fi/infoscreen"
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    conditions: *default_conditions
+    alerts: *default_alerts
   - name: oldweb
     url: "https://old.tietokilta.fi"
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    conditions: *default_conditions
+    alerts: *default_alerts
   - name: rekry
     url: "https://rekry.tietokilta.fi"
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    conditions: *default_conditions
+    alerts: *default_alerts
   - name: laskugeneraattori
     url: "https://laskutus.tietokilta.fi/health"
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    conditions: *default_conditions
+    alerts: *default_alerts
   - name: tenttiarkisto
     url: "https://tenttiarkisto.fi"
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    conditions: *default_conditions
+    alerts: *default_alerts
   - name: ilmomasiina
     url: "https://ilmo.tietokilta.fi"
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    conditions: *default_conditions
+    alerts: *default_alerts
   - name: isopistekortti
     url: "https://iso.tietokilta.fi"
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    conditions: *default_conditions
+    alerts: *default_alerts
   - name: muistinnollaus
     url: "https://muistinnollaus.fi"
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    conditions: *default_conditions
+    alerts: *default_alerts
   - name: juvusivu
     url: "https://juhlavuosi.fi"
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    conditions: *default_conditions
+    alerts: *default_alerts
   - name: vaultwarden
     url: "https://vault.tietokilta.fi/api/alive"
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    conditions: *default_conditions
+    alerts: *default_alerts
   - name: vaalifoorumi
     url: "https://vaalit.tietokilta.fi"
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    conditions: *default_conditions
+    alerts: *default_alerts
   - name: rekisteri
     url: "https://rekisteri.tietokilta.fi"
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    conditions: *default_conditions
+    alerts: *default_alerts
 external-endpoints:
   - name: guild-room-infoscreen
     token: "$INFOSCREEN_TOKEN"
     heartbeat:
       interval: 5m
-    alerts:
-      - type: telegram
-        send-on-resolved: true
+    alerts: *default_alerts
