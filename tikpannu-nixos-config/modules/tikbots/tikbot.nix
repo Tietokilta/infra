@@ -7,13 +7,21 @@ let
   cfg = config.services.tikbots.tikbot;
 in
 {
-  sops.secrets.tikbot-envFile = lib.mkIf cfg.enable {
-    sopsFile = ../secrets/tikbot.yaml;
-    owner = cfg.user;
+  sops = lib.mkIf cfg.enable {
+    secrets.tikbot-token = {
+      sopsFile = ../secrets/tikbot.yaml;
+      owner = cfg.user;
+    };
+    templates.tikbot-env = {
+      owner = cfg.user;
+      content = ''
+        TELEGRAM_TOKEN=${config.sops.placeholder.tikbot-token}
+      '';
+    };
   };
 
   services.tikbots.tikbot = {
     enable = true;
-    envFile = config.sops.secrets.tikbot-envFile.path;
+    envFile = config.sops.templates.tikbot-env.path;
   };
 }
