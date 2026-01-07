@@ -1,4 +1,3 @@
-{ inputs }:
 { lib, ... }:
 {
   name = "server-is-up";
@@ -6,10 +5,7 @@
   nodes = {
     pannu = {
       imports = [
-        (lib.modules.importApply ./base-pannu-config.nix { inherit inputs; })
-      ];
-      disabledModules = [
-        ../modules/tikbots
+        ./base-pannu-config.nix
       ];
       networking.firewall.allowedTCPPorts = [
         80
@@ -18,6 +14,12 @@
       virtualisation = {
         memorySize = 3048; # MiB
         cores = 2;
+      };
+
+      services.tikbots = {
+        tikbot.enable = lib.mkForce false;
+        summer-body-bot.enable = lib.mkForce false;
+        wappupokemonbot.enable = lib.mkForce false;
       };
     };
 
