@@ -93,7 +93,7 @@
               azure-cli-extensions.ssh
             ])
             sops
-            opentofu
+            terraform
           ];
 
           shellHook = ''
