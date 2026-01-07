@@ -1,4 +1,3 @@
-{ inputs }:
 { pkgs, lib, ... }:
 let
   discourseAdminPassFile = pkgs.writeText "discourseAdminPassFile" "VerylongAdminpass1";
@@ -17,7 +16,6 @@ in
 {
   imports = [
     ../modules
-    (lib.modules.importApply ../third-party-imports.nix { inherit inputs; })
   ];
 
   services.discourse = {

@@ -1,11 +1,15 @@
 {
   config,
+  lib,
   ...
 }:
+let
+  cfg = config.services.tikbots.summer-body-bot;
+in
 {
-  sops.secrets.summer-body-bot-envFile = {
+  sops.secrets.summer-body-bot-envFile = lib.mkIf cfg.enable {
     sopsFile = ../secrets/summer-body-bot.yaml;
-    owner = config.services.tikbots.summer-body-bot.user;
+    owner = cfg.user;
   };
 
   services.tikbots.summer-body-bot = {

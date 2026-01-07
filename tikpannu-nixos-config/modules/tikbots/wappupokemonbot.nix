@@ -1,11 +1,15 @@
 {
   config,
+  lib,
   ...
 }:
+let
+  cfg = config.services.tikbots.wappupokemonbot;
+in
 {
-  sops.secrets.wappupokemonbot-envFile = {
+  sops.secrets.wappupokemonbot-envFile = lib.mkIf cfg.enable {
     sopsFile = ../secrets/wappupokemonbot.yaml;
-    owner = config.services.tikbots.wappupokemonbot.user;
+    owner = cfg.user;
   };
 
   services.tikbots.wappupokemonbot = {

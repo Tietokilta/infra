@@ -9,10 +9,6 @@ and SummerBodyBot. The configuration also defines the aforementioned services th
 unless you really know what you're doing. `./configuration.nix` has general configuration
 of the system.
 
-> [!Note]  
-> Any imports of third party modules (ie. don't come from Nixpkgs) must be imported in
-> [./third-party-imports.nix](./third-party-imports.nix) so that the NixOS tests can run
-
 ### Secrets
 Secrets are managed using [sops-nix](https://github.com/Mic92/sops-nix), which itself
 uses [sops](https://github.com/getsops/sops). The `sops` CLI tool is required to manage
