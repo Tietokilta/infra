@@ -7,13 +7,21 @@ let
   cfg = config.services.tikbots.wappupokemonbot;
 in
 {
-  sops.secrets.wappupokemonbot-envFile = lib.mkIf cfg.enable {
-    sopsFile = ../secrets/wappupokemonbot.yaml;
-    owner = cfg.user;
+  sops = lib.mkIf cfg.enable {
+    secrets.wappupokemonbot-token = {
+      sopsFile = ../secrets/wappupokemonbot.yaml;
+      owner = cfg.user;
+    };
+    templates.wappupokemonbot-env = {
+      owner = cfg.user;
+      content = ''
+        TELEGRAM_BOT_TOKEN=${config.sops.placeholder.wappupokemonbot-token}
+      '';
+    };
   };
 
   services.tikbots.wappupokemonbot = {
     enable = true;
-    envFile = config.sops.secrets.wappupokemonbot-envFile.path;
+    envFile = config.sops.templates.wappupokemonbot-env.path;
   };
 }
