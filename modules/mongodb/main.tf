@@ -33,6 +33,10 @@ resource "mongodbatlas_flex_cluster" "flex_cluster" {
     region_name           = var.atlas_region
   }
   termination_protection_enabled = true
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "mongodbatlas_project_ip_access_list" "test" {
