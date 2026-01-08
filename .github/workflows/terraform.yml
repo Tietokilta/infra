@@ -11,6 +11,9 @@ on:
       - "**.md"
       - "tikpannu-nixos-config/**"
   workflow_dispatch:
+concurrency:
+  group: terraform-apply
+  cancel-in-progress: false
 # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
 defaults:
   run:
