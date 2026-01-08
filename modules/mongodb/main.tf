@@ -26,14 +26,13 @@ resource "mongodbatlas_project" "project" {
 }
 
 resource "mongodbatlas_flex_cluster" "flex_cluster" {
-  project_id                     = mongodbatlas_project.project.id
-  name                           = var.cluster_name
-  termination_protection_enabled = true
-
-  provider_settings {
+  project_id = mongodbatlas_project.project.id
+  name       = var.cluster_name
+  provider_settings = {
     backing_provider_name = "AZURE"
     region_name           = var.atlas_region
   }
+  termination_protection_enabled = true
 }
 
 resource "mongodbatlas_project_ip_access_list" "test" {
