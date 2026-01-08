@@ -25,15 +25,15 @@ resource "mongodbatlas_project" "project" {
   is_schema_advisor_enabled                        = true
 }
 
-resource "mongodbatlas_serverless_instance" "serverless_instance" {
-  project_id                              = mongodbatlas_project.project.id
-  name                                    = var.serverless_instance_name
-  termination_protection_enabled          = true
-  provider_settings_backing_provider_name = "AZURE"
-  provider_settings_provider_name         = "SERVERLESS"
-  provider_settings_region_name           = var.atlas_region
-  continuous_backup_enabled               = true
-  auto_indexing                           = true
+resource "mongodbatlas_flex_cluster" "flex_cluster" {
+  project_id                     = mongodbatlas_project.project.id
+  name                           = var.cluster_name
+  termination_protection_enabled = true
+
+  provider_settings {
+    backing_provider_name = "AZURE"
+    region_name           = var.atlas_region
+  }
 }
 
 resource "mongodbatlas_project_ip_access_list" "test" {

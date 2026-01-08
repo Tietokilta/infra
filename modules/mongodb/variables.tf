@@ -10,7 +10,7 @@ variable "project_name" {
   type = string
 }
 
-variable "serverless_instance_name" {
+variable "cluster_name" {
   type = string
 }
 
