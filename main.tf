@@ -193,7 +193,7 @@ module "mongodb" {
   source                    = "./modules/mongodb"
   mongodb_atlas_public_key  = module.keyvault.secrets["mongodb-atlas-public-key"]
   mongodb_atlas_private_key = module.keyvault.secrets["mongodb-atlas-private-key"]
-  serverless_instance_name  = "tikweb-serverless-instance"
+  cluster_name              = "tikweb-serverless-instance"
   project_name              = "tikweb-${terraform.workspace}"
   atlas_region              = "EUROPE_WEST"
 }
