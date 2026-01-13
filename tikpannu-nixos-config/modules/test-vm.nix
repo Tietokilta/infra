@@ -51,7 +51,7 @@ in
     networking = {
       extraHosts = ''
         127.0.0.1 pannu.tietokilta.fi
-        127.0.0.1 vaalit.staging.tietokilta.fi
+        127.0.0.1 vaalit.tietokilta.fi
       '';
       networkmanager.enable = true;
     };

@@ -28,7 +28,7 @@
       {
         networking.extraHosts = ''
           ${nodes.pannu.networking.primaryIPAddress} pannu.tietokilta.fi
-          ${nodes.pannu.networking.primaryIPAddress} vaalit.staging.tietokilta.fi
+          ${nodes.pannu.networking.primaryIPAddress} vaalit.tietokilta.fi
         '';
       };
   };
@@ -54,11 +54,11 @@
       # These should redirect to https
       assert_http_code("http://pannu.tietokilta.fi", 301)
       assert_http_code("http://pannu.tietokilta.fi/doesnt-exist", 301)
-      assert_http_code("http://vaalit.staging.tietokilta.fi", 301)
+      assert_http_code("http://vaalit.tietokilta.fi", 301)
 
       pannu.wait_for_open_port(443)
       assert_http_code("https://pannu.tietokilta.fi", 404, extra_curl_args="--insecure")
       assert_http_code("https://pannu.tietokilta.fi/doesnt-exist", 404, extra_curl_args="--insecure")
-      assert_http_code("https://vaalit.staging.tietokilta.fi", 200, extra_curl_args="--insecure")
+      assert_http_code("https://vaalit.tietokilta.fi", 200, extra_curl_args="--insecure")
     '';
 }

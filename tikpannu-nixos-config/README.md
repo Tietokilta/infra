@@ -1,8 +1,8 @@
 # NixOS configuration for pannu.tietokilta.fi
 
-This directory defines the system that hosts at least vaalit.staging.tietokilta.fi
-(soon to be vaalit.tietokilta.fi), and the Telegram bots TiKbot, WappuPokemonBot,
-and SummerBodyBot. The configuration also defines the aforementioned services themselves.
+This directory defines the system that hosts at least vaalit.tietokilta.fi,
+and the Telegram bots TiKbot, WappuPokemonBot, and SummerBodyBot. The
+configuration also defines the aforementioned services themselves.
 
 ## General configuration
 `./hardware-configuration.nix` and `./networking.nix` should generally not be modified
@@ -31,7 +31,7 @@ For an example on how the secrets can be used in the NixOS configuration, see
 `./modules/discourse/`.
 
 
-## vaalit.staging.tietokilta.fi (Discourse)
+## vaalit.tietokilta.fi (Discourse)
 *See [./modules/discourse/](./modules/discourse/)*  
 Discourse is configured using [the Discourse module](https://search.nixos.org/options?channel=unstable&query=services.discourse)
 provided by Nixpkgs.
