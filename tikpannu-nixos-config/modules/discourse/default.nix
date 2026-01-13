@@ -9,7 +9,7 @@
 
   services.discourse = {
     enable = true;
-    hostname = "vaalit.staging.tietokilta.fi";
+    hostname = "vaalit.tietokilta.fi";
 
     enableACME = config.services.discourse.hostname != "localhost";
     nginx.enable = true;
