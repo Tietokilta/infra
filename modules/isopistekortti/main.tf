@@ -17,12 +17,6 @@ module "service_database" {
   postgres_server_fqdn    = var.postgres_server_fqdn
 }
 
-# Database configuration moved to separate module
-moved {
-  from = azurerm_postgresql_flexible_server_database.isopistekortti_db
-  to   = module.service_database.azurerm_postgresql_flexible_server_database.database
-}
-
 resource "azurerm_linux_web_app" "isopistekortti" {
   name                = "tik-isopistekortti-${var.environment}"
   location            = var.resource_group_location

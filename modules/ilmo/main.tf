@@ -13,12 +13,6 @@ module "service_database" {
   postgres_server_fqdn    = var.postgres_server_fqdn
 }
 
-# Database configuration moved to separate module
-moved {
-  from = azurerm_postgresql_flexible_server_database.ilmo_db_new
-  to   = module.service_database.azurerm_postgresql_flexible_server_database.database
-}
-
 resource "azurerm_linux_web_app" "ilmo_backend" {
   name                = "tik-ilmo-${var.environment}-app"
   location            = var.tikweb_rg_location
@@ -62,9 +56,9 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     NEW_EDIT_TOKEN_SECRET = var.edit_token_secret
     FEATHERS_AUTH_SECRET  = var.auth_jwt_secret
 
-    MAIL_FROM       = "noreply@${var.mailgun_domain}"
+    MAIL_FROM       = module.mailgun.mail_from
     MAILGUN_API_KEY = var.mailgun_api_key
-    MAILGUN_DOMAIN  = var.mailgun_domain
+    MAILGUN_DOMAIN  = module.mailgun.domain
 
     ALLOW_ORIGIN = "*"
 

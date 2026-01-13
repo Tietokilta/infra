@@ -22,12 +22,6 @@ variable "dns_resource_group_name" {
 variable "acme_account_key" {
   type = string
 }
-variable "dkim_selector" {
-  type = string
-}
-variable "dkim_key" {
-  type = string
-}
 variable "db_host" {
   description = "Hostname or IP address of the existing PostgreSQL database"
   type        = string

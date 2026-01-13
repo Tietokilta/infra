@@ -46,10 +46,6 @@ variable "mailgun_api_key" {
   sensitive = true
 }
 
-variable "mailgun_domain" {
-  type = string
-}
-
 variable "website_url" {
   type = string
 }
@@ -63,14 +59,6 @@ variable "root_zone_name" {
 }
 
 variable "subdomain" {
-  type = string
-}
-
-variable "dkim_selector" {
-  type = string
-}
-
-variable "dkim_key" {
   type = string
 }
 
