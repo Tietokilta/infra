@@ -12,8 +12,8 @@
         443
       ];
       virtualisation = {
-        memorySize = 3048; # MiB
-        cores = 2;
+        memorySize = 4096; # MiB
+        cores = 4;
       };
 
       services.tikbots = {
@@ -47,7 +47,7 @@
 
       pannu.wait_for_unit("discourse.service")
       # Discourse is 'active' before it's ready for connections
-      pannu.succeed("timeout 60 journalctl -fu discourse.service | grep -m1 'listening on addr'")
+      pannu.succeed("timeout 120 journalctl -fu discourse.service | grep -m1 'worker=3 ready'")
 
       client.wait_for_unit("network.target")
       pannu.wait_for_open_port(80)
