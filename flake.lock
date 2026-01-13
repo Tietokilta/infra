@@ -66,11 +66,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1763745013,
-        "narHash": "sha256-VMXjXEUA+clMdqDZVQySZVufX6+J+NeOYs49f+BQ8JI=",
+        "lastModified": 1768329490,
+        "narHash": "sha256-dWfMOkN3Mfi1y0Rnyq/zZV9onP8qPdH1VISEuLCqepY=",
         "owner": "Tietokilta",
         "repo": "tikbots",
-        "rev": "2fbea5a57b0228b578d211d8c414b49d596efbab",
+        "rev": "5fb309d13c12374050177739075bea7f8e172d58",
         "type": "github"
       },
       "original": {
