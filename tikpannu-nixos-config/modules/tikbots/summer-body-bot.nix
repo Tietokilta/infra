@@ -22,7 +22,7 @@ in
   };
 
   services.tikbots.summer-body-bot = {
-    enable = true;
+    enable = false;
     envFile = config.sops.templates.summer-body-bot-env.path;
     env = {
       COMPETITION_START_DATE = "2025-03-10";
