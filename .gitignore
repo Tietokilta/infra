@@ -9,3 +9,7 @@ terraform.exe
 
 result
 *.qcow2
+
+# Terraform state
+*.tfstate
+*.tfstate.*
