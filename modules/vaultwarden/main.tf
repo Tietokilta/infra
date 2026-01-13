@@ -55,7 +55,7 @@ resource "azurerm_linux_web_app" "vaultwarden_app" {
 
     # Vaultwarden Environment Variables
     ADMIN_TOKEN     = var.admin_api_key
-    DOMAIN          = "https://${local.fqdn}"
+    DOMAIN          = "https://${module.vaultwarden_hostname.fqdn}"
     SIGNUPS_ALLOWED = "false"
 
     # SMTP configuration 

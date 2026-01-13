@@ -18,12 +18,6 @@ module "service_database" {
   postgres_server_fqdn    = var.postgres_server_fqdn
 }
 
-# Database configuration moved to separate module
-moved {
-  from = azurerm_postgresql_flexible_server_database.juvusivu_db
-  to   = module.service_database.azurerm_postgresql_flexible_server_database.database
-}
-
 resource "azurerm_storage_account" "storage_account" {
   name                     = "juvusivustorage${var.environment}"
   resource_group_name      = azurerm_resource_group.rg.name

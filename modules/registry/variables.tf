@@ -52,14 +52,6 @@ variable "mailgun_api_key" {
   sensitive = true
 }
 
-variable "mailgun_domain" {
-  type = string
-}
-
-variable "mailgun_url" {
-  type = string
-}
-
 variable "stripe_api_key" {
   type      = string
   sensitive = true
@@ -68,12 +60,4 @@ variable "stripe_api_key" {
 variable "stripe_webhook_secret" {
   type      = string
   sensitive = true
-}
-
-variable "dkim_selector" {
-  type = string
-}
-
-variable "dkim_key" {
-  type = string
 }

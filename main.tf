@@ -20,6 +20,10 @@ terraform {
       source  = "hashicorp/tls"
       version = "~>4.0"
     }
+    mailgun = {
+      source  = "wgebis/mailgun"
+      version = "~>0.7"
+    }
   }
   backend "azurerm" {
     container_name       = "tfstate"
@@ -42,6 +46,10 @@ provider "dns" {
 
 provider "acme" {
   server_url = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
+provider "mailgun" {
+  api_key = module.keyvault.secrets["mailgun-terraform-api-key"]
 }
 
 locals {
@@ -88,7 +96,8 @@ module "keyvault" {
     "status-telegram-channel-id",
     "registry-mailgun-api-key",
     "registry-stripe-api-key",
-    "registry-stripe-webhook-secret"
+    "registry-stripe-webhook-secret",
+    "mailgun-terraform-api-key"
   ]
 }
 
@@ -246,15 +255,11 @@ module "ilmo" {
   edit_token_secret       = module.keyvault.secrets["ilmo-edit-token-secret"]
   auth_jwt_secret         = module.keyvault.secrets["ilmo-auth-jwt-secret"]
   mailgun_api_key         = module.keyvault.secrets["ilmo-mailgun-api-key"]
-  mailgun_domain          = module.keyvault.secrets["ilmo-mailgun-domain"]
   website_url             = "https://tietokilta.fi"
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "ilmo"
   acme_account_key        = module.common.acme_account_key
-
-  dkim_selector = "mg"
-  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDQYrVWefo+vOByb07hseOTt1Ryu47Yt5odumYka5JiEt1p/FHl/ZeeY8gehxV0Dv4PIWM91htY2JY2UZguGYFODzqq9Y9AeKjWpq1dyFKiM8nlrI6GRin0kY7SRLeSgpcVFuwNLiT74Wqy477Geq+l5/Stwho23kHu/pXiQuVUMwIDAQAB"
 }
 
 module "ilmo_staging" {
@@ -342,8 +347,6 @@ module "tikjob_app" {
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "rekry"
-  dkim_selector           = "mta"
-  dkim_key                = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDIvN+P4vQeU88WdDcISgVgZzXnGXeCZHU7h826JhE8p3UvLO4NuHJKuXuKmVcRXFcxOro4MJg2dIaU/Yei8QAVN7ZIxXXbPDLncDKJ4XEjdRajbY1oTPJAuy/KjInozSEeZeVwA2aYtbQ/Ttq4fXGwgKe2rS2uvDBVseqj4Oa6wwIDAQAB"
 }
 
 module "tikjob_tg_bot" {
@@ -399,32 +402,6 @@ module "discourse" {
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzppfPnLHshnORT2P0C3OBuo80OCsCOpLHQS2txfRq2k+y+P4rocFy4z1H0397Ijy6wKM+VI3qOnc8RzVkaZib8+p08jBf/O/hxTwTkuMrotdIo2zrfBq+T1AaYMj4zNJnPt10+vLptpEA6m0XIWsu7wTRE6WfqHjlHj7CwkhTzwIDAQAB"
 }
 
-# DNS records moved from forum module to discourse module when vaalit subdomain was migrated
-moved {
-  from = module.forum.azurerm_dns_a_record.forum_a
-  to   = module.discourse.azurerm_dns_a_record.discourse_a
-}
-
-moved {
-  from = module.forum.azurerm_dns_mx_record.forum_mx
-  to   = module.discourse.azurerm_dns_mx_record.discourse_mx
-}
-
-moved {
-  from = module.forum.azurerm_dns_txt_record.forum_spf
-  to   = module.discourse.azurerm_dns_txt_record.discourse_spf
-}
-
-moved {
-  from = module.forum.azurerm_dns_txt_record.forum_dkim
-  to   = module.discourse.azurerm_dns_txt_record.discourse_dkim
-}
-
-moved {
-  from = module.forum.azurerm_dns_txt_record.forum_dmarc
-  to   = module.discourse.azurerm_dns_txt_record.discourse_dmarc
-}
-
 module "tikpannu" {
   source = "./modules/tikpannu"
 
@@ -441,11 +418,6 @@ module "invoicing" {
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "laskutus"
 
-  dkim_selector = "mta"
-  dkim_key      = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsAjLp5HRzTjMcjGGjZ75U42hCUaopuficYZiyLL3Ail/BmTqh2K8LRxN2UrWXOzVGLEh2F9PR6MC7nqR1Vj+3yR4+5nznwfmZh0cnX4Q2asm7A76st4uVwkVk0y21Mj1wufBIz885XCk+rzeorMOCU+lDZUIehYk1sVSDcubDuBAwJ9TBLXj2EMmcrD1KmJWMca0d5I6RfB+ZD7hG97rWhpgPuKYP7gaT6/t+ekXIJn9ZJmNRoIm/5X04AdM20ywwUrVe6NzWkB8eFuVy01DZki2bI9JnPwjnjw+KgZWrZBhtaYE8umVExmwGmI9PTzrHrknaBKQ0UBrDqSlyXuWgwIDAQAB"
-
-  mailgun_url             = "https://api.eu.mailgun.net/v3/laskutus.tietokilta.fi/messages"
-  mailgun_user            = "api"
   mailgun_api_key         = module.keyvault.secrets["invoice-mailgun-api-key"]
   resource_group_location = local.resource_group_location
   resource_group_name     = module.common.resource_group_name
@@ -467,13 +439,9 @@ module "registry" {
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "rekisteri"
   acme_account_key        = module.common.acme_account_key
-  mailgun_url             = "https://api.eu.mailgun.net"
-  mailgun_domain          = "rekisteri.tietokilta.fi"
   mailgun_api_key         = module.keyvault.secrets["registry-mailgun-api-key"]
   stripe_api_key          = module.keyvault.secrets["registry-stripe-api-key"]
   stripe_webhook_secret   = module.keyvault.secrets["registry-stripe-webhook-secret"]
-  dkim_selector           = "email"
-  dkim_key                = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDpz7YQQUpscjJYLhaXr+jcyN30EwI90CmjRmsvuN1XrsZjTJgXTxATi0WlV80FrWuTBsV2WTv8dK7F7S0xnkh515IxTBrDMau6jUp90nWNp5Oy9DkqW8fNPJUiFWiazWilOPXuARjlOgk18e8d/CvTpke0R1G/S12KXkTshO06JQIDAQAB"
 }
 
 module "oldweb" {
@@ -513,8 +481,6 @@ module "vaultwarden" {
   acme_account_key                     = module.common.acme_account_key
   root_zone_name                       = module.dns_prod.root_zone_name
   subdomain                            = "vault"
-  dkim_selector                        = "s1"
-  dkim_key                             = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDI4os0RXkOmE7+FJGIYDdUFmzGlmmXPzyvvyuCRUzeOBCBiHQQKTqDULecVmbtuROXA2cVBqjZyxHPVcvLLtPOTJYEUTrZ7xpkLDJmtPUIn5iPqXDMbv7QG/XbXN1njRCC9GUPcNvHTocNXe8ZwTK92Ax/l586bLyIzfBUR+yfQQIDAQAB"
 }
 
 module "github-ci-roles" {

@@ -12,13 +12,6 @@ module "service_database" {
   postgres_server_fqdn    = var.postgres_server_fqdn
 }
 
-# Database configuration moved to separate module
-moved {
-  from = azurerm_postgresql_flexible_server_database.ilmo_db_new
-  to   = module.service_database.azurerm_postgresql_flexible_server_database.database
-}
-
-
 resource "azurerm_linux_web_app" "ilmo_backend" {
   name                = "tik-ilmo-${var.environment}-app"
   location            = var.tikweb_rg_location

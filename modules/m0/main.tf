@@ -13,13 +13,6 @@ module "service_database" {
   postgres_server_fqdn    = var.postgres_server_fqdn
 }
 
-# Database configuration moved to separate module
-moved {
-  from = azurerm_postgresql_flexible_server_database.m0_db
-  to   = module.service_database.azurerm_postgresql_flexible_server_database.database
-}
-
-
 resource "azurerm_linux_web_app" "frontend" {
   name                = "m0-frontend-${terraform.workspace}"
   location            = var.resource_group_location

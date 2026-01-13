@@ -3,14 +3,6 @@ variable "mailgun_api_key" {
   sensitive = true
 }
 
-variable "mailgun_url" {
-  type = string
-}
-
-variable "mailgun_user" {
-  type = string
-}
-
 variable "app_service_plan_id" {
   type = string
 }
@@ -36,13 +28,5 @@ variable "root_zone_name" {
 }
 
 variable "acme_account_key" {
-  type = string
-}
-
-variable "dkim_selector" {
-  type = string
-}
-
-variable "dkim_key" {
   type = string
 }

@@ -30,11 +30,11 @@ resource "azurerm_linux_web_app" "invoice_generator" {
     ALLOWED_ORIGINS  = "http://localhost:3000,https://tietokilta.fi"
     RUST_LOG         = "laskugeneraattori=debug,tower_http=debug,axum::rejection=trace"
     RUST_LOG_STYLE   = "never"
-    MAILGUN_URL      = var.mailgun_url
-    MAILGUN_USER     = var.mailgun_user
+    MAILGUN_URL      = "${module.mailgun.api_url_with_domain}/messages"
+    MAILGUN_USER     = "api"
     MAILGUN_PASSWORD = var.mailgun_api_key
     MAILGUN_TO       = "Rahastonhoitaja <rahastonhoitaja@tietokilta.fi>"
-    MAILGUN_FROM     = "noreply@laskutus.tietokilta.fi"
+    MAILGUN_FROM     = module.mailgun.mail_from
     # https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/headers.md
     IP_EXTRACTOR_HEADER = "X-Client-IP"
   }

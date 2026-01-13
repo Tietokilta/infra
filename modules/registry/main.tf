@@ -52,10 +52,10 @@ resource "azurerm_linux_web_app" "registry" {
     ADDRESS_HEADER = "X-Client-IP" # See: https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/headers.md
     PUBLIC_URL     = "https://${module.app_service_hostname.fqdn}"
 
-    MAILGUN_SENDER  = "TiK-rekisteri <noreply@${var.mailgun_domain}>"
+    MAILGUN_SENDER  = "TiK-rekisteri <${module.mailgun.mail_from}>"
     MAILGUN_API_KEY = var.mailgun_api_key
-    MAILGUN_DOMAIN  = var.mailgun_domain
-    MAILGUN_URL     = var.mailgun_url
+    MAILGUN_DOMAIN  = module.mailgun.domain
+    MAILGUN_URL     = module.mailgun.api_url
 
     STRIPE_API_KEY        = var.stripe_api_key
     STRIPE_WEBHOOK_SECRET = var.stripe_webhook_secret

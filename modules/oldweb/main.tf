@@ -18,13 +18,6 @@ module "service_database" {
   postgres_server_fqdn    = var.postgres_server_fqdn
 }
 
-# Database configuration moved to separate module
-moved {
-  from = azurerm_postgresql_flexible_server_database.oldweb_db
-  to   = module.service_database.azurerm_postgresql_flexible_server_database.database
-}
-
-
 # Storage account
 resource "azurerm_storage_account" "storage_account" {
   name                     = "oldwebstorage"

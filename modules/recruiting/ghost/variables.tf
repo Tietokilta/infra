@@ -40,7 +40,7 @@ variable "storage_share_name" {
   type = string
 }
 
-// Ghost config
+// Ghost SMTP config
 
 variable "ghost_mail_host" {
   type = string
@@ -58,6 +58,8 @@ variable "ghost_mail_password" {
   type = string
 }
 
+// DNS
+
 variable "dns_resource_group_name" {
   type = string
 }
@@ -70,13 +72,7 @@ variable "subdomain" {
   type = string
 }
 
-variable "dkim_selector" {
-  type = string
-}
-
-variable "dkim_key" {
-  type = string
-}
+// App Service Plan
 
 variable "tikweb_app_plan_id" {
   type = string

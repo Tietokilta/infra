@@ -17,12 +17,6 @@ module "service_database" {
   postgres_server_fqdn    = var.postgres_server_fqdn
 }
 
-# Database configuration moved to separate module
-moved {
-  from = azurerm_postgresql_flexible_server_database.tenttiarkisto_db_new
-  to   = module.service_database.azurerm_postgresql_flexible_server_database.database
-}
-
 resource "azurerm_storage_account" "tenttiarkisto_storage_account" {
   name                            = "tenttiarkisto${var.env_name}sa"
   resource_group_name             = azurerm_resource_group.tenttiarkisto_rg.name
