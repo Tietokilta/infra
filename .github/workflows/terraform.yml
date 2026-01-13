@@ -40,7 +40,7 @@ jobs:
         run: terraform fmt -check -recursive
       # Generates an execution plan for Terraform (not necessary when running apply immediately after)
       - name: Terraform Plan
-        run: terraform plan -input=false
+        run: terraform plan -input=false -lock-timeout=10m
   apply:
     name: Apply
     runs-on: ubuntu-latest
@@ -64,7 +64,7 @@ jobs:
       # On push to main, build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
-        run: terraform apply -input=false -auto-approve
+        run: terraform apply -input=false -auto-approve -lock-timeout=10m
 env:
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
