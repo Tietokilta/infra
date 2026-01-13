@@ -22,7 +22,7 @@
     };
     mail.outgoing = {
       username = "postmaster@vaalit" + ".tietokilta.fi";
-      serverAddress = "smtp.eu.mailgun.fi";
+      serverAddress = "smtp.eu.mailgun.org";
       port = 587;
       passwordFile = config.sops.secrets.discourse-mailgun-smtp-password.path;
     };
