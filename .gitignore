@@ -5,6 +5,7 @@ terraform.exe
 .idea/
 .devenv
 .direnv
+.envrc
 .pre-commit-config.yaml
 
 result
