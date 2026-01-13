@@ -10,13 +10,13 @@ variable "subdomain" {
   type = string
 }
 
-# variable "dkim_selector" {
-#   type = string
-# }
-#
-# variable "dkim_key" {
-#   type = string
-# }
+variable "dkim_selector" {
+  type = string
+}
+
+variable "dkim_key" {
+  type = string
+}
 
 variable "discourse_ip" {
   type = string
