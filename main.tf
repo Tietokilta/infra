@@ -368,7 +368,7 @@ module "forum" {
 
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "vaalit"
+  subdomain               = "vaalit.old"
 
   dkim_selector = "mta"
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzppfPnLHshnORT2P0C3OBuo80OCsCOpLHQS2txfRq2k+y+P4rocFy4z1H0397Ijy6wKM+VI3qOnc8RzVkaZib8+p08jBf/O/hxTwTkuMrotdIo2zrfBq+T1AaYMj4zNJnPt10+vLptpEA6m0XIWsu7wTRE6WfqHjlHj7CwkhTzwIDAQAB"
@@ -392,8 +392,11 @@ module "discourse" {
 
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "vaalit.staging"
+  subdomain               = "vaalit"
   discourse_ip            = "46.62.222.17"
+
+  dkim_selector = "mta"
+  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzppfPnLHshnORT2P0C3OBuo80OCsCOpLHQS2txfRq2k+y+P4rocFy4z1H0397Ijy6wKM+VI3qOnc8RzVkaZib8+p08jBf/O/hxTwTkuMrotdIo2zrfBq+T1AaYMj4zNJnPt10+vLptpEA6m0XIWsu7wTRE6WfqHjlHj7CwkhTzwIDAQAB"
 }
 
 module "tikpannu" {
