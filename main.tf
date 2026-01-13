@@ -399,6 +399,32 @@ module "discourse" {
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzppfPnLHshnORT2P0C3OBuo80OCsCOpLHQS2txfRq2k+y+P4rocFy4z1H0397Ijy6wKM+VI3qOnc8RzVkaZib8+p08jBf/O/hxTwTkuMrotdIo2zrfBq+T1AaYMj4zNJnPt10+vLptpEA6m0XIWsu7wTRE6WfqHjlHj7CwkhTzwIDAQAB"
 }
 
+# DNS records moved from forum module to discourse module when vaalit subdomain was migrated
+moved {
+  from = module.forum.azurerm_dns_a_record.forum_a
+  to   = module.discourse.azurerm_dns_a_record.vaalit_a
+}
+
+moved {
+  from = module.forum.azurerm_dns_mx_record.forum_mx
+  to   = module.discourse.azurerm_dns_mx_record.vaalit_mx
+}
+
+moved {
+  from = module.forum.azurerm_dns_txt_record.forum_spf
+  to   = module.discourse.azurerm_dns_txt_record.vaalit_spf
+}
+
+moved {
+  from = module.forum.azurerm_dns_txt_record.forum_dkim
+  to   = module.discourse.azurerm_dns_txt_record.vaalit_dkim
+}
+
+moved {
+  from = module.forum.azurerm_dns_txt_record.forum_dmarc
+  to   = module.discourse.azurerm_dns_txt_record.vaalit_dmarc
+}
+
 module "tikpannu" {
   source = "./modules/tikpannu"
 
