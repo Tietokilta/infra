@@ -3,7 +3,7 @@ locals {
 }
 
 # A record for vaalit.tietokilta.fi
-resource "azurerm_dns_a_record" "vaalit_a" {
+resource "azurerm_dns_a_record" "discourse_a" {
   name                = var.subdomain
   resource_group_name = var.dns_resource_group_name
   zone_name           = var.root_zone_name
@@ -12,7 +12,7 @@ resource "azurerm_dns_a_record" "vaalit_a" {
 }
 
 # MX records for Mailgun
-resource "azurerm_dns_mx_record" "vaalit_mx" {
+resource "azurerm_dns_mx_record" "discourse_mx" {
   name                = var.subdomain
   resource_group_name = var.dns_resource_group_name
   zone_name           = var.root_zone_name
@@ -29,7 +29,7 @@ resource "azurerm_dns_mx_record" "vaalit_mx" {
 }
 
 # SPF record for Mailgun
-resource "azurerm_dns_txt_record" "vaalit_spf" {
+resource "azurerm_dns_txt_record" "discourse_spf" {
   name                = var.subdomain
   resource_group_name = var.dns_resource_group_name
   zone_name           = var.root_zone_name
@@ -41,7 +41,7 @@ resource "azurerm_dns_txt_record" "vaalit_spf" {
 }
 
 # DKIM key for Mailgun
-resource "azurerm_dns_txt_record" "vaalit_dkim" {
+resource "azurerm_dns_txt_record" "discourse_dkim" {
   name                = "${var.dkim_selector}._domainkey.${var.subdomain}"
   resource_group_name = var.dns_resource_group_name
   zone_name           = var.root_zone_name
@@ -53,7 +53,7 @@ resource "azurerm_dns_txt_record" "vaalit_dkim" {
 }
 
 # Reporting-only DMARC policy
-resource "azurerm_dns_txt_record" "vaalit_dmarc" {
+resource "azurerm_dns_txt_record" "discourse_dmarc" {
   name                = "_dmarc.${var.subdomain}"
   resource_group_name = var.dns_resource_group_name
   zone_name           = var.root_zone_name

@@ -167,7 +167,7 @@ module "dns_misc_prod" {
     module.tikjob_app.fqdn,
     module.ilmo.fqdn,
     module.invoicing.fqdn,
-    module.forum.fqdn,
+    module.discourse.fqdn,
     module.mattermost.fqdn,
     module.registry.fqdn,
   ]
@@ -402,27 +402,27 @@ module "discourse" {
 # DNS records moved from forum module to discourse module when vaalit subdomain was migrated
 moved {
   from = module.forum.azurerm_dns_a_record.forum_a
-  to   = module.discourse.azurerm_dns_a_record.vaalit_a
+  to   = module.discourse.azurerm_dns_a_record.discourse_a
 }
 
 moved {
   from = module.forum.azurerm_dns_mx_record.forum_mx
-  to   = module.discourse.azurerm_dns_mx_record.vaalit_mx
+  to   = module.discourse.azurerm_dns_mx_record.discourse_mx
 }
 
 moved {
   from = module.forum.azurerm_dns_txt_record.forum_spf
-  to   = module.discourse.azurerm_dns_txt_record.vaalit_spf
+  to   = module.discourse.azurerm_dns_txt_record.discourse_spf
 }
 
 moved {
   from = module.forum.azurerm_dns_txt_record.forum_dkim
-  to   = module.discourse.azurerm_dns_txt_record.vaalit_dkim
+  to   = module.discourse.azurerm_dns_txt_record.discourse_dkim
 }
 
 moved {
   from = module.forum.azurerm_dns_txt_record.forum_dmarc
-  to   = module.discourse.azurerm_dns_txt_record.vaalit_dmarc
+  to   = module.discourse.azurerm_dns_txt_record.discourse_dmarc
 }
 
 module "tikpannu" {
