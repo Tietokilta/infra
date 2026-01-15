@@ -67,6 +67,10 @@ module "keyvault" {
     "ilmo-edit-token-secret",
     "ilmo-mailgun-api-key",
     "ilmo-mailgun-domain",
+    "ilmo-stripe-api-key",
+    "ilmo-stripe-webhook-secret",
+    "ilmo-staging-stripe-api-key",
+    "ilmo-staging-stripe-webhook-secret",
     "invoice-mailgun-api-key",
     "tikjob-ghost-mail-username",
     "tikjob-ghost-mail-password",
@@ -255,7 +259,10 @@ module "ilmo" {
   edit_token_secret       = module.keyvault.secrets["ilmo-edit-token-secret"]
   auth_jwt_secret         = module.keyvault.secrets["ilmo-auth-jwt-secret"]
   mailgun_api_key         = module.keyvault.secrets["ilmo-mailgun-api-key"]
+  stripe_secret_key       = module.keyvault.secrets["ilmo-staging-stripe-api-key"]
+  stripe_webhook_secret   = module.keyvault.secrets["ilmo-staging-stripe-webhook-secret"]
   website_url             = "https://tietokilta.fi"
+
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "ilmo"
@@ -276,6 +283,8 @@ module "ilmo_staging" {
   auth_jwt_secret         = module.keyvault.secrets["ilmo-auth-jwt-secret"]
   mailgun_api_key         = module.keyvault.secrets["ilmo-mailgun-api-key"]
   mailgun_domain          = module.keyvault.secrets["ilmo-mailgun-domain"]
+  stripe_secret_key       = module.keyvault.secrets["ilmo-staging-stripe-api-key"]
+  stripe_webhook_secret   = module.keyvault.secrets["ilmo-staging-stripe-webhook-secret"]
   website_url             = "https://tietokilta.fi"
 }
 

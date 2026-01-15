@@ -65,3 +65,13 @@ variable "subdomain" {
 variable "acme_account_key" {
   type = string
 }
+
+variable "stripe_secret_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "stripe_webhook_secret" {
+  type      = string
+  sensitive = true
+}
