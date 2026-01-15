@@ -24,12 +24,24 @@ jobs:
         uses: actions/checkout@v6
       - name: Install Nix
         uses: cachix/install-nix-action@v31
+      - name: Restore and save /nix/store
+        uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}
+          purge: true
       - name: Run flake checks
         run: |
           nix flake check -L
+          # Add GC roots
+          nix flake show --json | jq ".checks.\"$(uname -m)-linux\" | keys[]" | \
+            xargs -I{} nix build .#checks.x86_64-linux."{}" --out-link "{}"
       - name: Build NixOS Configuration
         run: |
-          nix build .#nixosConfigurations.tikpannu.config.system.build.toplevel -L
+          nix build .#nixosConfigurations.tikpannu.config.system.build.toplevel -L --out-link tikpannu-config
+      - name: Nix GC
+        run: |
+          nix-collect-garbage
   deploy:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
@@ -38,12 +50,13 @@ jobs:
         uses: actions/checkout@v6
       - name: Install Nix
         uses: cachix/install-nix-action@v31
+      - name: Restore and save /nix/store
+        uses: nix-community/cache-nix-action@v7
         with:
-          extra-nix-config: |
-            experimental-features = nix-command flakes
-      - name: Run flake checks
-        run: |
-          nix flake check -L
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}
+          gc-max-store-size-linux: 9G
+          purge: true
       - name: Configure SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
@@ -60,12 +73,23 @@ jobs:
             IdentityFile ~/.ssh/deploy_key
             User deploy
           EOF
+      - name: Run flake checks
+        run: |
+          nix flake check -L
+          # Add GC roots
+          nix flake show --json | jq ".checks.\"$(uname -m)-linux\" | keys[]" | \
+            xargs -I{} nix build .#checks.x86_64-linux."{}" --out-link "{}"
       - name: Build and Deploy NixOS Configuration
         run: |
+          nix build .#nixosConfigurations.tikpannu.config.system.build.toplevel -L --out-link tikpannu-config
+
           nix copy .#nixosConfigurations.tikpannu.config.system.build.toplevel -L \
             --to ssh://pannu.tietokilta.fi
 
           ssh pannu.tietokilta.fi 'sudo $(realpath $(which rebuild-from-infra)) "$GITHUB_SHA"'
+      - name: Nix GC
+        run: |
+          nix-collect-garbage
       - name: Cleanup
         if: always()
         run: |
