@@ -75,3 +75,8 @@ variable "stripe_webhook_secret" {
   type      = string
   sensitive = true
 }
+
+variable "complete_payment_url" {
+  type    = string
+  default = null
+}

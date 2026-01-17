@@ -67,7 +67,7 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     EVENT_DETAILS_URL    = "${var.website_url}/{lang}/events/{slug}"
     EDIT_SIGNUP_URL      = "${var.website_url}/{lang}/signups/{id}/{editToken}"
     ADMIN_URL            = "https://${module.app_service_hostname.fqdn}/admin"
-    COMPLETE_PAYMENT_URL = "https://juhlavuosi.fi/{lang}/signups/{id}/{editToken}"
+    COMPLETE_PAYMENT_URL = coalesce(var.complete_payment_url, "${var.website_url}/{lang}/signups/{id}/{editToken}")
 
     ICAL_UID_DOMAIN = "tietokilta.fi"
 

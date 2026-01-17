@@ -262,6 +262,7 @@ module "ilmo" {
   stripe_secret_key       = module.keyvault.secrets["ilmo-staging-stripe-api-key"]
   stripe_webhook_secret   = module.keyvault.secrets["ilmo-staging-stripe-webhook-secret"]
   website_url             = "https://tietokilta.fi"
+  complete_payment_url    = "https://juhlavuosi.fi/{lang}/signups/{id}/{editToken}"
 
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
