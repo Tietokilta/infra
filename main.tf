@@ -259,10 +259,10 @@ module "ilmo" {
   edit_token_secret       = module.keyvault.secrets["ilmo-edit-token-secret"]
   auth_jwt_secret         = module.keyvault.secrets["ilmo-auth-jwt-secret"]
   mailgun_api_key         = module.keyvault.secrets["ilmo-mailgun-api-key"]
-  stripe_secret_key       = module.keyvault.secrets["ilmo-staging-stripe-api-key"]
-  stripe_webhook_secret   = module.keyvault.secrets["ilmo-staging-stripe-webhook-secret"]
+  stripe_secret_key       = module.keyvault.secrets["ilmo-stripe-api-key"]
+  stripe_webhook_secret   = module.keyvault.secrets["ilmo-stripe-webhook-secret"]
   website_url             = "https://tietokilta.fi"
-  complete_payment_url    = "https://juhlavuosi.fi/{lang}/signups/{id}/{editToken}"
+  complete_payment_url    = "https://juhlavuosi.fi/{lang}/payment/{id}/{editToken}"
 
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
