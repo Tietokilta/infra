@@ -29,5 +29,8 @@ in
     wappupokemonbot.envFile = lib.mkForce wappupokemonbotEnvFile.outPath;
   };
 
+  # Disable backup in base test config (requires CIFS mount)
+  services.tik-backup.enable = lib.mkForce false;
+
   system.stateVersion = "23.11";
 }

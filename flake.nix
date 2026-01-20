@@ -94,6 +94,7 @@
             ])
             sops
             terraform
+            age-plugin-yubikey
           ];
 
           shellHook = ''
