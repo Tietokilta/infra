@@ -16,4 +16,5 @@ let
 in
 {
   server-up = runTest ./server-up.nix;
+  backup-module = runTest ./backup-module.nix;
 }
