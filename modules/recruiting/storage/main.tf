@@ -15,8 +15,8 @@ resource "azurerm_mysql_flexible_server" "tikjob_mysql_new" {
   location               = azurerm_resource_group.tikjob_rg.location
   administrator_login    = var.ghost_db_username
   administrator_password = random_password.db_password.result
-  sku_name               = "B_Standard_B1s"
-  version                = "8.0.21"
+  sku_name               = "B_Standard_B1ms"
+  version                = "8.4"
   zone                   = "2"
   lifecycle {
     prevent_destroy = true
