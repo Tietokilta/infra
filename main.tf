@@ -198,7 +198,6 @@ module "dns_misc_prod" {
     module.ilmo.fqdn,
     module.invoicing.fqdn,
     module.discourse.fqdn,
-    module.mattermost.fqdn,
     module.registry.fqdn,
   ]
 }
@@ -394,33 +393,6 @@ module "tikjob_tg_bot" {
   bot_token                  = module.keyvault.secrets["tikjob-tg-bot-token"]
   ghost_hook_secret          = module.keyvault.secrets["tikjob-tg-ghost-hook-secret"]
   channel_id                 = "-1001347398697"
-}
-
-module "forum" {
-  source   = "./modules/forum"
-  env_name = "prod"
-
-  resource_group_location = local.resource_group_location
-
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "vaalit.old"
-
-  dkim_selector = "mta"
-  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzppfPnLHshnORT2P0C3OBuo80OCsCOpLHQS2txfRq2k+y+P4rocFy4z1H0397Ijy6wKM+VI3qOnc8RzVkaZib8+p08jBf/O/hxTwTkuMrotdIo2zrfBq+T1AaYMj4zNJnPt10+vLptpEA6m0XIWsu7wTRE6WfqHjlHj7CwkhTzwIDAQAB"
-}
-
-module "mattermost" {
-  source = "./modules/mattermost"
-
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "mm"
-
-  dkim_selector = "email"
-  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDEIS79WkHcT6Dr1KLQp9CkLtzCqU/We4SqYWSQSQkfabOdWyoKkQJlwjLzbMjLSQtX35gPvSQXIzqYnC0dhppQoNleu25Me0QIfjwc7cWSvYUC1HEp1OX5+NTZXHvCuc0KdhEEQ3tUTUnSAk7QZZMUlX+gSQV5MFMEO9Wcqk4E1wIDAQAB"
-
-  mattermost_ip = module.forum.forum_ip
 }
 
 module "discourse" {
