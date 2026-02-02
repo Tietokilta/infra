@@ -528,7 +528,7 @@ module "github-ci-roles" {
     "Tietokilta/laskugeneraattori" : [module.invoicing.invoicing_app_id]
     "Tietokilta/ilmomasiina" : [module.ilmo.app_id]
     "Tietokilta/ISOpistekortti" : [module.isopistekortti.app_id]
-    "Tietokilta/m0-ilmotunkki" : [module.m0.frontend_app_id, module.m0.strapi_app_id]
+    # "Tietokilta/m0-ilmotunkki" : [module.m0.frontend_app_id, module.m0.strapi_app_id]
     "Tietokilta/juvusivu" : [module.juvusivu.juvusivu_app_id]
     "Tietokilta/infra" : [module.status.app_id]
     "Tietokilta/rekisteri" : [module.registry.registry_app_id]
