@@ -14,7 +14,6 @@ on:
 concurrency:
   group: terraform-apply
   cancel-in-progress: false
-# Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
 defaults:
   run:
     shell: bash
@@ -23,46 +22,173 @@ jobs:
     name: Plan
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
-      # Checkout the repository
       - name: Checkout
-        uses: actions/checkout@v3
-      # Install the latest version of Terraform CLI
+        uses: actions/checkout@v6
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-      # Initialize Terraform working directory
+        with:
+          terraform_wrapper: true
       - name: Initialize Terraform
+        id: init
         run: |
           terraform init
           terraform workspace select prod
-      # Checks that all Terraform configuration files adhere to a canonical format
       - name: Check formatting
+        id: fmt
         run: terraform fmt -check -recursive
-      # Generates an execution plan for Terraform (not necessary when running apply immediately after)
+        continue-on-error: true
+      - name: Validate
+        id: validate
+        run: terraform validate -no-color
+        continue-on-error: true
       - name: Terraform Plan
-        run: terraform plan -input=false -lock-timeout=10m
+        id: plan
+        run: terraform plan -input=false -lock-timeout=10m -no-color -out=tfplan
+        continue-on-error: true
+      - name: Generate Plan Output
+        id: plan_output
+        if: always() && steps.init.outcome == 'success'
+        run: |
+          if [ -f tfplan ]; then
+            PLAN=$(terraform show -no-color tfplan)
+          else
+            PLAN="Plan could not be generated"
+          fi
+
+          # Save plan to file for the comment step
+          echo "$PLAN" > plan_output.txt
+
+          # Extract summary line if present
+          SUMMARY=$(echo "$PLAN" | grep -E "Plan:|No changes\." | head -1 || echo "")
+          echo "summary=$SUMMARY" >> $GITHUB_OUTPUT
+
+          # Determine plan status emoji and message
+          if echo "$PLAN" | grep -q "No changes."; then
+            echo "status_emoji=white_check_mark" >> $GITHUB_OUTPUT
+            echo "status_message=No changes - Infrastructure is up-to-date" >> $GITHUB_OUTPUT
+          elif echo "$PLAN" | grep -q "Plan:"; then
+            # Extract counts
+            ADD=$(echo "$PLAN" | grep -oP '\d+(?= to add)' || echo "0")
+            CHANGE=$(echo "$PLAN" | grep -oP '\d+(?= to change)' || echo "0")
+            DESTROY=$(echo "$PLAN" | grep -oP '\d+(?= to destroy)' || echo "0")
+            echo "status_emoji=memo" >> $GITHUB_OUTPUT
+            echo "status_message=Plan: $ADD to add, $CHANGE to change, $DESTROY to destroy" >> $GITHUB_OUTPUT
+          else
+            echo "status_emoji=x" >> $GITHUB_OUTPUT
+            echo "status_message=Unable to generate plan summary" >> $GITHUB_OUTPUT
+          fi
+      - name: Comment Plan on PR
+        if: always() && steps.init.outcome == 'success'
+        uses: actions/github-script@v7
+        env:
+          PLAN_FILE: plan_output.txt
+          FMT_OUTCOME: ${{ steps.fmt.outcome }}
+          VALIDATE_OUTCOME: ${{ steps.validate.outcome }}
+          PLAN_OUTCOME: ${{ steps.plan.outcome }}
+          STATUS_EMOJI: ${{ steps.plan_output.outputs.status_emoji }}
+          STATUS_MESSAGE: ${{ steps.plan_output.outputs.status_message }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+
+            // Read plan output
+            let plan = 'Plan output not available';
+            try {
+              plan = fs.readFileSync(process.env.PLAN_FILE, 'utf8');
+            } catch (e) {
+              console.log('Could not read plan file:', e.message);
+            }
+
+            // Determine status icons
+            const fmtIcon = process.env.FMT_OUTCOME === 'success' ? ':white_check_mark:' : ':x:';
+            const validateIcon = process.env.VALIDATE_OUTCOME === 'success' ? ':white_check_mark:' : ':x:';
+            const planIcon = process.env.PLAN_OUTCOME === 'success' ? ':white_check_mark:' : ':x:';
+            const statusEmoji = `:${process.env.STATUS_EMOJI}:`;
+
+            // Build comment body
+            const body = [
+              `## Terraform Plan Results`,
+              ``,
+              `### ${statusEmoji} ${process.env.STATUS_MESSAGE}`,
+              ``,
+              `| Step | Status |`,
+              `|------|--------|`,
+              `| :pencil2: **Format** | ${fmtIcon} \`${process.env.FMT_OUTCOME}\` |`,
+              `| :mag: **Validate** | ${validateIcon} \`${process.env.VALIDATE_OUTCOME}\` |`,
+              `| :book: **Plan** | ${planIcon} \`${process.env.PLAN_OUTCOME}\` |`,
+              ``,
+              `<details><summary><b>Show Plan Output</b></summary>`,
+              ``,
+              `\`\`\`hcl`,
+              plan,
+              `\`\`\``,
+              `</details>`,
+              ``,
+              `---`,
+              `*Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`,
+              `*Workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*`
+            ].join('\n');
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('## Terraform Plan Results')
+            );
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+              console.log('Updated existing comment');
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+              console.log('Created new comment');
+            }
+      - name: Check Status
+        if: steps.fmt.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.plan.outcome == 'failure'
+        run: |
+          echo "::error::One or more Terraform steps failed"
+          echo "Format: ${{ steps.fmt.outcome }}"
+          echo "Validate: ${{ steps.validate.outcome }}"
+          echo "Plan: ${{ steps.plan.outcome }}"
+          exit 1
   apply:
     name: Apply
     runs-on: ubuntu-latest
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     environment: production
     steps:
-      # Checkout the repository
       - name: Checkout
-        uses: actions/checkout@v3
-      # Install the latest version of Terraform CLI
+        uses: actions/checkout@v6
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-      # Initialize Terraform working directory
       - name: Initialize Terraform
         run: |
           terraform init
           terraform workspace select prod
-      # Checks that all Terraform configuration files adhere to a canonical format
       - name: Check formatting
         run: terraform fmt -check -recursive
-      # On push to main, build or change infrastructure according to Terraform configuration files
-      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
         run: terraform apply -input=false -auto-approve -lock-timeout=10m
 env:
