@@ -39,15 +39,6 @@ resource "azurerm_storage_share" "file_share" {
   quota              = 2 # GB
 }
 
-resource "azurerm_container_registry" "acr" {
-  name                = "oldwebContainerRegistry"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  sku                 = "Basic"
-  admin_enabled       = true
-  # Admin usage is not ideal, but it hopefully works
-}
-
 # Create actual application
 resource "azurerm_linux_web_app" "oldweb_backend" {
   name                = "tik-oldweb-${var.environment}-app"
@@ -66,6 +57,7 @@ resource "azurerm_linux_web_app" "oldweb_backend" {
       docker_image_name        = "tietokilta/oldweb:latest"
       docker_registry_username = "TietokiltaAdmin"
       docker_registry_password = var.ghcr_token
+      # The ghcr_token is a GitHub Personal Access Token (for TietokiltaAdmin account) with read:packages scope
     }
   }
 
