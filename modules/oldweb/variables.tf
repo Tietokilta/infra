@@ -50,3 +50,8 @@ variable "tikweb_rg_location" {
 variable "acme_account_key" {
   type = string
 }
+
+variable "ghcr_token" {
+  type      = string
+  sensitive = true
+}
