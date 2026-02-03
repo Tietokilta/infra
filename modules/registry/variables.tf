@@ -18,15 +18,6 @@ variable "postgres_server_fqdn" {
   type = string
 }
 
-variable "postgres_admin_username" {
-  type = string
-}
-
-variable "postgres_admin_password" {
-  type      = string
-  sensitive = true
-}
-
 variable "subdomain" {
   type = string
 }

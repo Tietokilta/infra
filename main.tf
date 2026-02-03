@@ -24,6 +24,10 @@ terraform {
       source  = "wgebis/mailgun"
       version = "~>0.7"
     }
+    postgresql = {
+      source  = "cyrilgdn/postgresql"
+      version = ">= 1.13.0"
+    }
   }
   backend "azurerm" {
     container_name       = "tfstate"
@@ -51,6 +55,18 @@ provider "acme" {
 provider "mailgun" {
   api_key = module.keyvault.secrets["mailgun-terraform-api-key"]
 }
+
+# Configure aliased provider to connect as the Postgres administrator
+provider "postgresql" {
+  alias     = "admin"
+  host      = module.common.postgres_server_fqdn
+  port      = 5432
+  username  = module.common.postgres_admin_username
+  password  = module.common.postgres_admin_password
+  sslmode   = "require"
+  superuser = false
+}
+
 
 locals {
   resource_group_location = "northeurope"
@@ -248,46 +264,50 @@ resource "azurerm_key_vault_secret" "cms_password" {
   key_vault_id = module.keyvault.keyvault_id
 }
 module "ilmo" {
-  source                  = "./modules/ilmo"
-  environment             = "prod"
-  tikweb_rg_name          = module.common.resource_group_name
-  tikweb_rg_location      = module.common.resource_group_location
-  tikweb_app_plan_id      = module.common.tikweb_app_plan_id
-  postgres_server_fqdn    = module.common.postgres_server_fqdn
-  postgres_admin_username = module.common.postgres_admin_username
-  postgres_admin_password = module.common.postgres_admin_password
-  postgres_server_id      = module.common.postgres_server_id
-  edit_token_secret       = module.keyvault.secrets["ilmo-edit-token-secret"]
-  auth_jwt_secret         = module.keyvault.secrets["ilmo-auth-jwt-secret"]
-  mailgun_api_key         = module.keyvault.secrets["ilmo-mailgun-api-key"]
-  stripe_secret_key       = module.keyvault.secrets["ilmo-stripe-api-key"]
-  stripe_webhook_secret   = module.keyvault.secrets["ilmo-stripe-webhook-secret"]
-  website_url             = "https://tietokilta.fi"
-  complete_payment_url    = "https://juhlavuosi.fi/{lang}/payment/{id}/{editToken}"
+  source                = "./modules/ilmo"
+  environment           = "prod"
+  tikweb_rg_name        = module.common.resource_group_name
+  tikweb_rg_location    = module.common.resource_group_location
+  tikweb_app_plan_id    = module.common.tikweb_app_plan_id
+  postgres_server_fqdn  = module.common.postgres_server_fqdn
+  postgres_server_id    = module.common.postgres_server_id
+  edit_token_secret     = module.keyvault.secrets["ilmo-edit-token-secret"]
+  auth_jwt_secret       = module.keyvault.secrets["ilmo-auth-jwt-secret"]
+  mailgun_api_key       = module.keyvault.secrets["ilmo-mailgun-api-key"]
+  stripe_secret_key     = module.keyvault.secrets["ilmo-stripe-api-key"]
+  stripe_webhook_secret = module.keyvault.secrets["ilmo-stripe-webhook-secret"]
+  website_url           = "https://tietokilta.fi"
+  complete_payment_url  = "https://juhlavuosi.fi/{lang}/payment/{id}/{editToken}"
 
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "ilmo"
   acme_account_key        = module.common.acme_account_key
+
+  providers = {
+    postgresql.admin = postgresql.admin
+  }
 }
 
 module "ilmo_staging" {
-  source                  = "./modules/ilmo_staging"
-  environment             = "staging"
-  tikweb_rg_name          = module.common.resource_group_name
-  tikweb_rg_location      = module.common.resource_group_location
-  tikweb_app_plan_id      = module.common.tikweb_app_plan_id
-  postgres_server_fqdn    = module.common.postgres_server_fqdn
-  postgres_admin_username = module.common.postgres_admin_username
-  postgres_admin_password = module.common.postgres_admin_password
-  postgres_server_id      = module.common.postgres_server_id
-  edit_token_secret       = module.keyvault.secrets["ilmo-edit-token-secret"]
-  auth_jwt_secret         = module.keyvault.secrets["ilmo-auth-jwt-secret"]
-  mailgun_api_key         = module.keyvault.secrets["ilmo-mailgun-api-key"]
-  mailgun_domain          = module.keyvault.secrets["ilmo-mailgun-domain"]
-  stripe_secret_key       = module.keyvault.secrets["ilmo-staging-stripe-api-key"]
-  stripe_webhook_secret   = module.keyvault.secrets["ilmo-staging-stripe-webhook-secret"]
-  website_url             = "https://tietokilta.fi"
+  source                = "./modules/ilmo_staging"
+  environment           = "staging"
+  tikweb_rg_name        = module.common.resource_group_name
+  tikweb_rg_location    = module.common.resource_group_location
+  tikweb_app_plan_id    = module.common.tikweb_app_plan_id
+  postgres_server_fqdn  = module.common.postgres_server_fqdn
+  postgres_server_id    = module.common.postgres_server_id
+  edit_token_secret     = module.keyvault.secrets["ilmo-edit-token-secret"]
+  auth_jwt_secret       = module.keyvault.secrets["ilmo-auth-jwt-secret"]
+  mailgun_api_key       = module.keyvault.secrets["ilmo-mailgun-api-key"]
+  mailgun_domain        = module.keyvault.secrets["ilmo-mailgun-domain"]
+  stripe_secret_key     = module.keyvault.secrets["ilmo-staging-stripe-api-key"]
+  stripe_webhook_secret = module.keyvault.secrets["ilmo-staging-stripe-webhook-secret"]
+  website_url           = "https://tietokilta.fi"
+
+  providers = {
+    postgresql.admin = postgresql.admin
+  }
 }
 
 module "histotik" {
@@ -306,8 +326,6 @@ module "tenttiarkisto" {
   postgres_resource_group_name = module.common.resource_group_name
   resource_group_location      = local.resource_group_location
   postgres_server_fqdn         = module.common.postgres_server_fqdn
-  postgres_admin_username      = module.common.postgres_admin_username
-  postgres_admin_password      = module.common.postgres_admin_password
   postgres_server_id           = module.common.postgres_server_id
   tikweb_app_plan_id           = module.common.tikweb_app_plan_id
   tikweb_app_plan_rg_location  = module.common.resource_group_location
@@ -316,6 +334,10 @@ module "tenttiarkisto" {
   acme_account_key             = module.common.acme_account_key
   dns_resource_group_name      = module.tenttiarkisto_dns_zone.resource_group_name
   root_zone_name               = module.tenttiarkisto_dns_zone.root_zone_name
+
+  providers = {
+    postgresql.admin = postgresql.admin
+  }
 }
 
 module "voo" {
@@ -443,8 +465,6 @@ module "registry" {
   app_service_plan_id     = module.common.tikweb_app_plan_id
   postgres_server_id      = module.common.postgres_server_id
   postgres_server_fqdn    = module.common.postgres_server_fqdn
-  postgres_admin_username = module.common.postgres_admin_username
-  postgres_admin_password = module.common.postgres_admin_password
   environment             = "prod"
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
@@ -453,14 +473,16 @@ module "registry" {
   mailgun_api_key         = module.keyvault.secrets["registry-mailgun-api-key"]
   stripe_api_key          = module.keyvault.secrets["registry-stripe-api-key"]
   stripe_webhook_secret   = module.keyvault.secrets["registry-stripe-webhook-secret"]
+
+  providers = {
+    postgresql.admin = postgresql.admin
+  }
 }
 
 module "oldweb" {
   source                  = "./modules/oldweb"
   environment             = "prod"
   postgres_server_fqdn    = module.common.postgres_server_fqdn
-  postgres_admin_username = module.common.postgres_admin_username
-  postgres_admin_password = module.common.postgres_admin_password
   postgres_server_id      = module.common.postgres_server_id
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
@@ -471,6 +493,10 @@ module "oldweb" {
   tikweb_rg_name          = module.common.resource_group_name
   location                = local.resource_group_location
   ghcr_token              = module.keyvault.secrets["oldweb-ghcr-access-token"]
+
+  providers = {
+    postgresql.admin = postgresql.admin
+  }
 }
 
 module "vaultwarden" {
@@ -536,8 +562,6 @@ module "m0" {
   m0_dns_zone_name                    = module.dns_m0.root_zone_name
   m0_dns_resource_group_name          = module.dns_m0.resource_group_name
   postgres_server_fqdn                = module.common.postgres_server_fqdn
-  postgres_admin_username             = module.common.postgres_admin_username
-  postgres_admin_password             = module.common.postgres_admin_password
   postgres_server_id                  = module.common.postgres_server_id
   dkim_key                            = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Ho1FBsK9IyD0dl7gA/fh8vA1abuLrgB/e//bIrcFb8NS/Ze3W2cMUHZ7T3UvjnjlPhutWMblBX39oFBj9jp+lFpy+AwKSYBz7GZ/WCdZTsN01U6miUGiMEdfB/pOmIXKJKtkT9wHk7RJkRl9MTnUY60UgVweZFfdJbAnMXNKvulEZAEsKlE+8M5qDJDvnGNs99/wDl9nam5KyGPFLTzxeBSlsEQo6qa5qPcmn3vxbgVlwrFDt9KmbFcgAbq3wZ+W0MwwL54wPZVmHCwObi4sIptokmZVlmaXyvTwJ8eklrwJD51TLlpinwNBUpvgFGWDC62nLLt3wOHFSadtuxWCwIDAQAB"
   dkim_selector                       = "email"
@@ -548,6 +572,10 @@ module "m0" {
   strapi_token                        = module.keyvault.secrets["muistinnollaus-strapi-token"]
   muistinnollaus_paytrail_merchant_id = module.keyvault.secrets["muistinnollaus-paytrail-merchant-id"]
   muistinnollaus_paytrail_secret_key  = module.keyvault.secrets["muistinnollaus-paytrail-secret-key"]
+
+  providers = {
+    postgresql.admin = postgresql.admin
+  }
 }
 
 module "juvusivu" {
@@ -558,14 +586,16 @@ module "juvusivu" {
   app_service_plan_resource_group_name = module.common.resource_group_name
   location                             = local.resource_group_location
   postgres_server_fqdn                 = module.common.postgres_server_fqdn
-  postgres_admin_username              = module.common.postgres_admin_username
-  postgres_admin_password              = module.common.postgres_admin_password
   postgres_server_id                   = module.common.postgres_server_id
   acme_account_key                     = module.common.acme_account_key
   dns_resource_group_name              = module.dns_juvusivu.resource_group_name
   root_zone_name                       = module.dns_juvusivu.root_zone_name
   m0_dns_resource_group_name           = module.dns_m0.resource_group_name
   m0_dns_zone_name                     = module.dns_m0.root_zone_name
+
+  providers = {
+    postgresql.admin = postgresql.admin
+  }
 }
 
 module "status" {
@@ -589,11 +619,13 @@ module "isopistekortti" {
   app_service_plan_id     = module.common.tikweb_app_plan_id
   postgres_server_id      = module.common.postgres_server_id
   postgres_server_fqdn    = module.common.postgres_server_fqdn
-  postgres_admin_username = module.common.postgres_admin_username
-  postgres_admin_password = module.common.postgres_admin_password
   subdomain               = "iso"
   environment             = "prod"
   root_zone_name          = module.dns_prod.root_zone_name
   dns_resource_group_name = module.dns_prod.resource_group_name
   acme_account_key        = module.common.acme_account_key
+
+  providers = {
+    postgresql.admin = postgresql.admin
+  }
 }
