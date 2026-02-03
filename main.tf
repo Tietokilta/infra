@@ -198,7 +198,6 @@ module "dns_misc_prod" {
     module.ilmo.fqdn,
     module.invoicing.fqdn,
     module.discourse.fqdn,
-    module.mattermost.fqdn,
     module.registry.fqdn,
   ]
 }
@@ -396,33 +395,6 @@ module "tikjob_tg_bot" {
   channel_id                 = "-1001347398697"
 }
 
-module "forum" {
-  source   = "./modules/forum"
-  env_name = "prod"
-
-  resource_group_location = local.resource_group_location
-
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "vaalit.old"
-
-  dkim_selector = "mta"
-  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzppfPnLHshnORT2P0C3OBuo80OCsCOpLHQS2txfRq2k+y+P4rocFy4z1H0397Ijy6wKM+VI3qOnc8RzVkaZib8+p08jBf/O/hxTwTkuMrotdIo2zrfBq+T1AaYMj4zNJnPt10+vLptpEA6m0XIWsu7wTRE6WfqHjlHj7CwkhTzwIDAQAB"
-}
-
-module "mattermost" {
-  source = "./modules/mattermost"
-
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "mm"
-
-  dkim_selector = "email"
-  dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDEIS79WkHcT6Dr1KLQp9CkLtzCqU/We4SqYWSQSQkfabOdWyoKkQJlwjLzbMjLSQtX35gPvSQXIzqYnC0dhppQoNleu25Me0QIfjwc7cWSvYUC1HEp1OX5+NTZXHvCuc0KdhEEQ3tUTUnSAk7QZZMUlX+gSQV5MFMEO9Wcqk4E1wIDAQAB"
-
-  mattermost_ip = module.forum.forum_ip
-}
-
 module "discourse" {
   source = "./modules/discourse"
 
@@ -528,7 +500,6 @@ module "github-ci-roles" {
     "Tietokilta/laskugeneraattori" : [module.invoicing.invoicing_app_id]
     "Tietokilta/ilmomasiina" : [module.ilmo.app_id]
     "Tietokilta/ISOpistekortti" : [module.isopistekortti.app_id]
-    "Tietokilta/m0-ilmotunkki" : [module.m0.frontend_app_id, module.m0.strapi_app_id]
     "Tietokilta/juvusivu" : [module.juvusivu.juvusivu_app_id]
     "Tietokilta/infra" : [module.status.app_id]
     "Tietokilta/rekisteri" : [module.registry.registry_app_id]
@@ -550,32 +521,6 @@ output "github_actions_azure_subscription_id" {
 output "github_actions_azure_tenant_id" {
   description = "AZURE_TENANT_ID in Github Actions"
   value       = module.github-ci-roles.azure_tenant_id
-}
-
-module "m0" {
-  source                              = "./modules/m0"
-  resource_group_location             = local.resource_group_location
-  acme_account_key                    = module.common.acme_account_key
-  app_service_plan_id                 = module.common.tikweb_app_plan_id
-  web_resource_group_name             = module.common.resource_group_name
-  mail_dns_resource_group_name        = module.dns_prod.resource_group_name
-  m0_dns_zone_name                    = module.dns_m0.root_zone_name
-  m0_dns_resource_group_name          = module.dns_m0.resource_group_name
-  postgres_server_fqdn                = module.common.postgres_server_fqdn
-  postgres_server_id                  = module.common.postgres_server_id
-  dkim_key                            = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Ho1FBsK9IyD0dl7gA/fh8vA1abuLrgB/e//bIrcFb8NS/Ze3W2cMUHZ7T3UvjnjlPhutWMblBX39oFBj9jp+lFpy+AwKSYBz7GZ/WCdZTsN01U6miUGiMEdfB/pOmIXKJKtkT9wHk7RJkRl9MTnUY60UgVweZFfdJbAnMXNKvulEZAEsKlE+8M5qDJDvnGNs99/wDl9nam5KyGPFLTzxeBSlsEQo6qa5qPcmn3vxbgVlwrFDt9KmbFcgAbq3wZ+W0MwwL54wPZVmHCwObi4sIptokmZVlmaXyvTwJ8eklrwJD51TLlpinwNBUpvgFGWDC62nLLt3wOHFSadtuxWCwIDAQAB"
-  dkim_selector                       = "email"
-  mail_subdomain                      = "m0"
-  smtp_email                          = module.keyvault.secrets["muistinnollaus-smtp-email"]
-  smtp_password                       = module.keyvault.secrets["muistinnollaus-smtp-password"]
-  mail_dns_zone_name                  = module.dns_prod.root_zone_name
-  strapi_token                        = module.keyvault.secrets["muistinnollaus-strapi-token"]
-  muistinnollaus_paytrail_merchant_id = module.keyvault.secrets["muistinnollaus-paytrail-merchant-id"]
-  muistinnollaus_paytrail_secret_key  = module.keyvault.secrets["muistinnollaus-paytrail-secret-key"]
-
-  providers = {
-    postgresql.admin = postgresql.admin
-  }
 }
 
 module "juvusivu" {
