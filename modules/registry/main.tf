@@ -6,11 +6,13 @@ locals {
 module "service_database" {
   source = "../service_database"
 
-  db_name                 = local.postgres_db_name
-  postgres_server_id      = var.postgres_server_id
-  postgres_admin_username = var.postgres_admin_username
-  postgres_admin_password = var.postgres_admin_password
-  postgres_server_fqdn    = var.postgres_server_fqdn
+  db_name              = local.postgres_db_name
+  postgres_server_id   = var.postgres_server_id
+  postgres_server_fqdn = var.postgres_server_fqdn
+
+  providers = {
+    postgresql.admin = postgresql.admin
+  }
 }
 
 resource "azurerm_linux_web_app" "registry" {
