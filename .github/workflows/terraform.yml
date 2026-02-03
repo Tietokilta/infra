@@ -14,7 +14,6 @@ on:
 concurrency:
   group: terraform-apply
   cancel-in-progress: false
-# Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
 defaults:
   run:
     shell: bash
@@ -27,42 +26,29 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      # Checkout the repository
       - name: Checkout
         uses: actions/checkout@v4
-
-      # Install the latest version of Terraform CLI
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_wrapper: true
-
-      # Initialize Terraform working directory
       - name: Initialize Terraform
         id: init
         run: |
           terraform init
           terraform workspace select prod
-
-      # Checks that all Terraform configuration files adhere to a canonical format
       - name: Check formatting
         id: fmt
         run: terraform fmt -check -recursive
         continue-on-error: true
-
-      # Validate Terraform configuration
       - name: Validate
         id: validate
         run: terraform validate -no-color
         continue-on-error: true
-
-      # Generates an execution plan for Terraform
       - name: Terraform Plan
         id: plan
         run: terraform plan -input=false -lock-timeout=10m -no-color -out=tfplan
         continue-on-error: true
-
-      # Generate plan output for comment
       - name: Generate Plan Output
         id: plan_output
         if: always() && steps.init.outcome == 'success'
@@ -95,8 +81,6 @@ jobs:
             echo "status_emoji=x" >> $GITHUB_OUTPUT
             echo "status_message=Unable to generate plan summary" >> $GITHUB_OUTPUT
           fi
-
-      # Post PR comment with plan results
       - name: Comment Plan on PR
         if: always() && steps.init.outcome == 'success'
         uses: actions/github-script@v7
@@ -190,8 +174,6 @@ jobs:
               });
               console.log('Created new comment');
             }
-
-      # Fail the job if any critical step failed
       - name: Check Status
         if: steps.fmt.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.plan.outcome == 'failure'
         run: |
@@ -200,32 +182,22 @@ jobs:
           echo "Validate: ${{ steps.validate.outcome }}"
           echo "Plan: ${{ steps.plan.outcome }}"
           exit 1
-
   apply:
     name: Apply
     runs-on: ubuntu-latest
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     environment: production
     steps:
-      # Checkout the repository
       - name: Checkout
         uses: actions/checkout@v4
-
-      # Install the latest version of Terraform CLI
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-
-      # Initialize Terraform working directory
       - name: Initialize Terraform
         run: |
           terraform init
           terraform workspace select prod
-
-      # Checks that all Terraform configuration files adhere to a canonical format
       - name: Check formatting
         run: terraform fmt -check -recursive
-
-      # On push to main, build or change infrastructure according to Terraform configuration files
       - name: Terraform Apply
         run: terraform apply -input=false -auto-approve -lock-timeout=10m
 env:
