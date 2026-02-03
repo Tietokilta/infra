@@ -104,14 +104,6 @@ jobs:
               console.log('Could not read plan file:', e.message);
             }
 
-            // Truncate plan if too long (GitHub comment limit is 65536 chars)
-            const maxLength = 60000;
-            let planTruncated = false;
-            if (plan.length > maxLength) {
-              plan = plan.substring(0, maxLength);
-              planTruncated = true;
-            }
-
             // Determine status icons
             const fmtIcon = process.env.FMT_OUTCOME === 'success' ? ':white_check_mark:' : ':x:';
             const validateIcon = process.env.VALIDATE_OUTCOME === 'success' ? ':white_check_mark:' : ':x:';
@@ -135,7 +127,6 @@ jobs:
               `\`\`\`hcl`,
               plan,
               `\`\`\``,
-              planTruncated ? `\n:warning: *Plan output was truncated due to length*\n` : '',
               `</details>`,
               ``,
               `---`,
