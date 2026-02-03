@@ -91,6 +91,7 @@ module "keyvault" {
     "mailgun-api-key",
     "mailgun-domain",
     "mailgun-url",
+    "oldweb-ghcr-access-token",
     "tikjob-tg-bot-token",
     "tikjob-tg-ghost-hook-secret",
     "vaultwarden-api-key",
@@ -469,6 +470,7 @@ module "oldweb" {
   tikweb_rg_location      = module.common.resource_group_location
   tikweb_rg_name          = module.common.resource_group_name
   location                = local.resource_group_location
+  ghcr_token              = module.keyvault.secrets["oldweb-ghcr-access-token"]
 }
 
 module "vaultwarden" {
