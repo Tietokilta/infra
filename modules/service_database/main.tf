@@ -19,7 +19,6 @@ resource "random_password" "db_user_password" {
 
 # Create a database role scoped to the this database
 resource "postgresql_role" "db_user" {
-  provider = postgresql.admin
   name     = "${var.db_name}_user"
   login    = true
   password = random_password.db_user_password.result
@@ -27,7 +26,6 @@ resource "postgresql_role" "db_user" {
 
 # Grant the role privileges only on this database
 resource "postgresql_grant" "db_role" {
-  provider    = postgresql.admin
   role        = postgresql_role.db_user.name
   database    = azurerm_postgresql_flexible_server_database.database.name
   privileges  = ["ALL"]
@@ -37,7 +35,6 @@ resource "postgresql_grant" "db_role" {
 # Grant access to various database objects
 resource "postgresql_grant" "object_permissions" {
   for_each    = toset(["function", "procedure", "routine", "schema", "sequence", "table"])
-  provider    = postgresql.admin
   database    = azurerm_postgresql_flexible_server_database.database.name
   schema      = "public"
   object_type = each.key

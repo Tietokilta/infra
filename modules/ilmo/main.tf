@@ -9,10 +9,6 @@ module "service_database" {
   db_name              = local.db_name
   postgres_server_id   = var.postgres_server_id
   postgres_server_fqdn = var.postgres_server_fqdn
-
-  providers = {
-    postgresql.admin = postgresql.admin
-  }
 }
 
 resource "azurerm_linux_web_app" "ilmo_backend" {

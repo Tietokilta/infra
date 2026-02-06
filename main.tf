@@ -56,9 +56,7 @@ provider "mailgun" {
   api_key = module.keyvault.secrets["mailgun-terraform-api-key"]
 }
 
-# Configure aliased provider to connect as the Postgres administrator
 provider "postgresql" {
-  alias     = "admin"
   host      = module.common.postgres_server_fqdn
   port      = 5432
   username  = module.common.postgres_admin_username
@@ -282,10 +280,6 @@ module "ilmo" {
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "ilmo"
   acme_account_key        = module.common.acme_account_key
-
-  providers = {
-    postgresql.admin = postgresql.admin
-  }
 }
 
 module "ilmo_staging" {
@@ -303,10 +297,6 @@ module "ilmo_staging" {
   stripe_secret_key     = module.keyvault.secrets["ilmo-staging-stripe-api-key"]
   stripe_webhook_secret = module.keyvault.secrets["ilmo-staging-stripe-webhook-secret"]
   website_url           = "https://tietokilta.fi"
-
-  providers = {
-    postgresql.admin = postgresql.admin
-  }
 }
 
 module "histotik" {
@@ -333,10 +323,6 @@ module "tenttiarkisto" {
   acme_account_key             = module.common.acme_account_key
   dns_resource_group_name      = module.tenttiarkisto_dns_zone.resource_group_name
   root_zone_name               = module.tenttiarkisto_dns_zone.root_zone_name
-
-  providers = {
-    postgresql.admin = postgresql.admin
-  }
 }
 
 module "voo" {
@@ -445,10 +431,6 @@ module "registry" {
   mailgun_api_key         = module.keyvault.secrets["registry-mailgun-api-key"]
   stripe_api_key          = module.keyvault.secrets["registry-stripe-api-key"]
   stripe_webhook_secret   = module.keyvault.secrets["registry-stripe-webhook-secret"]
-
-  providers = {
-    postgresql.admin = postgresql.admin
-  }
 }
 
 module "oldweb" {
@@ -465,10 +447,6 @@ module "oldweb" {
   tikweb_rg_name          = module.common.resource_group_name
   location                = local.resource_group_location
   ghcr_token              = module.keyvault.secrets["oldweb-ghcr-access-token"]
-
-  providers = {
-    postgresql.admin = postgresql.admin
-  }
 }
 
 module "vaultwarden" {
@@ -537,10 +515,6 @@ module "juvusivu" {
   root_zone_name                       = module.dns_juvusivu.root_zone_name
   m0_dns_resource_group_name           = module.dns_m0.resource_group_name
   m0_dns_zone_name                     = module.dns_m0.root_zone_name
-
-  providers = {
-    postgresql.admin = postgresql.admin
-  }
 }
 
 module "status" {
@@ -569,8 +543,4 @@ module "isopistekortti" {
   root_zone_name          = module.dns_prod.root_zone_name
   dns_resource_group_name = module.dns_prod.resource_group_name
   acme_account_key        = module.common.acme_account_key
-
-  providers = {
-    postgresql.admin = postgresql.admin
-  }
 }
