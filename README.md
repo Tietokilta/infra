@@ -1,6 +1,6 @@
 # Tietokilta/infra
 
-[Architecture diagram](https://miro.com/app/board/o9J_lVeCVWw=/)
+See [ARCHITECTURE.md](./docs/ARCHITECTURE.md) for infrastructure architecture diagrams.
 
 ## Renewing certs
 
