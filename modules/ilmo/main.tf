@@ -61,11 +61,20 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     ALLOW_ORIGIN = "*"
 
     # Paths from tikweb-web
-    BASE_URL             = var.website_url
+    BASE_URL = var.website_url
+    # TODO: remove _URLs once Ilmomasiina v3.0.0-alpha.8 deployed
     EVENT_DETAILS_URL    = "${var.website_url}/{lang}/events/{slug}"
     EDIT_SIGNUP_URL      = "${var.website_url}/{lang}/signups/{id}/{editToken}"
+    COMPLETE_PAYMENT_URL = "${var.website_url}/{lang}/payment/{id}/{editToken}"
     ADMIN_URL            = "https://${module.app_service_hostname.fqdn}/admin"
-    COMPLETE_PAYMENT_URL = coalesce(var.complete_payment_url, "${var.website_url}/{lang}/signups/{id}/{editToken}")
+    FRONTENDS = jsonencode(merge({
+      "default" = {
+        "eventDetailsUrl"    = "${var.website_url}/{lang}/events/{slug}"
+        "editSignupUrl"      = "${var.website_url}/{lang}/signups/{id}/{editToken}"
+        "completePaymentUrl" = "${var.website_url}/{lang}/payment/{id}/{editToken}"
+        "adminUrl"           = "https://${module.app_service_hostname.fqdn}/admin"
+      }
+    }, var.extra_frontends))
 
     ICAL_UID_DOMAIN = "tietokilta.fi"
 

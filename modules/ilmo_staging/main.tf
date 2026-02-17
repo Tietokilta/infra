@@ -61,8 +61,8 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     BASE_URL             = var.website_url
     EVENT_DETAILS_URL    = "${var.website_url}/{lang}/events/{slug}"
     EDIT_SIGNUP_URL      = "${var.website_url}/{lang}/signups/{id}/{editToken}"
+    COMPLETE_PAYMENT_URL = "${var.website_url}/{lang}/payment/{id}/{editToken}"
     ADMIN_URL            = "https://tik-ilmo-${var.environment}-app.azurewebsites.net/admin"
-    COMPLETE_PAYMENT_URL = "https://juhlavuosi.fi/{lang}/signups/{id}/{editToken}"
 
     ICAL_UID_DOMAIN = "tietokilta.fi"
 
