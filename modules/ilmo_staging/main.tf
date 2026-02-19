@@ -59,10 +59,14 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
 
     # Paths from tikweb-web
     BASE_URL             = var.website_url
-    EVENT_DETAILS_URL    = "${var.website_url}/{lang}/events/{slug}"
-    EDIT_SIGNUP_URL      = "${var.website_url}/{lang}/signups/{id}/{editToken}"
-    COMPLETE_PAYMENT_URL = "${var.website_url}/{lang}/payment/{id}/{editToken}"
-    ADMIN_URL            = "https://tik-ilmo-${var.environment}-app.azurewebsites.net/admin"
+    FRONTENDS = jsonencode(merge({
+      "default" = {
+        "eventDetailsUrl"    = "${var.website_url}/{lang}/events/{slug}"
+        "editSignupUrl"      = "${var.website_url}/{lang}/signups/{id}/{editToken}"
+        "completePaymentUrl" = "${var.website_url}/{lang}/payment/{id}/{editToken}"
+        "adminUrl"           = "https://${module.app_service_hostname.fqdn}/admin"
+      }
+    }))
 
     ICAL_UID_DOMAIN = "tietokilta.fi"
 
