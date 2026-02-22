@@ -11,13 +11,13 @@ resource "azuread_application_federated_identity_credential" "github_oidc" {
   display_name   = "github-actions-${replace(var.repository, "/", "-")}-federated-credential"
   audiences      = ["api://AzureADTokenExchange"]
   issuer         = "https://token.actions.githubusercontent.com"
-  subject        = "repo:${var.repository}:ref:refs/heads/main"
+  subject        = coalesce(var.subject, "repo:${var.repository}:ref:refs/heads/main")
 }
 
 resource "azurerm_role_assignment" "github_oidc_role" {
-  count = length(var.app_service_ids)
+  count = length(var.role_assignments)
 
-  scope                = var.app_service_ids[count.index]
-  role_definition_name = "Contributor"
+  scope                = var.role_assignments[count.index].scope
+  role_definition_name = var.role_assignments[count.index].role_definition_name
   principal_id         = azuread_service_principal.github_oidc.object_id
 }
