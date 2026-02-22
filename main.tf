@@ -489,10 +489,30 @@ module "github-ci-roles" {
     "Tietokilta/rekisteri" : [module.registry.registry_app_id]
   }
 }
+
+module "histotik_github_ci" {
+  source     = "./modules/github-ci-role"
+  repository = "Tietokilta/histotik"
+  subject    = "repo:Tietokilta/histotik:environment:production"
+  role_assignments = [
+    {
+      scope                = module.histotik.storage_account_id
+      role_definition_name = "Storage Blob Data Contributor"
+    },
+    {
+      scope                = module.histotik.cdn_profile_id
+      role_definition_name = "CDN Endpoint Contributor"
+    }
+  ]
+}
+
 # Output Azure Client IDs for Each Repository
 output "github_actions_azure_client_ids" {
   description = "Mapping of GitHub repositories to their AZURE_CLIENT_ID"
-  value       = module.github-ci-roles.azure_client_ids
+  value = merge(
+    module.github-ci-roles.azure_client_ids,
+    { "Tietokilta/histotik" = module.histotik_github_ci.client_id }
+  )
 }
 
 # Output Azure Subscription ID
