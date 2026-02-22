@@ -2,14 +2,14 @@ name: Build & Deploy tikpannu
 on:
   pull_request:
     paths:
-      - "**/*.nix"
+      - "flake.*"
       - tikpannu-nixos-config/*
       - .github/workflows/deploy-pannu.yml
   push:
     branches:
       - main
     paths:
-      - "**/*.nix"
+      - "flake.*"
       - tikpannu-nixos-config/*
       - .github/workflows/deploy-pannu.yml
   workflow_dispatch:
