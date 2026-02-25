@@ -42,12 +42,6 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEpaMQB0cEJY/jh/sKhWL6w836pR/BzlNXLSc5z8R6Rm"
   ];
 
-  # Backup system
-  services.tik-backup = {
-    enable = true;
-    storageboxServer = "u531035.your-storagebox.de";
-  };
-
   # DO NOT TOUCH THIS
   # Changing this variable does not update the system
   # and may corrupt the databases running on it
