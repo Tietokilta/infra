@@ -7,14 +7,24 @@ let
   cfg = config.services.tik-backup;
 in
 {
-  options.services.tik-backup.storageboxServer = lib.mkOption {
-    type = lib.types.str;
-    description = "Hetzner Storage Box server hostname (from terraform output storagebox_server)";
-    example = "u123456.your-storagebox.de";
+  options.services.tik-backup = {
+    enable = lib.mkEnableOption "backup service";
+
+    storageboxMountPath = lib.mkOption {
+      description = "The path to mount the backup on";
+      type = lib.types.path;
+      default = "/mnt/backup";
+    };
+
+    storageboxServer = lib.mkOption {
+      description = "Hetzner storage box server hostname";
+      type = lib.types.str;
+      example = "u123456.your-storagebox.de";
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    fileSystems.${cfg.mountPath} = {
+    fileSystems.${cfg.storageboxMountPath} = {
       device = "//${cfg.storageboxServer}/backup";
       fsType = "cifs";
       options = [
