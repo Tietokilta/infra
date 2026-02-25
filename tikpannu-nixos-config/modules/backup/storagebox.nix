@@ -31,6 +31,8 @@ in
         "credentials=${config.sops.secrets.storagebox-credentials.path}"
         "uid=root"
         "gid=root"
+        "file_mode=0700"
+        "dir_mode=0700"
         "_netdev"
         "nofail"
         "x-systemd.automount"
