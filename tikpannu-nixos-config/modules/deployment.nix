@@ -6,7 +6,14 @@
 }:
 let
   rebuild-from-infra = pkgs.writeShellScriptBin "rebuild-from-infra" ''
-    ${lib.getExe config.system.build.nixos-rebuild} switch --flake github:Tietokilta/infra/"$1" --refresh
+    rev=$1
+    shift
+    if [[ -z "$rev" ]]; then
+      echo "No commit rev given to rebuild from, please give a commit rev as an argument" >&2
+      exit 1
+    fi
+
+    ${lib.getExe config.system.build.nixos-rebuild} switch --flake github:Tietokilta/infra/"$rev" --refresh
   '';
 in
 {

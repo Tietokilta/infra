@@ -89,7 +89,7 @@ jobs:
           nix copy .#nixosConfigurations.tikpannu.config.system.build.toplevel -L \
             --to ssh://pannu.tietokilta.fi
 
-          ssh pannu.tietokilta.fi 'sudo $(realpath $(which rebuild-from-infra)) "$GITHUB_SHA"'
+          ssh pannu.tietokilta.fi "sudo \$(realpath \$(which rebuild-from-infra)) \"$GITHUB_SHA\""
       - name: Nix GC
         run: |
           nix-collect-garbage
