@@ -16,11 +16,7 @@
         cores = 4;
       };
 
-      services.tikbots = {
-        tikbot.enable = lib.mkForce false;
-        summer-body-bot.enable = lib.mkForce false;
-        wappupokemonbot.enable = lib.mkForce false;
-      };
+      services.discourse.enable = lib.mkForce true;
     };
 
     client =
