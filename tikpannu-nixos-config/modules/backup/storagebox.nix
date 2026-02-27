@@ -8,10 +8,8 @@ let
 in
 {
   options.services.tik-backup = {
-    enable = lib.mkEnableOption "backup service";
-
     storageboxMountPath = lib.mkOption {
-      description = "The path to mount the backup on";
+      description = "The path to mount the storagebox on";
       type = lib.types.path;
       default = "/mnt/backup";
     };
@@ -29,8 +27,10 @@ in
       fsType = "cifs";
       options = [
         "credentials=${config.sops.secrets.storagebox-credentials.path}"
-        "uid=root"
-        "gid=root"
+        "uid=backup"
+        "gid=backup"
+        "file_mode=0700"
+        "dir_mode=0700"
         "_netdev"
         "nofail"
         "x-systemd.automount"

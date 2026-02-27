@@ -12,5 +12,10 @@ in
       sopsFile = ../secrets/backup.yaml;
       # CIFS credentials file format: username=uXXXXXX\npassword=PASSWORD
     };
+
+    restic-password = {
+      sopsFile = ../secrets/backup.yaml;
+      owner = "backup";
+    };
   };
 }

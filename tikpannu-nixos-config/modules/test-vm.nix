@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   lib,
   ...
@@ -14,6 +15,10 @@ let
   '';
   wappupokemonbotEnvFile = pkgs.writeText "wappupokemonbotEnvFile" ''
     TELEGRAM_BOT_TOKEN=my-test-tg-token3
+  '';
+
+  resticPassFile = pkgs.writeText "resticPassFile" ''
+    veryStrongResticPass1
   '';
 in
 {
@@ -66,5 +71,10 @@ in
       tikbot.envFile = lib.mkForce tikbotEnvFile.outPath;
       wappupokemonbot.envFile = lib.mkForce wappupokemonbotEnvFile.outPath;
     };
+
+    systemd.tmpfiles.rules = [
+      "d ${config.services.tik-backup.storageboxMountPath} 0700 backup backup -"
+    ];
+    services.restic.backups.tik-backup.passwordFile = lib.mkForce resticPassFile.outPath;
   }; # `virtualisation.vmVariant` ends here
 }
