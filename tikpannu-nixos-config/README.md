@@ -68,6 +68,76 @@ nixos-rebuild switch \
   --flake ..#tikpannu
 ```
 
+## Backups
+This machine handles the backups of Tietokilta's services to a Hetzner Storage
+Box. The backup service is defined in [./modules/backup](./modules/backup).
+
+The module defines a restic job that backs up the directory defined in
+`services.tik-backup.stagingDir` to an SMB drive. If something should be backed
+up, a systemd service should be defined that moves its files to its own
+subdirectory in the staging directory. Such a systemd service should also define
+the following options (defined [here](./modules/backup/default.nix)). See
+[./modules/discourse/backup.nix](./modules/discourse/backup.nix) for an example.
+> [!Note]  
+> The service that copies data into the staging directory should make sure that
+> the user `backup` has permission to read and write to it. All files created in
+> the staging directory will by default have the `backup` group, so setting
+> `umask 0002` to give the group write permissions should be enough.
+```nix
+{
+  services.tik-backup = {
+    stagingServices = [
+      "<name of service>.service"
+    ];
+    stagingSubdirs = [
+      {
+        subdir = "<subdirectory name>";
+        user = "<user that owns the subdirectory>";
+      }
+    ];
+  };
+}
+```
+This tells the restic job to first run the staging services to move the data
+into the staging directory before running the restic backup job. This is defined
+by the restic systemd service having `wants` and `after` on each staging
+service. The `stagingSubdirs` definition is used to create the service's
+directory with systemd tmpfiles.
+
+Before running the staging services, a pre-staging cleanup job empties the
+subdirectories so that only the current state is backed up, as restic handles
+incrementalism. The subdirectories are also cleaned post-backup if the backup
+was a success, but are otherwise left there.
+
+```mermaid
+graph TB
+subgraph TB pipeline["Backup pipeline"]
+  resticJob["restic-backups-tik-backup.service"]
+  stagingServices["Staging services"]
+  resticJob -.->|wants, runs after|stagingServices
+  stagingServices ==triggers when all finished ==> resticJob
+
+  preCleanup["Pre-staging cleanup service"]
+  stagingServices -.->|requires, runs after|preCleanup
+  preCleanup ==triggers on finish ==> stagingServices
+
+  restic
+  resticJob ==runs ==> restic
+end
+resticTimer["restic-backups-tik-backup.timer"]
+resticTimer -.-triggers -.-> resticJob
+
+stagingServices --copies data to --> stagingDir
+
+stagingDir["Staging directory"]
+preCleanup --cleans --> stagingDir
+
+SMB@{ shape: lin-cyl, label: "Hetzner Storage Box" }
+restic --backs up from --> stagingDir
+restic --backs up to --> SMB
+restic --cleans on success --> stagingDir
+```
+
 ## Testing
 ### NixOS tests
 [NixOS tests](https://nixos.org/manual/nixos/stable/#sec-nixos-tests) are a way
