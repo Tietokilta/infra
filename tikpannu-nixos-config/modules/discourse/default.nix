@@ -5,6 +5,7 @@
 {
   imports = [
     ./secrets.nix
+    ./backup.nix
   ];
 
   services.discourse = {
