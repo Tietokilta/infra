@@ -102,7 +102,7 @@ resource "random_password" "storagebox" {
 
 resource "hcloud_storage_box" "backup" {
   name             = "tikbox-1"
-  location         = "hel1"
+  location         = "fsn1"
   storage_box_type = "bx11"
   password         = random_password.storagebox.result
 
