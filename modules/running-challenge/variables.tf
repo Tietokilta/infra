@@ -1,0 +1,55 @@
+variable "resource_group_location" {
+  type = string
+}
+
+variable "resource_group_name" {
+  type = string
+}
+
+variable "app_service_plan_id" {
+  type = string
+}
+
+variable "postgres_server_id" {
+  type = string
+}
+
+variable "postgres_server_fqdn" {
+  type = string
+}
+
+variable "subdomain" {
+  type = string
+}
+
+variable "root_zone_name" {
+  type = string
+}
+
+variable "dns_resource_group_name" {
+  type = string
+}
+
+variable "acme_account_key" {
+  type = string
+}
+
+variable "client_id" {
+  type      = string
+  sensitive = true
+}
+
+variable "client_secret" {
+  type      = string
+  sensitive = true
+}
+
+variable "refresh_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "club_id" {
+  type    = string
+  default = "1997937"
+}
