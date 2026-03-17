@@ -3,14 +3,14 @@ on:
   pull_request:
     paths:
       - "flake.*"
-      - tikpannu-nixos-config/*
+      - tikpannu-nixos-config/**/*
       - .github/workflows/deploy-pannu.yml
   push:
     branches:
       - main
     paths:
       - "flake.*"
-      - tikpannu-nixos-config/*
+      - tikpannu-nixos-config/**/*
       - .github/workflows/deploy-pannu.yml
   workflow_dispatch:
 permissions:
