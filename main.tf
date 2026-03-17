@@ -116,7 +116,10 @@ module "keyvault" {
     "registry-mailgun-api-key",
     "registry-stripe-api-key",
     "registry-stripe-webhook-secret",
-    "mailgun-terraform-api-key"
+    "mailgun-terraform-api-key",
+    "running-challenge-client-id",
+    "running-challenge-client-secret",
+    "running-challenge-refresh-token"
   ]
 }
 
@@ -487,6 +490,7 @@ module "github-ci-roles" {
     "Tietokilta/juvusivu" : [module.juvusivu.juvusivu_app_id]
     "Tietokilta/infra" : [module.status.app_id]
     "Tietokilta/rekisteri" : [module.registry.registry_app_id]
+    "Tietokilta/running-challenge" : [module.running_challenge.app_id]
   }
 }
 
@@ -555,6 +559,23 @@ module "status" {
   telegram_token                       = module.keyvault.secrets["status-telegram-token"]
   telegram_channel_id                  = "-1003648545192"
   subdomain                            = "status"
+}
+
+module "running_challenge" {
+  source                  = "./modules/running-challenge"
+  resource_group_location = local.resource_group_location
+  resource_group_name     = module.common.resource_group_name
+  app_service_plan_id     = module.common.tikweb_app_plan_id
+  postgres_server_id      = module.common.postgres_server_id
+  postgres_server_fqdn    = module.common.postgres_server_fqdn
+  subdomain               = "run"
+  root_zone_name          = module.dns_prod.root_zone_name
+  dns_resource_group_name = module.dns_prod.resource_group_name
+  acme_account_key        = module.common.acme_account_key
+  client_id               = module.keyvault.secrets["running-challenge-client-id"]
+  client_secret           = module.keyvault.secrets["running-challenge-client-secret"]
+  refresh_token           = module.keyvault.secrets["running-challenge-refresh-token"]
+  club_id                 = "1997937"
 }
 
 module "isopistekortti" {
