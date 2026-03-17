@@ -34,7 +34,8 @@ resource "azurerm_key_vault_access_policy" "CI" {
 
   secret_permissions = [
     "Get",
-    "Set"
+    "Set",
+    "List",
   ]
 
 }
