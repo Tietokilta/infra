@@ -6,6 +6,6 @@
 
   services.tik-backup = {
     enable = true;
-    storageboxServer = "u531035.your-storagebox.de";
+    storageboxServer = "u563055.your-storagebox.de";
   };
 }
