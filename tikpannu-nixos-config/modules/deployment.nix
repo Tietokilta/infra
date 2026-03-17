@@ -6,7 +6,7 @@
 }:
 let
   rebuild-from-infra = pkgs.writeShellScriptBin "rebuild-from-infra" ''
-    ${lib.getExe config.system.build.nixos-rebuild} switch --flake github:Tietokilta/infra/"$1" --refresh
+    ${lib.getExe config.system.build.nixos-rebuild} switch --flake github:Tietokilta/infra --refresh
   '';
 in
 {
