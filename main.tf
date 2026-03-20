@@ -568,7 +568,7 @@ module "running_challenge" {
   app_service_plan_id     = module.common.tikweb_app_plan_id
   postgres_server_id      = module.common.postgres_server_id
   postgres_server_fqdn    = module.common.postgres_server_fqdn
-  subdomain               = "run"
+  subdomain               = "liikuntahaaste"
   root_zone_name          = module.dns_prod.root_zone_name
   dns_resource_group_name = module.dns_prod.resource_group_name
   acme_account_key        = module.common.acme_account_key
