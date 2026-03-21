@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   discourseAdminPassFile = pkgs.writeText "discourseAdminPassFile" "VerylongAdminpass1";
   discourseSmtpPassFile = pkgs.writeText "discourseSmtpPassFile" "VerylongMailpass1";
@@ -12,25 +17,41 @@ let
     TELEGRAM_BOT_TOKEN=my-test-tg-token3
   '';
 
+  resticPassFile = pkgs.writeText "resticPassFile" ''
+    veryStrongResticPass1
+  '';
+
+  # default is 100, mkForce is 50. Allow using mkForce in specific tests
+  mkWeakForce = lib.mkOverride 90;
 in
 {
-  imports = [
-    ../modules
-  ];
+  imports = [ ../modules ];
 
   services.discourse = {
-    admin.passwordFile = lib.mkForce discourseAdminPassFile.outPath;
-    mail.outgoing.passwordFile = lib.mkForce discourseSmtpPassFile.outPath;
+    enable = mkWeakForce false;
+    admin.passwordFile = mkWeakForce discourseAdminPassFile.outPath;
+    mail.outgoing.passwordFile = mkWeakForce discourseSmtpPassFile.outPath;
   };
 
   services.tikbots = {
-    summer-body-bot.envFile = lib.mkForce summerbodybotEnvFile.outPath;
-    tikbot.envFile = lib.mkForce tikbotEnvFile.outPath;
-    wappupokemonbot.envFile = lib.mkForce wappupokemonbotEnvFile.outPath;
+    summer-body-bot = {
+      enable = mkWeakForce false;
+      envFile = mkWeakForce summerbodybotEnvFile.outPath;
+    };
+    tikbot = {
+      enable = mkWeakForce false;
+      envFile = mkWeakForce tikbotEnvFile.outPath;
+    };
+    wappupokemonbot = {
+      enable = mkWeakForce false;
+      envFile = mkWeakForce wappupokemonbotEnvFile.outPath;
+    };
   };
 
-  # Disable backup in base test config (requires CIFS mount)
-  services.tik-backup.enable = lib.mkForce false;
+  services.tik-backup.enable = mkWeakForce false;
+  services.restic.backups.tik-backup = lib.mkIf config.services.tik-backup.enable {
+    passwordFile = mkWeakForce resticPassFile.outPath;
+  };
 
   system.stateVersion = "23.11";
 }

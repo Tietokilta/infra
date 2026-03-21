@@ -1,9 +1,13 @@
 {
   config,
+  lib,
   ...
 }:
+let
+  cfg = config.services.discourse;
+in
 {
-  sops.secrets = {
+  sops.secrets = lib.mkIf cfg.enable {
     discourse-admin-password = {
       sopsFile = ../secrets/discourse.yaml;
       owner = config.systemd.services.discourse.serviceConfig.User;
