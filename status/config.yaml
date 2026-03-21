@@ -63,6 +63,10 @@ endpoints:
     url: "https://rekisteri.tietokilta.fi"
     conditions: *default_conditions
     alerts: *default_alerts
+  - name: liikuntahaaste
+    url: "https://liikuntahaaste.tietokilta.fi"
+    conditions: *default_conditions
+    alerts: *default_alerts
 external-endpoints:
   - name: guild-room-infoscreen
     token: "$INFOSCREEN_TOKEN"
