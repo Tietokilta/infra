@@ -8,6 +8,11 @@ resource "random_password" "guild-room-infoscreen-token" {
   special = false
 }
 
+resource "random_password" "backups-token" {
+  length  = 32
+  special = false
+}
+
 # App Service (Linux Web App)
 resource "azurerm_linux_web_app" "status_app" {
   name                = "tik-status-${terraform.workspace}"
@@ -38,6 +43,7 @@ resource "azurerm_linux_web_app" "status_app" {
     TELEGRAM_TOKEN                      = var.telegram_token
     ALERT_CHANNEL_ID                    = var.telegram_channel_id
     INFOSCREEN_TOKEN                    = random_password.guild-room-infoscreen-token.result
+    BACKUPS_TOKEN                       = random_password.backups-token.result
   }
 }
 

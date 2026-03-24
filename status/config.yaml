@@ -73,3 +73,8 @@ external-endpoints:
     heartbeat:
       interval: 5m
     alerts: *default_alerts
+  - name: backups
+    token: "$BACKUPS_TOKEN"
+    alerts:
+      - type: telegram
+        send-on-resolved: false
