@@ -137,6 +137,10 @@ restic --backs up from --> stagingDir
 restic --backs up to --> SMB
 restic --cleans on success --> stagingDir
 ```
+The staging services and the restic backup service will alert Gatus
+(status.tietokilta.fi) with either a success or failure upon finishing (see
+[./modules/backup/gatus.nix](./modules/backup/gatus.nix)).
+
 
 ## Testing
 ### NixOS tests
