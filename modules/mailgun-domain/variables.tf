@@ -40,3 +40,9 @@ variable "create_spf" {
   type        = bool
   default     = true
 }
+
+variable "cloudflare_zone_id" {
+  description = "Cloudflare zone ID. When set, DNS records are also created in Cloudflare."
+  type        = string
+  default     = ""
+}

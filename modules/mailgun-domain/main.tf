@@ -6,7 +6,14 @@ terraform {
     azurerm = {
       source = "hashicorp/azurerm"
     }
+    cloudflare = {
+      source = "cloudflare/cloudflare"
+    }
   }
+}
+
+locals {
+  use_cloudflare = var.cloudflare_zone_id != ""
 }
 
 # Mailgun domain
@@ -79,6 +86,54 @@ resource "azurerm_dns_txt_record" "dmarc" {
   record {
     value = "v=DMARC1;p=none;sp=none;rua=mailto:${var.dmarc_email}!10m;ruf=mailto:${var.dmarc_email}!10m"
   }
+}
+
+# Cloudflare DNS records (mirroring Azure records when cloudflare_zone_id is set)
+resource "cloudflare_dns_record" "cf_mx_mxa" {
+  count    = local.use_cloudflare ? 1 : 0
+  zone_id  = var.cloudflare_zone_id
+  name     = var.subdomain
+  type     = "MX"
+  content  = "mxa.eu.mailgun.org"
+  priority = 10
+  ttl      = 300
+}
+
+resource "cloudflare_dns_record" "cf_mx_mxb" {
+  count    = local.use_cloudflare ? 1 : 0
+  zone_id  = var.cloudflare_zone_id
+  name     = var.subdomain
+  type     = "MX"
+  content  = "mxb.eu.mailgun.org"
+  priority = 10
+  ttl      = 300
+}
+
+resource "cloudflare_dns_record" "cf_spf" {
+  count   = local.use_cloudflare && var.create_spf ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = var.subdomain
+  type    = "TXT"
+  content = "v=spf1 include:mailgun.org ~all"
+  ttl     = 300
+}
+
+resource "cloudflare_dns_record" "cf_dkim" {
+  count   = local.use_cloudflare ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = local.dkim_record_name
+  type    = "TXT"
+  content = local.dkim_record.value
+  ttl     = 300
+}
+
+resource "cloudflare_dns_record" "cf_dmarc" {
+  count   = local.use_cloudflare ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = "_dmarc.${var.subdomain}"
+  type    = "TXT"
+  content = "v=DMARC1;p=none;sp=none;rua=mailto:${var.dmarc_email}!10m;ruf=mailto:${var.dmarc_email}!10m"
+  ttl     = 300
 }
 
 # Optional SMTP credential
