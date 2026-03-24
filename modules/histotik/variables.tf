@@ -17,3 +17,9 @@ variable "root_zone_name" {
 variable "subdomain" {
   type = string
 }
+
+variable "cloudflare_zone_id" {
+  type        = string
+  description = "Cloudflare zone ID for tietokilta.fi."
+  default     = ""
+}

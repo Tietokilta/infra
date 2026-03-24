@@ -7,4 +7,5 @@ module "mailgun" {
   dns_zone_name           = var.root_zone_name
   create_smtp_credential  = false # Uses existing keyvault credentials
   create_spf              = false # SPF is in combined TXT record with Google site verification
+  cloudflare_zone_id      = var.cloudflare_zone_id
 }

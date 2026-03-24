@@ -5,3 +5,13 @@ resource "azurerm_dns_cname_record" "histotik_cname_record" {
   ttl                 = 300
   record              = "tietokilta.github.io"
 }
+
+resource "cloudflare_dns_record" "histotik_cname" {
+  count   = var.cloudflare_zone_id != "" ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = var.subdomain
+  type    = "CNAME"
+  content = "tietokilta.github.io"
+  proxied = false
+  ttl     = 300
+}

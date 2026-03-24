@@ -21,3 +21,9 @@ variable "dkim_key" {
 variable "discourse_ip" {
   type = string
 }
+
+variable "cloudflare_zone_id" {
+  type        = string
+  description = "Cloudflare zone ID for tietokilta.fi."
+  default     = ""
+}

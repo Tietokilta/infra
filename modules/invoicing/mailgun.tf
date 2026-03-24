@@ -6,4 +6,5 @@ module "mailgun" {
   dns_resource_group_name = var.dns_resource_group_name
   dns_zone_name           = var.root_zone_name
   create_smtp_credential  = false
+  cloudflare_zone_id      = var.cloudflare_zone_id
 }

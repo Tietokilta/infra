@@ -76,3 +76,14 @@ variable "extra_frontends" {
   }))
   default = {}
 }
+
+variable "cloudflare_zone_id" {
+  type        = string
+  description = "Cloudflare zone ID for tietokilta.fi. Used for DNS records and ACME challenge."
+}
+
+variable "cloudflare_api_token" {
+  type        = string
+  description = "Cloudflare API token for ACME DNS challenge."
+  sensitive   = true
+}
