@@ -40,9 +40,6 @@ variable "acme_account_key" {
   sensitive = true
 }
 
-variable "dns_resource_group_name" {
-  type = string
-}
 
 variable "root_zone_name" {
   type = string

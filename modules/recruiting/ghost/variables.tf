@@ -60,9 +60,6 @@ variable "ghost_mail_password" {
 
 // DNS
 
-variable "dns_resource_group_name" {
-  type = string
-}
 
 variable "root_zone_name" {
   type = string
@@ -75,14 +72,12 @@ variable "subdomain" {
 variable "cloudflare_zone_id" {
   type        = string
   description = "Cloudflare zone ID. When set, DNS records are also created in Cloudflare."
-  default     = ""
 }
 
 variable "cloudflare_api_token" {
   type        = string
   description = "Cloudflare API token for ACME DNS challenge."
   sensitive   = true
-  default     = ""
 }
 
 // App Service Plan
