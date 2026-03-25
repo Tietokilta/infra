@@ -20,6 +20,7 @@
     systemd.tmpfiles.rules = [
       "d /mnt/backup 0700 backup backup -"
       "d /var/lib/discourse/backups/default 0700 discourse discourse -"
+      ""
     ];
 
     environment.systemPackages = [
@@ -43,10 +44,13 @@
 
     # Discourse staging service only uses files that have been modified more
     # than some minutes ago.
-    discourse_dummy = "/var/lib/discourse/backups/default/dummy_backup.tar.gz"
-    pannu.succeed(f''''
-      touch -m -d @0 {discourse_dummy} && \\
-        chown discourse:discourse {discourse_dummy}
+    stdout = pannu.succeed(''''
+      cd /var/lib/discourse/backups/default;
+      gzip <<< "" > dump.sql.gz;
+      mkdir dir && touch dir/deepfile;
+      tar czf dummy.tar.gz --exclude=dummy.tar.gz .;
+      touch -md @0 dummy.tar.gz;
+      chown -R discourse:discourse .;
     '''')
 
     pannu.succeed("systemctl start restic-backups-tik-backup.service")

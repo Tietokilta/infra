@@ -11,6 +11,11 @@ let
 
   stagingScript = pkgs.writeShellApplication {
     name = "stage-discourse-backup";
+    runtimeInputs = [
+      pkgs.gnutar
+      pkgs.gzip
+    ];
+
     text = ''
       set -euo pipefail
       discourseData=/var/lib/discourse/backups/default
@@ -47,7 +52,18 @@ let
 
       echo "Found $newestBackup to be the newest backup, staging..." >&2
       umask 0002
-      cp "$newestBackup" "$targetDir/"
+
+      # because of how restic deduplicates and compresses data, it is better to
+      # store the data uncompressed so that restic can see the raw data and
+      # deduplicate it, then compress it. This does also mean that when
+      # restoring, these steps have to be reversed
+      tmp=$(mktemp -d) # tar messes up permissions, untar to tmpdir and copy
+
+      tar  xzf "$newestBackup" -C "$tmp"
+      gzip -d "$tmp/dump.sql.gz"
+      cp -r --no-preserve=mode "$tmp"/* "$targetDir/"
+
+      rm -rf "$tmp"
     '';
   };
 in

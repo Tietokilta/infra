@@ -137,6 +137,20 @@ restic --backs up from --> stagingDir
 restic --backs up to --> SMB
 restic --cleans on success --> stagingDir
 ```
+### Restic
+Restic deduplicates and compresses the data it stores. It handles deduplication
+by splitting files into content-defined (variable-size) chunks and only storing
+one such chunk even if multiple files contain that chunk. This doesn't work well
+if the stored data is compressed, as two slightly different files can be very
+different when compressed. Thus storing files uncompressed is more efficient
+for saving space, as restic will also handle the compression after deduplication.
+
+#### Discourse
+Discourse creates `.tar.gz` files of its state every day, which can be restored
+via the admin panel on the website. To optimize the space restic can save, this
+file is first untarred (`tar xzf`), and the contained sqldump is decompressed
+(`gzip -d`). When looking to restore a backup, these operations must be
+reversed (`gzip` -> `tar czf`).
 
 ## Testing
 ### NixOS tests
