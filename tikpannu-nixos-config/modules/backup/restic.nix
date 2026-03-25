@@ -6,7 +6,6 @@
 }:
 let
   cfg = config.services.tik-backup;
-  backupName = "tik-backup";
 
   cleanupScript = pkgs.writeShellApplication {
     name = "stagingDir-cleanup";
@@ -70,10 +69,19 @@ in
         "--keep-weekly 4"
       ];
     };
+
+    resticBackupName = lib.mkOption {
+      type = lib.types.str;
+      internal = true;
+      readOnly = true;
+      visible = false;
+    };
   };
 
   config = lib.mkIf cfg.enable {
-    services.restic.backups.${backupName} = {
+    services.tik-backup.resticBackupName = "tik-backup";
+
+    services.restic.backups.${cfg.resticBackupName} = {
       user = "backup";
       repository = cfg.resticRepo;
       initialize = true;
@@ -106,12 +114,12 @@ in
       '';
     };
 
-    systemd.services."restic-backups-${backupName}" = {
+    systemd.services."restic-backups-${cfg.resticBackupName}" = {
       wants = cfg.stagingServices;
       after = cfg.stagingServices;
     };
 
-    systemd.services."pre-${backupName}-cleanup" = {
+    systemd.services."pre-${cfg.resticBackupName}-cleanup" = {
       requiredBy = cfg.stagingServices;
       before = cfg.stagingServices;
       serviceConfig = {
