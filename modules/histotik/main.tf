@@ -78,7 +78,5 @@ resource "azurerm_cdn_endpoint_custom_domain" "histotik_cdn_domain" {
 
   # Deletion needs manual work. Hashicorp seems uninterested in fixing.
   # https://github.com/hashicorp/terraform-provider-azurerm/issues/11231
-  depends_on = [
-    azurerm_dns_cname_record.histotik_cname_record
-  ]
+  depends_on = [cloudflare_dns_record.histotik_cname]
 }

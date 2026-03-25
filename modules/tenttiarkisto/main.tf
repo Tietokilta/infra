@@ -96,7 +96,6 @@ module "tenttiarkisto_hostname" {
   source = "../app_service_hostname"
 
   subdomain                       = "@"
-  dns_resource_group_name         = var.dns_resource_group_name
   custom_domain_verification_id   = azurerm_linux_web_app.tenttiarkisto.custom_domain_verification_id
   app_service_name                = azurerm_linux_web_app.tenttiarkisto.name
   app_service_resource_group_name = var.tikweb_app_plan_rg_name
@@ -105,6 +104,8 @@ module "tenttiarkisto_hostname" {
   acme_account_key                = var.acme_account_key
   certificate_name                = "tenttiarkisto-cert"
   root_zone_name                  = var.root_zone_name
+  cloudflare_zone_id              = var.cloudflare_zone_id
+  cloudflare_api_token            = var.cloudflare_api_token
 }
 
 

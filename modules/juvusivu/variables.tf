@@ -33,18 +33,27 @@ variable "acme_account_key" {
   sensitive = true
 }
 
-variable "dns_resource_group_name" {
-  type = string
-}
 
 variable "root_zone_name" {
   type = string
 }
 
-// M0 dns
-variable "m0_dns_resource_group_name" {
-  type = string
-}
 variable "m0_dns_zone_name" {
   type = string
+}
+
+variable "cloudflare_zone_id" {
+  type        = string
+  description = "Cloudflare zone ID for juhlavuosi.fi."
+}
+
+variable "cloudflare_m0_zone_id" {
+  type        = string
+  description = "Cloudflare zone ID for muistinnollaus.fi."
+}
+
+variable "cloudflare_api_token" {
+  type        = string
+  description = "Cloudflare API token for ACME DNS challenge."
+  sensitive   = true
 }
