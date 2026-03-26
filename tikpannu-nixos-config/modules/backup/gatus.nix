@@ -19,7 +19,7 @@ let
         --silent \
         --show-error \
         -X POST \
-        -H "Authorization: Bearer $GATUS_TOKEN" \
+        -H "Authorization: Bearer ''${GATUS_TOKEN}" \
         --url-query "success=${lib.boolToString success}" \
         --url-query "error=${error}" \
         ${gatusEndpoint}
