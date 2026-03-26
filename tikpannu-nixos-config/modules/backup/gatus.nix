@@ -20,8 +20,8 @@ let
         --show-error \
         -X POST \
         -H "Authorization: Bearer $GATUS_TOKEN" \
-        --data "success=${lib.boolToString success}" \
-        --data-urlencode "error=${error}" \
+        --url-query "success=${lib.boolToString success}" \
+        --url-query "error=${error}" \
         ${gatusEndpoint}
     '';
 
