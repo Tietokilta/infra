@@ -37,7 +37,8 @@ resource "azurerm_linux_web_app" "registry" {
 
   https_only = true
   app_settings = {
-    NODE_ENV = "production"
+    NODE_ENV        = "production"
+    BODY_SIZE_LIMIT = "5M"
 
     DATABASE_URL = format(
       "postgres://%s:%s@%s:5432/%s",
