@@ -33,3 +33,13 @@ output "acme_account_key" {
   value     = acme_registration.acme_reg.account_key_pem
   sensitive = true
 }
+
+output "postgres_backup_username" {
+  value     = postgresql_role.backup_user.name
+  sensitive = true
+}
+
+output "postgres_backup_password" {
+  value     = random_password.backup_user_password.result
+  sensitive = true
+}
