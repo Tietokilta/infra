@@ -3,6 +3,10 @@ terraform {
     acme = {
       source = "vancluever/acme"
     }
+    postgresql = {
+      source  = "cyrilgdn/postgresql"
+      version = ">= 1.13.0"
+    }
   }
 }
 
@@ -48,6 +52,19 @@ resource "azurerm_service_plan" "tikweb_plan" {
 
   os_type  = "Linux"
   sku_name = "P0v3"
+}
+
+resource "random_password" "backup_user_password" {
+  length           = 32
+  special          = true
+  override_special = "_%@"
+}
+
+resource "postgresql_role" "backup_user" {
+  name     = "backup"
+  login    = true
+  password = random_password.backup_user_password.result
+  roles    = ["pg_read_all_data"]
 }
 
 resource "tls_private_key" "acme_account_key" {
