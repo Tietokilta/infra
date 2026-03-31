@@ -7,7 +7,7 @@
     stagingDir = "/var/lib/backup";
 
     dates = [
-      "04:00"
+      "04:00 Europe/Helsinki"
     ];
 
     retentionFlags = [
