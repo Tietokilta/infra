@@ -4,6 +4,7 @@ let
 in
 {
   imports = [
+    ./azure
     ./configuration.nix
     ./storagebox.nix
     ./secrets.nix
