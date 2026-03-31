@@ -48,7 +48,10 @@ in
     };
   };
 
-  services.tik-backup.enable = mkWeakForce false;
+  services.tik-backup = {
+    enable = mkWeakForce false;
+    azure.enable = mkWeakForce false;
+  };
   services.restic.backups.tik-backup = lib.mkIf config.services.tik-backup.enable {
     passwordFile = mkWeakForce resticPassFile.outPath;
   };

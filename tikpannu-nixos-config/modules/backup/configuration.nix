@@ -1,6 +1,7 @@
 {
   services.tik-backup = {
     enable = true;
+    azure.enable = true;
     storageboxServer = "u563055.your-storagebox.de";
     storageboxMountPath = "/mnt/backup";
     stagingDir = "/var/lib/backup";
