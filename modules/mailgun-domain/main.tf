@@ -1,8 +1,7 @@
 terraform {
   required_providers {
     mailgun = {
-      source  = "wgebis/mailgun"
-      version = "~> 0.7"
+      source = "wgebis/mailgun"
     }
     azurerm = {
       source = "hashicorp/azurerm"
