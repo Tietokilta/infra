@@ -26,7 +26,7 @@ terraform {
     }
     postgresql = {
       source  = "cyrilgdn/postgresql"
-      version = ">= 1.13.0"
+      version = "~>1.13"
     }
   }
   backend "azurerm" {
@@ -216,6 +216,16 @@ resource "azurerm_key_vault_secret" "postgres_admin_user" {
 resource "azurerm_key_vault_secret" "postgres_admin_password" {
   name         = "postgres-admin-password"
   value        = module.common.postgres_admin_password
+  key_vault_id = module.keyvault.keyvault_id
+}
+resource "azurerm_key_vault_secret" "postgres_backup_user" {
+  name         = "postgres-backup-user"
+  value        = module.common.postgres_backup_username
+  key_vault_id = module.keyvault.keyvault_id
+}
+resource "azurerm_key_vault_secret" "postgres_backup_password" {
+  name         = "postgres-backup-password"
+  value        = module.common.postgres_backup_password
   key_vault_id = module.keyvault.keyvault_id
 }
 

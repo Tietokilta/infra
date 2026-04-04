@@ -11,8 +11,41 @@
       ./base-pannu-config.nix
     ];
 
-    services.tik-backup.enable = lib.mkForce true;
+    services.tik-backup = {
+      enable = lib.mkForce true;
+      azure.enable = lib.mkForce true;
+      azure.postgresql.enable = lib.mkForce true;
+    };
 
+    # Enable a local PostgreSQL server and create mock DBs for the test VM.
+    services.postgresql = {
+      enable = lib.mkForce true;
+      ensureDatabases = [
+        "mock1"
+        "mock2"
+        "mock3"
+      ];
+      ensureUsers = [
+        {
+          name = "azure-psql-backup";
+          ensureClauses = {
+            password = "verygoodpass";
+          };
+        }
+      ];
+    };
+
+    systemd.services.stage-azure-psql = {
+      requires = [ "postgresql.target" ];
+      after = [ "postgresql.target" ];
+      serviceConfig.EnvironmentFile = lib.mkForce (
+        pkgs.writeText "envfile" ''
+          PGHOST=127.0.0.1
+          PGUSER=azure-psql-backup
+          PGPASSWORD=verygoodpass
+        ''
+      );
+    };
     # Enable discourse for the backup logic, not to run it
     services.discourse.enable = lib.mkForce true;
     systemd.services.discourse.wantedBy = lib.mkForce [ ];
@@ -51,6 +84,11 @@
 
     pannu.succeed("systemctl start restic-backups-tik-backup.service")
     unit_succeeded("discourse-stage-backup.service")
+    unit_succeeded("stage-azure-psql.service")
+
+
+    # Backup user must be able to clean up this dir
+    pannu.succeed("sudo -u backup sh -c 'rm -rf /var/lib/backup/*'")
 
     _, stdout = pannu.execute("restic-tik-backup ls latest")
     print("Backed up files:")
@@ -58,7 +96,7 @@
 
     # At least min_files files must exist in the backup. This does not include
     # directories.
-    min_files = 1
+    min_files = 4
     stdout = pannu.succeed(f''''
       restic-tik-backup ls --json latest \\
       | jq --exit-status --slurp \\
