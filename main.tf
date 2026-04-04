@@ -26,7 +26,7 @@ terraform {
     }
     postgresql = {
       source  = "cyrilgdn/postgresql"
-      version = ">= 1.13.0"
+      version = "~>1.13"
     }
   }
   backend "azurerm" {

@@ -4,8 +4,7 @@ terraform {
       source = "vancluever/acme"
     }
     postgresql = {
-      source  = "cyrilgdn/postgresql"
-      version = ">= 1.13.0"
+      source = "cyrilgdn/postgresql"
     }
   }
 }
