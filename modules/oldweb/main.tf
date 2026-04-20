@@ -87,7 +87,7 @@ resource "azurerm_linux_web_app" "oldweb_backend" {
     DB_PASSWORD = module.service_database.db_password
     DB_HOST     = var.postgres_server_fqdn
     DB_DATABASE = module.service_database.db_name
-    DB_PORT     = 5432
+    DB_PORT     = 6432
 
   }
 }
