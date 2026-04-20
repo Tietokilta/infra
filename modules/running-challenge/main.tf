@@ -40,7 +40,7 @@ resource "azurerm_linux_web_app" "running_challenge" {
     CLIENT_SECRET = var.client_secret
     REFRESH_TOKEN = var.refresh_token
     PGHOST        = var.postgres_server_fqdn
-    PGPORT        = 5432
+    PGPORT        = 6432
     PGDATABASE    = module.service_database.db_name
     PGUSER        = module.service_database.db_user
     PGPASSWORD    = module.service_database.db_password
