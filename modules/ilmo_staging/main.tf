@@ -43,6 +43,7 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
 
     DB_DIALECT  = "postgres"
     DB_HOST     = var.postgres_server_fqdn
+    DB_PORT     = 6432
     DB_SSL      = true
     DB_DATABASE = module.service_database.db_name
     DB_USER     = module.service_database.db_user
