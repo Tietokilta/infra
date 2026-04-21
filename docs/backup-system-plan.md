@@ -192,24 +192,22 @@ tikpannu-nixos-config/
 
     for sa in $STORAGE_ACCOUNTS; do
       echo "Backing up storage account: $sa"
-      KEY=$(az storage account keys list --account-name "$sa" --query "[0].value" -o tsv)
-
       # Backup ALL blob containers
-      CONTAINERS=$(az storage container list --account-name "$sa" --account-key "$KEY" --query "[].name" -o tsv)
+      CONTAINERS=$(az storage container list --account-name "$sa" --auth-mode login --query "[].name" -o tsv)
       for container in $CONTAINERS; do
         mkdir -p "/var/backup/azure-blob/$sa/$container"
         az storage blob download-batch \
           -d "/var/backup/azure-blob/$sa/$container" \
-          -s "$container" --account-name "$sa" --account-key "$KEY"
+          -s "$container" --account-name "$sa" --auth-mode login
       done
 
       # Backup ALL file shares
-      SHARES=$(az storage share list --account-name "$sa" --account-key "$KEY" --query "[].name" -o tsv 2>/dev/null || true)
+      SHARES=$(az storage share list --account-name "$sa" --auth-mode login --query "[].name" -o tsv)
       for share in $SHARES; do
         mkdir -p "/var/backup/azure-files/$sa/$share"
         az storage file download-batch \
           -d "/var/backup/azure-files/$sa/$share" \
-          -s "$share" --account-name "$sa" --account-key "$KEY"
+          -s "$share" --account-name "$sa" --auth-mode login
       done
     done
     ```
@@ -277,7 +275,8 @@ storagebox-credentials: <encrypted>
 restic-password: <encrypted>
 
 # Azure Service Principal (for dynamic storage discovery)
-# This SP needs "Storage Account Key Operator" and "Reader" roles
+# This SP needs "Reader", "Storage Blob Data Reader", and
+# "Storage File Data Privileged Reader" roles
 azure-client-id: <encrypted>
 azure-client-secret: <encrypted>
 azure-tenant-id: <encrypted>
