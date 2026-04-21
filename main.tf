@@ -520,6 +520,10 @@ module "histotik_github_ci" {
   ]
 }
 
+module "backup_storage_identity" {
+  source = "./modules/backup-storage-identity"
+}
+
 # Output Azure Client IDs for Each Repository
 output "github_actions_azure_client_ids" {
   description = "Mapping of GitHub repositories to their AZURE_CLIENT_ID"
@@ -539,6 +543,22 @@ output "github_actions_azure_subscription_id" {
 output "github_actions_azure_tenant_id" {
   description = "AZURE_TENANT_ID in Github Actions"
   value       = module.github-ci-roles.azure_tenant_id
+}
+
+output "backup_azure_client_id" {
+  description = "Client ID for the backup service principal."
+  value       = module.backup_storage_identity.client_id
+}
+
+output "backup_azure_client_secret" {
+  description = "Client secret for the backup service principal."
+  value       = module.backup_storage_identity.client_secret
+  sensitive   = true
+}
+
+output "backup_azure_tenant_id" {
+  description = "Tenant ID for the backup service principal."
+  value       = module.backup_storage_identity.tenant_id
 }
 
 module "juvusivu" {
