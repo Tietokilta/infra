@@ -50,7 +50,7 @@ graph TD
         oldweb["oldweb<br/>old.tietokilta.fi<br/>(Legacy)"]
     end
 
-    histotik["histotik<br/>histotik.tietokilta.fi<br/>(Static via CDN)"]
+    histotik["histotik<br/>histotik.tietokilta.fi<br/>(GitHub Pages)"]
 
     PG[PostgreSQL]
     KV[Key Vault]
@@ -66,7 +66,6 @@ graph TD
 
     tikweb & juvusivu & tenttiarkisto --> Storage
     ghost & vaultwarden & oldweb --> Storage
-    histotik --> Storage
 ```
 
 ## NixOS Server (tikpannu)

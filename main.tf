@@ -512,10 +512,6 @@ module "histotik_github_ci" {
     {
       scope                = module.histotik.storage_account_id
       role_definition_name = "Storage Blob Data Contributor"
-    },
-    {
-      scope                = module.histotik.cdn_profile_id
-      role_definition_name = "CDN Endpoint Contributor"
     }
   ]
 }
