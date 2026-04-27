@@ -66,4 +66,6 @@ module "app_service_hostname" {
   app_service_default_hostname    = azurerm_linux_web_app.running_challenge.default_hostname
   acme_account_key                = var.acme_account_key
   certificate_name                = "tik-running-challenge-cert"
+  cloudflare_zone_id              = var.cloudflare_zone_id
+  cloudflare_api_token            = var.cloudflare_api_token
 }

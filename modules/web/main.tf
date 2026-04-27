@@ -108,4 +108,7 @@ module "tikweb_hostname" {
   app_service_default_hostname    = azurerm_linux_web_app.web.default_hostname
   acme_account_key                = var.acme_account_key
   certificate_name                = "tikweb-cert-${var.environment}"
+  cloudflare_zone_id              = var.cloudflare_zone_id
+  cloudflare_api_token            = var.cloudflare_api_token
+  proxied                         = true
 }

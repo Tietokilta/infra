@@ -72,6 +72,19 @@ variable "subdomain" {
   type = string
 }
 
+variable "cloudflare_zone_id" {
+  type        = string
+  description = "Cloudflare zone ID. When set, DNS records are also created in Cloudflare."
+  default     = ""
+}
+
+variable "cloudflare_api_token" {
+  type        = string
+  description = "Cloudflare API token for ACME DNS challenge."
+  sensitive   = true
+  default     = ""
+}
+
 // App Service Plan
 
 variable "tikweb_app_plan_id" {

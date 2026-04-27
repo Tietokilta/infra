@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/azuread"
       version = "~>3.0"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~>5.0"
+    }
     dns = {
       source  = "hashicorp/dns"
       version = "~>3.4"
@@ -54,6 +58,10 @@ provider "acme" {
 
 provider "mailgun" {
   api_key = module.keyvault.secrets["mailgun-terraform-api-key"]
+}
+
+provider "cloudflare" {
+  api_token = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 provider "postgresql" {
@@ -117,9 +125,27 @@ module "keyvault" {
     "registry-stripe-api-key",
     "registry-stripe-webhook-secret",
     "mailgun-terraform-api-key",
+    "cloudflare-api-token",
     "running-challenge-client-id",
     "running-challenge-client-secret",
     "running-challenge-refresh-token"
+  ]
+}
+
+module "cloudflare" {
+  source = "./modules/cloudflare"
+
+  zone_name              = "tietokilta.fi"
+  github_challenge_value = module.keyvault.secrets["github-challenge-value"]
+  # Hardcoded to avoid circular dependency with modules that consume cloudflare.zone_id
+  dmarc_report_domains = [
+    "list.tietokilta.fi",
+    "list.tietokila.fi",
+    "rekry.tietokilta.fi",
+    "ilmo.tietokilta.fi",
+    "laskutus.tietokilta.fi",
+    "vaalit.tietokilta.fi",
+    "rekisteri.tietokilta.fi",
   ]
 }
 
@@ -171,6 +197,7 @@ module "mailman" {
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "list"
+  cloudflare_zone_id      = module.cloudflare.zone_id
 
   dkim_selector = "mta"
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJN6WyS7YQcOKO4MKsSbrYfjL8hh24ot/0uQysHte3eqscbbwCFVlgmsg3423by3e20ZSBMhRXdtIkYdgn8wkfPyZlHVEOvOJBCR+tKqtexxQEbkk8LqmEzVggNZoLLX06wYNqt2Nxl++dlvUuB4IxmPPGQed3Xr7HBT8OZmKJYQIDAQAB"
@@ -266,6 +293,8 @@ module "web" {
   mailgun_api_key              = module.keyvault.secrets["mailgun-api-key"]
   mailgun_domain               = module.keyvault.secrets["mailgun-domain"]
   mailgun_url                  = module.keyvault.secrets["mailgun-url"]
+  cloudflare_zone_id           = module.cloudflare.zone_id
+  cloudflare_api_token         = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 resource "azurerm_key_vault_secret" "cms_password" {
@@ -299,6 +328,8 @@ module "ilmo" {
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "ilmo"
   acme_account_key        = module.common.acme_account_key
+  cloudflare_zone_id      = module.cloudflare.zone_id
+  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "ilmo_staging" {
@@ -326,6 +357,7 @@ module "histotik" {
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "histotik"
+  cloudflare_zone_id      = module.cloudflare.zone_id
 }
 
 module "tenttiarkisto" {
@@ -384,6 +416,8 @@ module "tikjob_app" {
   dns_resource_group_name = module.dns_prod.resource_group_name
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "rekry"
+  cloudflare_zone_id      = module.cloudflare.zone_id
+  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "tikjob_tg_bot" {
@@ -407,6 +441,7 @@ module "discourse" {
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "vaalit"
   discourse_ip            = "46.62.222.17"
+  cloudflare_zone_id      = module.cloudflare.zone_id
 
   dkim_selector = "mta"
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzppfPnLHshnORT2P0C3OBuo80OCsCOpLHQS2txfRq2k+y+P4rocFy4z1H0397Ijy6wKM+VI3qOnc8RzVkaZib8+p08jBf/O/hxTwTkuMrotdIo2zrfBq+T1AaYMj4zNJnPt10+vLptpEA6m0XIWsu7wTRE6WfqHjlHj7CwkhTzwIDAQAB"
@@ -419,6 +454,7 @@ module "tikpannu" {
   root_zone_name          = module.dns_prod.root_zone_name
   subdomain               = "pannu"
   tikpannu_ip             = "46.62.222.17"
+  cloudflare_zone_id      = module.cloudflare.zone_id
 }
 
 module "invoicing" {
@@ -433,6 +469,8 @@ module "invoicing" {
   resource_group_name     = module.common.resource_group_name
   app_service_plan_id     = module.common.tikweb_app_plan_id
   acme_account_key        = module.common.acme_account_key
+  cloudflare_zone_id      = module.cloudflare.zone_id
+  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "registry" {
@@ -450,6 +488,8 @@ module "registry" {
   mailgun_api_key         = module.keyvault.secrets["registry-mailgun-api-key"]
   stripe_api_key          = module.keyvault.secrets["registry-stripe-api-key"]
   stripe_webhook_secret   = module.keyvault.secrets["registry-stripe-webhook-secret"]
+  cloudflare_zone_id      = module.cloudflare.zone_id
+  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "oldweb" {
@@ -466,6 +506,8 @@ module "oldweb" {
   tikweb_rg_name          = module.common.resource_group_name
   location                = local.resource_group_location
   ghcr_token              = module.keyvault.secrets["oldweb-ghcr-access-token"]
+  cloudflare_zone_id      = module.cloudflare.zone_id
+  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "vaultwarden" {
@@ -488,6 +530,8 @@ module "vaultwarden" {
   acme_account_key                     = module.common.acme_account_key
   root_zone_name                       = module.dns_prod.root_zone_name
   subdomain                            = "vault"
+  cloudflare_zone_id                   = module.cloudflare.zone_id
+  cloudflare_api_token                 = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "github-ci-roles" {
@@ -569,6 +613,8 @@ module "status" {
   telegram_token                       = module.keyvault.secrets["status-telegram-token"]
   telegram_channel_id                  = "-1003648545192"
   subdomain                            = "status"
+  cloudflare_zone_id                   = module.cloudflare.zone_id
+  cloudflare_api_token                 = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "running_challenge" {
@@ -586,6 +632,8 @@ module "running_challenge" {
   client_secret           = module.keyvault.secrets["running-challenge-client-secret"]
   refresh_token           = module.keyvault.secrets["running-challenge-refresh-token"]
   club_id                 = "1997937"
+  cloudflare_zone_id      = module.cloudflare.zone_id
+  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "isopistekortti" {
@@ -600,4 +648,6 @@ module "isopistekortti" {
   root_zone_name          = module.dns_prod.root_zone_name
   dns_resource_group_name = module.dns_prod.resource_group_name
   acme_account_key        = module.common.acme_account_key
+  cloudflare_zone_id      = module.cloudflare.zone_id
+  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
 }

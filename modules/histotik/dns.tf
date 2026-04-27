@@ -7,4 +7,12 @@ resource "azurerm_dns_cname_record" "histotik_cname_record" {
   # TODO: use .fqdn when azurerm provider has been upgraded
 }
 
-# TODO: add histo.tik.tietokilta.fi
+resource "cloudflare_dns_record" "histotik_cname" {
+  count   = var.cloudflare_zone_id != "" ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = var.subdomain
+  type    = "CNAME"
+  content = "${azurerm_cdn_endpoint.histotik_cdn_endpoint.name}.azureedge.net"
+  proxied = false
+  ttl     = 300
+}
