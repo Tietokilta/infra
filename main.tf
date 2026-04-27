@@ -76,6 +76,12 @@ provider "postgresql" {
 
 locals {
   resource_group_location = "northeurope"
+  # Zone name strings -- previously derived from Azure DNS zone modules
+  tietokilta_zone     = "tietokilta.fi"
+  tietokila_zone      = "tietokila.fi"
+  muistinnollaus_zone = "muistinnollaus.fi"
+  juhlavuosi_zone     = "juhlavuosi.fi"
+  tenttiarkisto_zone  = "tenttiarkisto.fi"
 }
 
 module "keyvault" {
@@ -135,7 +141,7 @@ module "keyvault" {
 module "cloudflare" {
   source = "./modules/cloudflare"
 
-  zone_name              = "tietokilta.fi"
+  zone_name              = local.tietokilta_zone
   github_challenge_value = module.keyvault.secrets["github-challenge-value"]
   # Hardcoded to avoid circular dependency with modules that consume cloudflare.zone_id
   dmarc_report_domains = [
@@ -149,85 +155,45 @@ module "cloudflare" {
   ]
 }
 
-module "dns_prod" {
-  source                  = "./modules/dns/root"
-  env_name                = "prod"
-  resource_group_location = local.resource_group_location
-  zone_name               = "tietokilta.fi"
+# Cloudflare zone lookups for domains migrated from Azure DNS
+data "cloudflare_zone" "juvusivu" {
+  filter = {
+    name = "juhlavuosi.fi"
+  }
+}
+data "cloudflare_zone" "m0" {
+  filter = {
+    name = "muistinnollaus.fi"
+  }
+}
+data "cloudflare_zone" "staging" {
+  filter = {
+    name = "tietokila.fi"
+  }
+}
+data "cloudflare_zone" "tenttiarkisto" {
+  filter = {
+    name = "tenttiarkisto.fi"
+  }
 }
 
-module "dns_staging" {
-  source                  = "./modules/dns/root"
-  env_name                = "staging"
-  resource_group_location = local.resource_group_location
-  zone_name               = "tietokila.fi"
-}
-module "dns_m0" {
-  source                  = "./modules/dns/root"
-  env_name                = "m0"
-  resource_group_location = local.resource_group_location
-  zone_name               = "muistinnollaus.fi"
-}
-module "dns_juvusivu" {
-  source                  = "./modules/dns/root"
-  env_name                = "juvu"
-  resource_group_location = local.resource_group_location
-  zone_name               = "juhlavuosi.fi"
-}
-module "tenttiarkisto_dns_zone" {
-  source                  = "./modules/dns/root"
-  env_name                = "prod"
-  resource_group_location = module.common.resource_group_location
-  # legacy due to previous setup
-  resource_group_name = module.common.resource_group_name
-  zone_name           = "tenttiarkisto.fi"
-}
-module "dns_github" {
-  source = "./modules/dns/github"
-
-  resource_group_name = module.dns_prod.resource_group_name
-  zone_name           = module.dns_prod.root_zone_name
-  challenge_name      = "_github-challenge-Tietokilta-org"
-  challenge_value     = module.keyvault.secrets["github-challenge-value"]
-
-}
 module "mailman" {
   source = "./modules/dns/mailman"
 
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "list"
-  cloudflare_zone_id      = module.cloudflare.zone_id
+  subdomain          = "list"
+  cloudflare_zone_id = module.cloudflare.zone_id
 
   dkim_selector = "mta"
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJN6WyS7YQcOKO4MKsSbrYfjL8hh24ot/0uQysHte3eqscbbwCFVlgmsg3423by3e20ZSBMhRXdtIkYdgn8wkfPyZlHVEOvOJBCR+tKqtexxQEbkk8LqmEzVggNZoLLX06wYNqt2Nxl++dlvUuB4IxmPPGQed3Xr7HBT8OZmKJYQIDAQAB"
 }
-
 module "mailing_staging" {
   source = "./modules/dns/mailing"
 
-  dns_resource_group_name = module.dns_staging.resource_group_name
-  root_zone_name          = module.dns_staging.root_zone_name
-  subdomain               = "list"
+  cloudflare_zone_id = data.cloudflare_zone.staging.id
+  subdomain          = "list"
 
   dkim_selector = "mg"
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZGR9aFa3+4SaHMkvO44EzQzbmMPEYqryH1tsgBlNErA5Qd/UNtCgQ+vy1uO2SyOGZDoD6xEDVZ8Mqh4JXXX3GVvEgpESjSlj+RkhCLY9JGVJwkgVWTUD65qkLJ9NpADBMQUhzJgxIv+It3zxbFDUOmLv2+Qee7d/MR1Gfgn/wNwIDAQAB"
-}
-
-module "dns_misc_prod" {
-  source                  = "./modules/dns/prod"
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-
-  dmarc_report_domains = [
-    module.mailman.fqdn,
-    module.mailing_staging.fqdn,
-    module.tikjob_app.fqdn,
-    module.ilmo.fqdn,
-    module.invoicing.fqdn,
-    module.discourse.fqdn,
-    module.registry.fqdn,
-  ]
 }
 
 module "common" {
@@ -277,8 +243,7 @@ module "web" {
   resource_group_name          = module.common.resource_group_name
   app_service_plan_id          = module.common.tikweb_app_plan_id
   acme_account_key             = module.common.acme_account_key
-  root_zone_name               = module.dns_prod.root_zone_name
-  dns_resource_group_name      = module.dns_prod.resource_group_name
+  root_zone_name               = local.tietokilta_zone
   subdomain                    = "@"
   environment                  = "prod"
   mongo_connection_string      = "${module.mongodb.db_connection_string}/payload?retryWrites=true&w=majority"
@@ -324,12 +289,11 @@ module "ilmo" {
     }
   }
 
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "ilmo"
-  acme_account_key        = module.common.acme_account_key
-  cloudflare_zone_id      = module.cloudflare.zone_id
-  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
+  root_zone_name       = local.tietokilta_zone
+  subdomain            = "ilmo"
+  acme_account_key     = module.common.acme_account_key
+  cloudflare_zone_id   = module.cloudflare.zone_id
+  cloudflare_api_token = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "ilmo_staging" {
@@ -354,10 +318,9 @@ module "histotik" {
   env_name                = "prod"
   resource_group_location = local.resource_group_location
 
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "histotik"
-  cloudflare_zone_id      = module.cloudflare.zone_id
+  root_zone_name     = local.tietokilta_zone
+  subdomain          = "histotik"
+  cloudflare_zone_id = module.cloudflare.zone_id
 }
 
 module "tenttiarkisto" {
@@ -372,8 +335,9 @@ module "tenttiarkisto" {
   tikweb_app_plan_rg_name      = module.common.resource_group_name
   django_secret_key            = module.keyvault.secrets["tenttiarkisto-django-secret-key"]
   acme_account_key             = module.common.acme_account_key
-  dns_resource_group_name      = module.tenttiarkisto_dns_zone.resource_group_name
-  root_zone_name               = module.tenttiarkisto_dns_zone.root_zone_name
+  root_zone_name               = local.tenttiarkisto_zone
+  cloudflare_zone_id           = data.cloudflare_zone.tenttiarkisto.id
+  cloudflare_api_token         = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "voo" {
@@ -413,11 +377,10 @@ module "tikjob_app" {
 
   acme_account_key = module.common.acme_account_key
 
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "rekry"
-  cloudflare_zone_id      = module.cloudflare.zone_id
-  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
+  root_zone_name       = local.tietokilta_zone
+  subdomain            = "rekry"
+  cloudflare_zone_id   = module.cloudflare.zone_id
+  cloudflare_api_token = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "tikjob_tg_bot" {
@@ -437,11 +400,10 @@ module "tikjob_tg_bot" {
 module "discourse" {
   source = "./modules/discourse"
 
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "vaalit"
-  discourse_ip            = "46.62.222.17"
-  cloudflare_zone_id      = module.cloudflare.zone_id
+  root_zone_name     = local.tietokilta_zone
+  subdomain          = "vaalit"
+  discourse_ip       = "46.62.222.17"
+  cloudflare_zone_id = module.cloudflare.zone_id
 
   dkim_selector = "mta"
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzppfPnLHshnORT2P0C3OBuo80OCsCOpLHQS2txfRq2k+y+P4rocFy4z1H0397Ijy6wKM+VI3qOnc8RzVkaZib8+p08jBf/O/hxTwTkuMrotdIo2zrfBq+T1AaYMj4zNJnPt10+vLptpEA6m0XIWsu7wTRE6WfqHjlHj7CwkhTzwIDAQAB"
@@ -450,19 +412,16 @@ module "discourse" {
 module "tikpannu" {
   source = "./modules/tikpannu"
 
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "pannu"
-  tikpannu_ip             = "46.62.222.17"
-  cloudflare_zone_id      = module.cloudflare.zone_id
+  root_zone_name     = local.tietokilta_zone
+  subdomain          = "pannu"
+  tikpannu_ip        = "46.62.222.17"
+  cloudflare_zone_id = module.cloudflare.zone_id
 }
-
 module "invoicing" {
   source = "./modules/invoicing"
 
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "laskutus"
+  root_zone_name = local.tietokilta_zone
+  subdomain      = "laskutus"
 
   mailgun_api_key         = module.keyvault.secrets["invoice-mailgun-api-key"]
   resource_group_location = local.resource_group_location
@@ -481,8 +440,7 @@ module "registry" {
   postgres_server_id      = module.common.postgres_server_id
   postgres_server_fqdn    = module.common.postgres_server_fqdn
   environment             = "prod"
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
+  root_zone_name          = local.tietokilta_zone
   subdomain               = "rekisteri"
   acme_account_key        = module.common.acme_account_key
   mailgun_api_key         = module.keyvault.secrets["registry-mailgun-api-key"]
@@ -493,21 +451,20 @@ module "registry" {
 }
 
 module "oldweb" {
-  source                  = "./modules/oldweb"
-  environment             = "prod"
-  postgres_server_fqdn    = module.common.postgres_server_fqdn
-  postgres_server_id      = module.common.postgres_server_id
-  dns_resource_group_name = module.dns_prod.resource_group_name
-  root_zone_name          = module.dns_prod.root_zone_name
-  subdomain               = "old"
-  acme_account_key        = module.common.acme_account_key
-  tikweb_app_plan_id      = module.common.tikweb_app_plan_id
-  tikweb_rg_location      = module.common.resource_group_location
-  tikweb_rg_name          = module.common.resource_group_name
-  location                = local.resource_group_location
-  ghcr_token              = module.keyvault.secrets["oldweb-ghcr-access-token"]
-  cloudflare_zone_id      = module.cloudflare.zone_id
-  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
+  source               = "./modules/oldweb"
+  environment          = "prod"
+  postgres_server_fqdn = module.common.postgres_server_fqdn
+  postgres_server_id   = module.common.postgres_server_id
+  root_zone_name       = local.tietokilta_zone
+  subdomain            = "old"
+  acme_account_key     = module.common.acme_account_key
+  tikweb_app_plan_id   = module.common.tikweb_app_plan_id
+  tikweb_rg_location   = module.common.resource_group_location
+  tikweb_rg_name       = module.common.resource_group_name
+  location             = local.resource_group_location
+  ghcr_token           = module.keyvault.secrets["oldweb-ghcr-access-token"]
+  cloudflare_zone_id   = module.cloudflare.zone_id
+  cloudflare_api_token = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "vaultwarden" {
@@ -526,9 +483,8 @@ module "vaultwarden" {
   vaultwarden_smtp_from                = "vault@tietokilta.fi"
   vaultwarden_smtp_username            = module.keyvault.secrets["vaultwarden-smtp-username"]
   vaultwarden_smtp_password            = module.keyvault.secrets["vaultwarden-smtp-password"]
-  dns_resource_group_name              = module.dns_prod.resource_group_name
   acme_account_key                     = module.common.acme_account_key
-  root_zone_name                       = module.dns_prod.root_zone_name
+  root_zone_name                       = local.tietokilta_zone
   subdomain                            = "vault"
   cloudflare_zone_id                   = module.cloudflare.zone_id
   cloudflare_api_token                 = module.keyvault.secrets["cloudflare-api-token"]
@@ -595,10 +551,11 @@ module "juvusivu" {
   postgres_server_fqdn                 = module.common.postgres_server_fqdn
   postgres_server_id                   = module.common.postgres_server_id
   acme_account_key                     = module.common.acme_account_key
-  dns_resource_group_name              = module.dns_juvusivu.resource_group_name
-  root_zone_name                       = module.dns_juvusivu.root_zone_name
-  m0_dns_resource_group_name           = module.dns_m0.resource_group_name
-  m0_dns_zone_name                     = module.dns_m0.root_zone_name
+  root_zone_name                       = local.juhlavuosi_zone
+  m0_dns_zone_name                     = local.muistinnollaus_zone
+  cloudflare_zone_id                   = data.cloudflare_zone.juvusivu.id
+  cloudflare_m0_zone_id                = data.cloudflare_zone.m0.id
+  cloudflare_api_token                 = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "status" {
@@ -607,9 +564,8 @@ module "status" {
   app_service_plan_location            = local.resource_group_location
   app_service_plan_resource_group_name = module.common.resource_group_name
   location                             = local.resource_group_location
-  dns_resource_group_name              = module.dns_prod.resource_group_name
   acme_account_key                     = module.common.acme_account_key
-  root_zone_name                       = module.dns_prod.root_zone_name
+  root_zone_name                       = local.tietokilta_zone
   telegram_token                       = module.keyvault.secrets["status-telegram-token"]
   telegram_channel_id                  = "-1003648545192"
   subdomain                            = "status"
@@ -625,8 +581,7 @@ module "running_challenge" {
   postgres_server_id      = module.common.postgres_server_id
   postgres_server_fqdn    = module.common.postgres_server_fqdn
   subdomain               = "liikuntahaaste"
-  root_zone_name          = module.dns_prod.root_zone_name
-  dns_resource_group_name = module.dns_prod.resource_group_name
+  root_zone_name          = local.tietokilta_zone
   acme_account_key        = module.common.acme_account_key
   client_id               = module.keyvault.secrets["running-challenge-client-id"]
   client_secret           = module.keyvault.secrets["running-challenge-client-secret"]
@@ -645,8 +600,7 @@ module "isopistekortti" {
   postgres_server_fqdn    = module.common.postgres_server_fqdn
   subdomain               = "iso"
   environment             = "prod"
-  root_zone_name          = module.dns_prod.root_zone_name
-  dns_resource_group_name = module.dns_prod.resource_group_name
+  root_zone_name          = local.tietokilta_zone
   acme_account_key        = module.common.acme_account_key
   cloudflare_zone_id      = module.cloudflare.zone_id
   cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]

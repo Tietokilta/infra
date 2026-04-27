@@ -40,10 +40,18 @@ variable "acme_account_key" {
   sensitive = true
 }
 
-variable "dns_resource_group_name" {
-  type = string
-}
 
 variable "root_zone_name" {
   type = string
+}
+
+variable "cloudflare_zone_id" {
+  type        = string
+  description = "Cloudflare zone ID for tenttiarkisto.fi."
+}
+
+variable "cloudflare_api_token" {
+  type        = string
+  description = "Cloudflare API token for ACME DNS challenge."
+  sensitive   = true
 }

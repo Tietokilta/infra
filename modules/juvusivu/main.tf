@@ -101,7 +101,6 @@ module "juvusivu_hostname" {
   source = "../app_service_hostname"
 
   subdomain                       = "@"
-  dns_resource_group_name         = var.dns_resource_group_name
   custom_domain_verification_id   = azurerm_linux_web_app.juvusivu.custom_domain_verification_id
   app_service_name                = azurerm_linux_web_app.juvusivu.name
   app_service_resource_group_name = var.app_service_plan_resource_group_name
@@ -110,13 +109,14 @@ module "juvusivu_hostname" {
   acme_account_key                = var.acme_account_key
   certificate_name                = "juvusivu-cert"
   root_zone_name                  = var.root_zone_name
+  cloudflare_zone_id              = var.cloudflare_zone_id
+  cloudflare_api_token            = var.cloudflare_api_token
 }
 
 module "juvusivu_m0_hostname" {
   source = "../app_service_hostname"
 
   subdomain                       = "@"
-  dns_resource_group_name         = var.m0_dns_resource_group_name
   custom_domain_verification_id   = azurerm_linux_web_app.juvusivu.custom_domain_verification_id
   app_service_name                = azurerm_linux_web_app.juvusivu.name
   app_service_resource_group_name = var.app_service_plan_resource_group_name
@@ -125,4 +125,6 @@ module "juvusivu_m0_hostname" {
   acme_account_key                = var.acme_account_key
   certificate_name                = "juvu-m0-cert"
   root_zone_name                  = var.m0_dns_zone_name
+  cloudflare_zone_id              = var.cloudflare_m0_zone_id
+  cloudflare_api_token            = var.cloudflare_api_token
 }
