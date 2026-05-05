@@ -48,3 +48,15 @@ variable "m0_dns_resource_group_name" {
 variable "m0_dns_zone_name" {
   type = string
 }
+
+// Cloudflare
+variable "cloudflare_zone_id" {
+  type = string
+}
+variable "cloudflare_m0_zone_id" {
+  type = string
+}
+variable "cloudflare_api_token" {
+  type      = string
+  sensitive = true
+}

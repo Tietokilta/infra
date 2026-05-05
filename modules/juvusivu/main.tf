@@ -110,6 +110,8 @@ module "juvusivu_hostname" {
   acme_account_key                = var.acme_account_key
   certificate_name                = "juvusivu-cert"
   root_zone_name                  = var.root_zone_name
+  cloudflare_zone_id              = var.cloudflare_zone_id
+  cloudflare_api_token            = var.cloudflare_api_token
 }
 
 module "juvusivu_m0_hostname" {
@@ -125,4 +127,6 @@ module "juvusivu_m0_hostname" {
   acme_account_key                = var.acme_account_key
   certificate_name                = "juvu-m0-cert"
   root_zone_name                  = var.m0_dns_zone_name
+  cloudflare_zone_id              = var.cloudflare_m0_zone_id
+  cloudflare_api_token            = var.cloudflare_api_token
 }

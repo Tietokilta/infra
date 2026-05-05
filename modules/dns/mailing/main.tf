@@ -1,5 +1,14 @@
+terraform {
+  required_providers {
+    cloudflare = {
+      source = "cloudflare/cloudflare"
+    }
+  }
+}
+
 locals {
-  fqdn = "${var.subdomain}.${var.root_zone_name}"
+  fqdn           = "${var.subdomain}.${var.root_zone_name}"
+  use_cloudflare = var.cloudflare_zone_id != ""
 }
 
 # Email click tracking CNAME for Mailgun
@@ -62,4 +71,62 @@ resource "azurerm_dns_txt_record" "list_dmarc" {
   record {
     value = "v=DMARC1;p=none;sp=none;rua=mailto:dmarc@tietokilta.fi!10m;ruf=mailto:dmarc@tietokilta.fi!10m"
   }
+}
+
+# Cloudflare DNS records (mirroring Azure records when cloudflare_zone_id is set)
+resource "cloudflare_dns_record" "list_cname_link" {
+  count   = local.use_cloudflare ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = "link.${var.subdomain}"
+  type    = "CNAME"
+  content = "eu.mailgun.org"
+  proxied = false
+  ttl     = 300
+}
+
+resource "cloudflare_dns_record" "list_mx_mxa" {
+  count    = local.use_cloudflare ? 1 : 0
+  zone_id  = var.cloudflare_zone_id
+  name     = var.subdomain
+  type     = "MX"
+  content  = "mxa.eu.mailgun.org"
+  priority = 10
+  ttl      = 300
+}
+
+resource "cloudflare_dns_record" "list_mx_mxb" {
+  count    = local.use_cloudflare ? 1 : 0
+  zone_id  = var.cloudflare_zone_id
+  name     = var.subdomain
+  type     = "MX"
+  content  = "mxb.eu.mailgun.org"
+  priority = 10
+  ttl      = 300
+}
+
+resource "cloudflare_dns_record" "list_spf" {
+  count   = local.use_cloudflare ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = var.subdomain
+  type    = "TXT"
+  content = "v=spf1 include:mailgun.org ~all"
+  ttl     = 300
+}
+
+resource "cloudflare_dns_record" "list_dkim" {
+  count   = local.use_cloudflare ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = "${var.dkim_selector}._domainkey.${var.subdomain}"
+  type    = "TXT"
+  content = var.dkim_key
+  ttl     = 300
+}
+
+resource "cloudflare_dns_record" "list_dmarc" {
+  count   = local.use_cloudflare ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = "_dmarc.${var.subdomain}"
+  type    = "TXT"
+  content = "v=DMARC1;p=none;sp=none;rua=mailto:dmarc@tietokilta.fi!10m;ruf=mailto:dmarc@tietokilta.fi!10m"
+  ttl     = 300
 }

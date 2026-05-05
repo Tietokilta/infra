@@ -47,3 +47,12 @@ variable "dns_resource_group_name" {
 variable "root_zone_name" {
   type = string
 }
+
+variable "cloudflare_zone_id" {
+  type = string
+}
+
+variable "cloudflare_api_token" {
+  type      = string
+  sensitive = true
+}
