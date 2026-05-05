@@ -200,7 +200,8 @@ resource "cloudflare_dns_record" "mc_srv" {
     port     = 10015
     target   = "mc.tietokilta.fi"
   }
-  ttl = 300
+  ttl      = 300
+  priority = 0
 }
 
 # GitHub org challenge
