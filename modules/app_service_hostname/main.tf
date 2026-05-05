@@ -3,6 +3,9 @@ terraform {
     acme = {
       source = "vancluever/acme"
     }
+    cloudflare = {
+      source = "cloudflare/cloudflare"
+    }
   }
 }
 
@@ -10,13 +13,55 @@ locals {
   fqdn           = var.subdomain == "@" ? var.root_zone_name : "${var.subdomain}.${var.root_zone_name}"
   asuid_domain   = var.subdomain == "@" ? "" : ".${var.subdomain}"
   is_root_domain = var.subdomain == "@"
+  use_cloudflare = var.cloudflare_zone_id != ""
 }
 
 data "dns_a_record_set" "app_dns_fetch" {
   host = var.app_service_default_hostname
 }
 
-# Root/subdomain records
+# Cloudflare DNS records (only when cloudflare_zone_id is provided)
+resource "cloudflare_dns_record" "app_a_record" {
+  count   = local.use_cloudflare ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = var.subdomain
+  type    = "A"
+  content = data.dns_a_record_set.app_dns_fetch.addrs[0]
+  proxied = var.proxied
+  ttl     = var.proxied ? 1 : 300
+}
+
+# asuid TXT required by Azure App Service for hostname binding verification
+resource "cloudflare_dns_record" "app_asuid_record" {
+  count   = local.use_cloudflare ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = "asuid${local.asuid_domain}"
+  type    = "TXT"
+  content = var.custom_domain_verification_id
+  ttl     = 300
+}
+
+# WWW Cloudflare records (only for root domains using Cloudflare)
+resource "cloudflare_dns_record" "www_cname" {
+  count   = local.is_root_domain && local.use_cloudflare ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = "www"
+  type    = "CNAME"
+  content = local.fqdn
+  proxied = var.proxied
+  ttl     = var.proxied ? 1 : 300
+}
+
+resource "cloudflare_dns_record" "www_asuid_record" {
+  count   = local.is_root_domain && local.use_cloudflare ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = "asuid.www"
+  type    = "TXT"
+  content = var.custom_domain_verification_id
+  ttl     = 300
+}
+
+# Azure DNS records (kept as-is; non-authoritative once Cloudflare NS are active)
 resource "azurerm_dns_a_record" "app_a_record" {
   name                = var.subdomain
   resource_group_name = var.dns_resource_group_name
@@ -42,12 +87,14 @@ resource "azurerm_app_service_custom_hostname_binding" "app_hostname_binding" {
   resource_group_name = var.app_service_resource_group_name
 
   depends_on = [
+    cloudflare_dns_record.app_a_record,
+    cloudflare_dns_record.app_asuid_record,
     azurerm_dns_a_record.app_a_record,
-    azurerm_dns_txt_record.app_asuid_record
+    azurerm_dns_txt_record.app_asuid_record,
   ]
 }
 
-# WWW records (only for root domains)
+# WWW Azure DNS records (only for root domains)
 resource "azurerm_dns_cname_record" "www_cname" {
   count               = local.is_root_domain ? 1 : 0
   name                = "www"
@@ -76,8 +123,10 @@ resource "azurerm_app_service_custom_hostname_binding" "www_hostname_binding" {
   resource_group_name = var.app_service_resource_group_name
 
   depends_on = [
+    cloudflare_dns_record.www_cname,
+    cloudflare_dns_record.www_asuid_record,
     azurerm_dns_cname_record.www_cname,
-    azurerm_dns_txt_record.www_asuid_record
+    azurerm_dns_txt_record.www_asuid_record,
   ]
 }
 
@@ -95,8 +144,10 @@ resource "acme_certificate" "app_acme_cert" {
   certificate_p12_password  = random_password.app_cert_password.result
 
   dns_challenge {
-    provider = "azuredns"
-    config = {
+    provider = local.use_cloudflare ? "cloudflare" : "azuredns"
+    config = local.use_cloudflare ? {
+      CF_DNS_API_TOKEN = var.cloudflare_api_token
+      } : {
       AZURE_RESOURCE_GROUP = var.dns_resource_group_name
       AZURE_ZONE_NAME      = var.root_zone_name
     }

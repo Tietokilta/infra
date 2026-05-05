@@ -63,3 +63,61 @@ resource "azurerm_dns_txt_record" "discourse_dmarc" {
     value = "v=DMARC1;p=none;sp=none;rua=mailto:dmarc@tietokilta.fi!10m;ruf=mailto:dmarc@tietokilta.fi!10m"
   }
 }
+
+# Cloudflare DNS records (created alongside Azure records before NS flip)
+resource "cloudflare_dns_record" "discourse_a" {
+  count   = var.cloudflare_zone_id != "" ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = var.subdomain
+  type    = "A"
+  content = var.discourse_ip
+  proxied = false
+  ttl     = 300
+}
+
+resource "cloudflare_dns_record" "discourse_mx_mxa" {
+  count    = var.cloudflare_zone_id != "" ? 1 : 0
+  zone_id  = var.cloudflare_zone_id
+  name     = var.subdomain
+  type     = "MX"
+  content  = "mxa.eu.mailgun.org"
+  priority = 10
+  ttl      = 300
+}
+
+resource "cloudflare_dns_record" "discourse_mx_mxb" {
+  count    = var.cloudflare_zone_id != "" ? 1 : 0
+  zone_id  = var.cloudflare_zone_id
+  name     = var.subdomain
+  type     = "MX"
+  content  = "mxb.eu.mailgun.org"
+  priority = 10
+  ttl      = 300
+}
+
+resource "cloudflare_dns_record" "discourse_spf" {
+  count   = var.cloudflare_zone_id != "" ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = var.subdomain
+  type    = "TXT"
+  content = "v=spf1 include:mailgun.org ~all"
+  ttl     = 300
+}
+
+resource "cloudflare_dns_record" "discourse_dkim" {
+  count   = var.cloudflare_zone_id != "" ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = "${var.dkim_selector}._domainkey.${var.subdomain}"
+  type    = "TXT"
+  content = var.dkim_key
+  ttl     = 300
+}
+
+resource "cloudflare_dns_record" "discourse_dmarc" {
+  count   = var.cloudflare_zone_id != "" ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = "_dmarc.${var.subdomain}"
+  type    = "TXT"
+  content = "v=DMARC1;p=none;sp=none;rua=mailto:dmarc@tietokilta.fi!10m;ruf=mailto:dmarc@tietokilta.fi!10m"
+  ttl     = 300
+}

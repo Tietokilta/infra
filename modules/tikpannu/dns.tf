@@ -10,3 +10,13 @@ resource "azurerm_dns_a_record" "tikpannu_a" {
   ttl                 = 300
   records             = [var.tikpannu_ip]
 }
+
+resource "cloudflare_dns_record" "tikpannu_a" {
+  count   = var.cloudflare_zone_id != "" ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = var.subdomain
+  type    = "A"
+  content = var.tikpannu_ip
+  proxied = false
+  ttl     = 300
+}

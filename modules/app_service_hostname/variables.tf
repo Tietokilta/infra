@@ -49,3 +49,22 @@ variable "certificate_name" {
   type        = string
   description = "The name of the certificate resource."
 }
+
+variable "cloudflare_zone_id" {
+  type        = string
+  description = "The Cloudflare zone ID. When set, DNS records are created in Cloudflare and ACME challenge uses CF_DNS_API_TOKEN. Leave empty for zones not managed by Cloudflare (falls back to Azure DNS ACME)."
+  default     = ""
+}
+
+variable "proxied" {
+  type        = bool
+  description = "Whether to enable Cloudflare proxy (orange cloud) for the A record. Enable only for the main web app."
+  default     = false
+}
+
+variable "cloudflare_api_token" {
+  type        = string
+  description = "Cloudflare API token for ACME DNS challenge. Required when cloudflare_zone_id is set."
+  sensitive   = true
+  default     = ""
+}
