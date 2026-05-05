@@ -207,7 +207,7 @@ resource "cloudflare_dns_record" "mc_srv" {
 # GitHub org challenge
 resource "cloudflare_dns_record" "txt_github_challenge" {
   zone_id = data.cloudflare_zone.zone.id
-  name    = "_github-challenge-Tietokilta-org"
+  name    = "_github-challenge-tietokilta-org"
   type    = "TXT"
   content = var.github_challenge_value
   ttl     = 60
