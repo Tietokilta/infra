@@ -58,6 +58,11 @@ in
             type = lib.types.str;
             example = "discourse";
           };
+          options.clean = lib.mkOption {
+            description = "Whether to clean the directory after each backup";
+            type = lib.types.bool;
+            default = true;
+          };
         }
       );
       default = [ ];

@@ -7,31 +7,37 @@
 let
   cfg = config.services.tik-backup;
 
+  cleanupDirs = map (entry: "${cfg.stagingDir}/${entry.subdir}") (
+    builtins.filter (entry: entry.clean) cfg.stagingSubdirs
+  );
   cleanupScript = pkgs.writeShellApplication {
     name = "stagingDir-cleanup";
     text = ''
       set -euo pipefail
-
       stagingDir=$(realpath "${cfg.stagingDir}")
       if [[ -z "$stagingDir" || "$stagingDir" == "/" || ''${#stagingDir} -lt 5 ]]; then
         echo "stagingDir is unset, /, or too short (is: '$stagingDir'), refusing to clean up" >&2
         exit 1
       fi
 
-      if [[ ! -d "$stagingDir" || ! -O "$stagingDir" ]]; then
-        echo "$stagingDir does not exist or not owned by 'backup', refusing to clean up" >&2
-        exit 1
-      fi
-
+      cleanup_dirs=(${lib.escapeShellArgs cleanupDirs})
       shopt -s nullglob dotglob
-      for fileOrDir in "$stagingDir"/*; do
-        echo "Cleaning $fileOrDir" >&2
-        if [[ -d "$fileOrDir" ]]; then
-          rm -rf --one-file-system "''${fileOrDir:?}"/*
+      exit_code=0
+      for dir in "''${cleanup_dirs[@]}"; do
+        [[ "$(realpath "$dir")" == "$stagingDir"/* ]] || {
+          echo "$dir is not a subdirectory of $stagingDir, refusing to clean" >&2
+          exit_code=1
+          continue
+        }
+        echo "Cleaning $dir" >&2
+        if [[ -d "$dir" ]]; then
+          rm -rf --one-file-system "''${dir:?}"/*
         else
-          rm -f --one-file-system "$fileOrDir"
+          rm -f --one-file-system "$dir"
         fi
       done
+
+      exit "$exit_code"
     '';
   };
 in
