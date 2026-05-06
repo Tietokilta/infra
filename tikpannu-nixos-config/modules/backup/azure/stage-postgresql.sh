@@ -1,4 +1,3 @@
-# $1 = target directory to stage to
 set -euo pipefail
 
 die() {
@@ -6,12 +5,7 @@ die() {
   exit "${2:-1}"
 }
 
-targetdir="$1"
-if [[ -z "$targetdir" || ! -d "$targetdir" || ! -w "$targetdir" ]]; then
-  die "fatal: target directory should be passed as the first argument"
-fi
-
-
+: "${TARGET_DIR:?}"
 : "${PGHOST:?}"
 : "${PGUSER:?}"
 : "${PGPASSWORD:?}"
@@ -36,12 +30,12 @@ echo "Found postgresql databases:"
 printf "%s\n" "${databases_arr[@]}"
 
 all_succeeded=true
-[[ -d "$targetdir" ]] || die "fatal: target directory '$targetdir' does not exist"
+[[ -d "$TARGET_DIR" ]] || die "fatal: target directory '$TARGET_DIR' does not exist"
 
 for db in "${databases_arr[@]}"; do
   [[ -n "$db" ]] || continue
 
-  outTarget="$targetdir/$db.dump"
+  outTarget="$TARGET_DIR/$db.dump"
   echo "Staging $db to $outTarget"
   if ! pg_dump -d "$db" --format=directory --compress=none -f "$outTarget"; then
     echo "ERROR: failed to stage $db" >&2
@@ -52,7 +46,7 @@ for db in "${databases_arr[@]}"; do
 done
 
 # Allow backup group to read and delete all
-chmod -R g+rwX "$targetdir"/*
+chmod -R g+rwX "$TARGET_DIR"
 
 if [[ "$all_succeeded" != true ]]; then
   die "Not all databases were staged, failing..."
