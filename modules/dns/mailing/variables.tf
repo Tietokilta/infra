@@ -17,3 +17,8 @@ variable "dkim_selector" {
 variable "dkim_key" {
   type = string
 }
+
+variable "cloudflare_zone_id" {
+  type    = string
+  default = ""
+}

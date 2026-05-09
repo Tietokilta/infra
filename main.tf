@@ -191,6 +191,28 @@ module "dns_github" {
   challenge_value     = module.keyvault.secrets["github-challenge-value"]
 
 }
+# Cloudflare zone lookups for non-tietokilta.fi domains
+data "cloudflare_zone" "juvusivu" {
+  filter = {
+    name = "juhlavuosi.fi"
+  }
+}
+data "cloudflare_zone" "m0" {
+  filter = {
+    name = "muistinnollaus.fi"
+  }
+}
+data "cloudflare_zone" "staging" {
+  filter = {
+    name = "tietokila.fi"
+  }
+}
+data "cloudflare_zone" "tenttiarkisto" {
+  filter = {
+    name = "tenttiarkisto.fi"
+  }
+}
+
 module "mailman" {
   source = "./modules/dns/mailman"
 
@@ -209,6 +231,7 @@ module "mailing_staging" {
   dns_resource_group_name = module.dns_staging.resource_group_name
   root_zone_name          = module.dns_staging.root_zone_name
   subdomain               = "list"
+  cloudflare_zone_id      = data.cloudflare_zone.staging.id
 
   dkim_selector = "mg"
   dkim_key      = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZGR9aFa3+4SaHMkvO44EzQzbmMPEYqryH1tsgBlNErA5Qd/UNtCgQ+vy1uO2SyOGZDoD6xEDVZ8Mqh4JXXX3GVvEgpESjSlj+RkhCLY9JGVJwkgVWTUD65qkLJ9NpADBMQUhzJgxIv+It3zxbFDUOmLv2+Qee7d/MR1Gfgn/wNwIDAQAB"
@@ -374,6 +397,8 @@ module "tenttiarkisto" {
   acme_account_key             = module.common.acme_account_key
   dns_resource_group_name      = module.tenttiarkisto_dns_zone.resource_group_name
   root_zone_name               = module.tenttiarkisto_dns_zone.root_zone_name
+  cloudflare_zone_id           = data.cloudflare_zone.tenttiarkisto.id
+  cloudflare_api_token         = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "voo" {
@@ -615,6 +640,9 @@ module "juvusivu" {
   root_zone_name                       = module.dns_juvusivu.root_zone_name
   m0_dns_resource_group_name           = module.dns_m0.resource_group_name
   m0_dns_zone_name                     = module.dns_m0.root_zone_name
+  cloudflare_zone_id                   = data.cloudflare_zone.juvusivu.id
+  cloudflare_m0_zone_id                = data.cloudflare_zone.m0.id
+  cloudflare_api_token                 = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "status" {

@@ -105,6 +105,8 @@ module "tenttiarkisto_hostname" {
   acme_account_key                = var.acme_account_key
   certificate_name                = "tenttiarkisto-cert"
   root_zone_name                  = var.root_zone_name
+  cloudflare_zone_id              = var.cloudflare_zone_id
+  cloudflare_api_token            = var.cloudflare_api_token
 }
 
 
