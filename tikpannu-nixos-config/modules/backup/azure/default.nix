@@ -9,6 +9,7 @@ in
 {
   imports = [
     ./postgresql.nix
+    ./storage.nix
   ];
 
   options.services.tik-backup = {

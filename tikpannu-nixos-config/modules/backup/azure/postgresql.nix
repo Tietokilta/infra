@@ -74,10 +74,13 @@ in
       wants = [ "network-online.target" ];
       after = [ "network-online.target" ];
       restartIfChanged = false;
+      environment = {
+        TARGET_DIR = "${cfg.stagingDir}/${subdir}";
+      };
       serviceConfig = {
         Type = "oneshot";
         EnvironmentFile = config.sops.templates.azure-psql-envfile.path;
-        ExecStart = ''${lib.getExe stagingScript} "${cfg.stagingDir}/${subdir}/"'';
+        ExecStart = "${lib.getExe stagingScript}";
         User = user;
         Group = user;
       };
