@@ -91,7 +91,7 @@ resource "azurerm_linux_web_app" "juvusivu" {
     DB_PASSWORD = module.service_database.db_password
     DB_HOST     = var.postgres_server_fqdn
     DB_NAME     = module.service_database.db_name
-    DB_PORT     = 5432
+    DB_PORT     = 6432
 
     PRIMARY_DOMAIN = var.root_zone_name // For m0 redirect
   }
