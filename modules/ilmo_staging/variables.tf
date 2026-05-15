@@ -54,3 +54,13 @@ variable "stripe_webhook_secret" {
   type      = string
   sensitive = true
 }
+
+variable "extra_frontends" {
+  type = map(object({
+    eventDetailsUrl    = optional(string)
+    editSignupUrl      = optional(string)
+    completePaymentUrl = optional(string)
+    adminUrl           = optional(string)
+  }))
+  default = {}
+}

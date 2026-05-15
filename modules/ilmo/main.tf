@@ -62,11 +62,6 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
 
     # Paths from tikweb-web
     BASE_URL = var.website_url
-    # TODO: remove _URLs once Ilmomasiina v3.0.0-alpha.8 deployed
-    EVENT_DETAILS_URL    = "${var.website_url}/{lang}/events/{slug}"
-    EDIT_SIGNUP_URL      = "${var.website_url}/{lang}/signups/{id}/{editToken}"
-    COMPLETE_PAYMENT_URL = "${var.website_url}/{lang}/payment/{id}/{editToken}"
-    ADMIN_URL            = "https://${module.app_service_hostname.fqdn}/admin"
     FRONTENDS = jsonencode(merge({
       "default" = {
         "eventDetailsUrl"    = "${var.website_url}/{lang}/events/{slug}"
