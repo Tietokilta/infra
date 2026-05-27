@@ -85,10 +85,6 @@ for sa in "${storage_accounts[@]}"; do
   done
 done
 
-# Allow backup group to read and delete all
-chmod -R g+rwX "$FILE_DIR"
-chmod -R g+rwX "$BLOB_DIR"
-
 if [[ "$all_succeeded" != true ]]; then
   die "Not all staging jobs were successful, failing..."
 fi
