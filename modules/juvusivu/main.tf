@@ -101,7 +101,6 @@ module "juvusivu_hostname" {
   source = "../app_service_hostname"
 
   subdomain                       = "@"
-  dns_resource_group_name         = var.dns_resource_group_name
   custom_domain_verification_id   = azurerm_linux_web_app.juvusivu.custom_domain_verification_id
   app_service_name                = azurerm_linux_web_app.juvusivu.name
   app_service_resource_group_name = var.app_service_plan_resource_group_name
@@ -118,7 +117,6 @@ module "juvusivu_m0_hostname" {
   source = "../app_service_hostname"
 
   subdomain                       = "@"
-  dns_resource_group_name         = var.m0_dns_resource_group_name
   custom_domain_verification_id   = azurerm_linux_web_app.juvusivu.custom_domain_verification_id
   app_service_name                = azurerm_linux_web_app.juvusivu.name
   app_service_resource_group_name = var.app_service_plan_resource_group_name

@@ -52,7 +52,6 @@ module "app_service_hostname" {
   source                          = "../app_service_hostname"
   subdomain                       = var.subdomain
   root_zone_name                  = var.root_zone_name
-  dns_resource_group_name         = var.dns_resource_group_name
   custom_domain_verification_id   = azurerm_linux_web_app.status_app.custom_domain_verification_id
   app_service_name                = azurerm_linux_web_app.status_app.name
   app_service_resource_group_name = var.app_service_plan_resource_group_name

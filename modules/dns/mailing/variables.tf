@@ -1,8 +1,4 @@
-variable "dns_resource_group_name" {
-  type = string
-}
-
-variable "root_zone_name" {
+variable "cloudflare_zone_id" {
   type = string
 }
 
@@ -16,9 +12,4 @@ variable "dkim_selector" {
 
 variable "dkim_key" {
   type = string
-}
-
-variable "cloudflare_zone_id" {
-  type    = string
-  default = ""
 }

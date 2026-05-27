@@ -8,12 +8,8 @@ variable "subdomain" {
   type        = string
 }
 
-variable "dns_resource_group_name" {
-  type = string
-}
-
 variable "dns_zone_name" {
-  description = "Root DNS zone (e.g., tietokilta.fi)"
+  description = "Root DNS zone (e.g., tietokilta.fi) — used to derive relative record names from Mailgun's FQDN output"
   type        = string
 }
 
@@ -42,7 +38,6 @@ variable "create_spf" {
 }
 
 variable "cloudflare_zone_id" {
-  description = "Cloudflare zone ID. When set, DNS records are also created in Cloudflare."
+  description = "Cloudflare zone ID for the domain."
   type        = string
-  default     = ""
 }

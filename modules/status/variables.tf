@@ -4,9 +4,6 @@ variable "subdomain" {
 variable "root_zone_name" {
   type = string
 }
-variable "dns_resource_group_name" {
-  type = string
-}
 variable "acme_account_key" {
   type = string
 }
