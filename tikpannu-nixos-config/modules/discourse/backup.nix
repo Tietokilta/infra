@@ -7,14 +7,15 @@
 let
   enable = config.services.discourse.enable && config.services.tik-backup.enable;
   stagingDir = config.services.tik-backup.stagingDir;
+  tmpDir = "/tmp/discourse-backup-snapshot";
   subdir = "discourse";
 
-  stagingScript = pkgs.writeShellApplication {
-    name = "stage-discourse-backup";
+  stageToTmp = pkgs.writeShellApplication {
+    name = "stage-discourse-backup-1";
+    runtimeInputs = [ pkgs.acl ];
     text = ''
       set -euo pipefail
       discourseData=/var/lib/discourse/backups/default
-      targetDir="${stagingDir}/${subdir}/"
       if [[ ! -d "$discourseData" || ! -O "$discourseData" ]]; then
         echo "$discourseData does not exist or is not owned by the current user" >&2
         exit 1
@@ -46,30 +47,58 @@ let
       fi
 
       echo "Found $newestBackup to be the newest backup, staging..." >&2
-      umask 0002
-      cp "$newestBackup" "$targetDir/"
+
+      rm -rf "${tmpDir}"
+      mkdir -m 700 "${tmpDir}"
+      cp "$newestBackup" "${tmpDir}/"
+      setfacl -Rm u:backup:rwX "${tmpDir}"
+    '';
+  };
+  stagingScript = pkgs.writeShellApplication {
+    name = "stage-discourse-backup-2";
+    text = ''
+      set -euo pipefail
+
+      cp "${tmpDir}"/* "${stagingDir}/${subdir}/"
+      rm -rf "${tmpDir}"/*
     '';
   };
 in
 {
   config = lib.mkIf enable {
     services.tik-backup = {
-      stagingServices = [ "discourse-stage-backup.service" ];
+      stagingServices = [
+        "discourse-stage-backup1.service"
+        "discourse-stage-backup2.service"
+      ];
       stagingSubdirs = [
         {
           inherit subdir;
-          user = "discourse";
+          user = "backup";
         }
       ];
     };
 
-    systemd.services.discourse-stage-backup = {
-      description = "Stage Discourse backup to ${stagingDir}";
-      restartIfChanged = false;
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = lib.getExe stagingScript;
-        User = "discourse";
+    systemd.services = {
+      discourse-stage-backup1 = {
+        description = "Move discourse backup to /tmp for backup user";
+        restartIfChanged = false;
+        serviceConfig = {
+          Type = "oneshot";
+          User = "discourse";
+          ExecStart = lib.getExe stageToTmp;
+        };
+      };
+      discourse-stage-backup2 = {
+        description = "Stage Discourse backup to ${stagingDir}";
+        requires = [ "discourse-stage-backup1.service" ];
+        after = [ "discourse-stage-backup1.service" ];
+        restartIfChanged = false;
+        serviceConfig = {
+          Type = "oneshot";
+          User = "backup";
+          ExecStart = lib.getExe stagingScript;
+        };
       };
     };
   };

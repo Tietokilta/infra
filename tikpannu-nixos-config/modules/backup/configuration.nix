@@ -4,7 +4,8 @@
     azure.enable = true;
     storageboxServer = "u563055.your-storagebox.de";
     storageboxMountPath = "/mnt/backup";
-    stagingDir = "/var/lib/backup";
+    resticRepo = "/mnt/backup/restic-repo";
+    stagingDir = "/mnt/backup/staging_dir";
 
     dates = [
       "04:00 Europe/Helsinki"

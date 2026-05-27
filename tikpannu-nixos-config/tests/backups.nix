@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  config,
   ...
 }:
 {
@@ -83,12 +84,12 @@
     '''')
 
     pannu.succeed("systemctl start restic-backups-tik-backup.service")
-    unit_succeeded("discourse-stage-backup.service")
+    unit_succeeded("discourse-stage-backup2.service")
     unit_succeeded("stage-azure-psql.service")
 
 
     # Backup user must be able to clean up this dir
-    pannu.succeed("sudo -u backup sh -c 'rm -rf /var/lib/backup/*'")
+    pannu.succeed("sudo -u backup sh -c 'rm -rf ${config.nodes.pannu.services.tik-backup.stagingDir}/*'")
 
     _, stdout = pannu.execute("restic-tik-backup ls latest")
     print("Backed up files:")

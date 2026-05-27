@@ -7,7 +7,7 @@
 let
   cfg = config.services.tik-backup;
   subdir = "azure-psql";
-  user = "azure-psql";
+  user = "backup";
 
   stagingScript = pkgs.writeShellApplication {
     name = "stage-azure-psql-backup";
@@ -84,14 +84,6 @@ in
         User = user;
         Group = user;
       };
-    };
-
-    users = {
-      users.${user} = {
-        isSystemUser = true;
-        group = user;
-      };
-      groups.${user} = { };
     };
   };
 }

@@ -152,12 +152,9 @@ in
         '';
       }
       {
-        assertion =
-          !(lib.hasPrefix cfg.storageboxMountPath cfg.stagingDir)
-          && !(lib.hasPrefix cfg.stagingDir cfg.storageboxMountPath);
+        assertion = !(lib.hasPrefix cfg.stagingDir cfg.storageboxMountPath);
         message = ''
-          `services.tik-backup.stagingDir` exists inside
-          `services.tik-backup.storageboxMountPath` or vice versa
+          `services.tik-backup.storageboxMountPath` cannot be inside or equal to `services.tik-backup.stagingDir`
         '';
       }
     ];

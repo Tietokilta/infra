@@ -70,6 +70,7 @@ in
         {
           subdir = "discourse";
           user = "discourse";
+          clean = true;
         }
       ];
     };
@@ -78,9 +79,9 @@ in
   config = lib.mkIf cfg.enable {
     systemd.tmpfiles.rules = (
       [
-        ''d "${cfg.stagingDir}" 0711 backup backup -''
+        ''d "${cfg.stagingDir}" 0700 backup backup -''
       ]
-      ++ map (def: ''d "${cfg.stagingDir}/${def.subdir}" 2770 ${def.user} backup -'') cfg.stagingSubdirs
+      ++ map (def: ''d "${cfg.stagingDir}/${def.subdir}" 0700 ${def.user} backup -'') cfg.stagingSubdirs
     );
   };
 }
