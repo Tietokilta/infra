@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.services.tik-backup;
-  user = "azure-storage";
+  user = "backup";
   blobSubdir = "azure-blob-storage";
   fileSubdir = "azure-file-storage";
   stagingScript = pkgs.writeShellApplication {
@@ -93,13 +93,6 @@ in
           clean = false;
         }
       ];
-    };
-    users = {
-      users.${user} = {
-        isSystemUser = true;
-        group = user;
-      };
-      groups.${user} = { };
     };
   };
 }
