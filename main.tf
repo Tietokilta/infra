@@ -176,6 +176,11 @@ data "cloudflare_zone" "tenttiarkisto" {
     name = "tenttiarkisto.fi"
   }
 }
+data "cloudflare_zone" "ylikellotus" {
+  filter = {
+    name = "ylikellotus.fi"
+  }
+}
 
 module "mailman" {
   source = "./modules/dns/mailman"
@@ -621,3 +626,9 @@ module "isopistekortti" {
   cloudflare_zone_id      = module.cloudflare.zone_id
   cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
 }
+
+module "ylikellotus" {
+  source             = "./modules/ylikellotus"
+  cloudflare_zone_id = data.cloudflare_zone.ylikellotus.id
+}
+
