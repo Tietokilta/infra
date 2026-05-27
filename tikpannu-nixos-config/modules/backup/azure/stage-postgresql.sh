@@ -45,9 +45,6 @@ for db in "${databases_arr[@]}"; do
   fi
 done
 
-# Allow backup group to read and delete all
-chmod -R g+rwX "$TARGET_DIR"
-
 if [[ "$all_succeeded" != true ]]; then
   die "Not all databases were staged, failing..."
 fi
