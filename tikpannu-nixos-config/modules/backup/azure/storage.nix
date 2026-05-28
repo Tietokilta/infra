@@ -49,6 +49,7 @@ in
         FILE_DIR = "${cfg.stagingDir}/${fileSubdir}";
         AZURE_CLIENT_SECRET_FILE = config.sops.secrets."azure/backup-client-secret".path;
         AZCOPY_LOG_LOCATION = "%L/stage-azure-storages"; # preserve logs
+        AZCOPY_JOB_PLAN_LOCATION = "%L/stage-azure-storages";
         HOME = "%t/stage-azure-storages"; # needed for az login
       };
       serviceConfig = {
