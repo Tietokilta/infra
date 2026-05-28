@@ -48,7 +48,8 @@ in
         BLOB_DIR = "${cfg.stagingDir}/${blobSubdir}";
         FILE_DIR = "${cfg.stagingDir}/${fileSubdir}";
         AZURE_CLIENT_SECRET_FILE = config.sops.secrets."azure/backup-client-secret".path;
-        HOME = "%t/azure-storages"; # needed for az login
+        AZCOPY_LOG_LOCATION = "$LOGS_DIRECTORY"; # preserve logs
+        HOME = "%t/stage-azure-storages"; # needed for az login
       };
       serviceConfig = {
         Type = "oneshot";
@@ -56,7 +57,8 @@ in
         ExecStart = "${lib.getExe stagingScript}";
         User = user;
         Group = user;
-        RuntimeDirectory = "azure-storages";
+        RuntimeDirectory = "stage-azure-storages";
+        LogsDirectory = "stage-azure-storages";
       };
     };
     sops = {
