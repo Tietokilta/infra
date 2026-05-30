@@ -9,3 +9,9 @@ variable "secret_display_name" {
   type        = string
   default     = "tik-backup-storage-reader-secret"
 }
+
+variable "snapshot_role_name" {
+  description = "Name for the custom role allowing file share snapshot creation and deletion."
+  type        = string
+  default     = "tik-backup-file-share-snapshot"
+}
