@@ -1,6 +1,6 @@
-variable "zone_name" {
+variable "zone_id" {
   type        = string
-  description = "The Cloudflare zone name (domain), e.g. tietokilta.fi"
+  description = "The Cloudflare zone ID for tietokilta.fi"
 }
 
 variable "github_challenge_value" {
