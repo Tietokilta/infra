@@ -48,29 +48,3 @@ resource "cloudflare_dns_record" "list_dmarc" {
   content = "v=DMARC1;p=none;sp=none;rua=mailto:dmarc@tietokilta.fi!10m;ruf=mailto:dmarc@tietokilta.fi!10m"
   ttl     = 300
 }
-
-# State migrations from count-indexed to non-count resources
-moved {
-  from = cloudflare_dns_record.list_a[0]
-  to   = cloudflare_dns_record.list_a
-}
-moved {
-  from = cloudflare_dns_record.list_mx_tietokilta[0]
-  to   = cloudflare_dns_record.list_mx_tietokilta
-}
-moved {
-  from = cloudflare_dns_record.list_mx_mail_cs_hut[0]
-  to   = cloudflare_dns_record.list_mx_mail_cs_hut
-}
-moved {
-  from = cloudflare_dns_record.list_spf[0]
-  to   = cloudflare_dns_record.list_spf
-}
-moved {
-  from = cloudflare_dns_record.list_dkim[0]
-  to   = cloudflare_dns_record.list_dkim
-}
-moved {
-  from = cloudflare_dns_record.list_dmarc[0]
-  to   = cloudflare_dns_record.list_dmarc
-}

@@ -6,8 +6,3 @@ resource "cloudflare_dns_record" "histotik_cname" {
   proxied = false
   ttl     = 300
 }
-
-moved {
-  from = cloudflare_dns_record.histotik_cname[0]
-  to   = cloudflare_dns_record.histotik_cname
-}
