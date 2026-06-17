@@ -47,7 +47,7 @@ endpoints:
     url: "https://muistinnollaus.fi"
     conditions: *default_conditions
     alerts: *default_alerts
-  - name: juvusivu
+  - name: muistinnollaus
     url: "https://juhlavuosi.fi"
     conditions: *default_conditions
     alerts: *default_alerts

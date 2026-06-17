@@ -80,7 +80,6 @@ locals {
   tietokilta_zone     = "tietokilta.fi"
   tietokila_zone      = "tietokila.fi"
   muistinnollaus_zone = "muistinnollaus.fi"
-  juhlavuosi_zone     = "juhlavuosi.fi"
   tenttiarkisto_zone  = "tenttiarkisto.fi"
 }
 
@@ -156,11 +155,6 @@ module "cloudflare" {
 }
 
 # Cloudflare zone lookups for domains migrated from Azure DNS
-data "cloudflare_zone" "juvusivu" {
-  filter = {
-    name = "juhlavuosi.fi"
-  }
-}
 data "cloudflare_zone" "m0" {
   filter = {
     name = "muistinnollaus.fi"
@@ -502,7 +496,7 @@ module "github-ci-roles" {
     "Tietokilta/laskugeneraattori" : [module.invoicing.invoicing_app_id]
     "Tietokilta/ilmomasiina" : [module.ilmo.app_id]
     "Tietokilta/ISOpistekortti" : [module.isopistekortti.app_id]
-    "Tietokilta/juvusivu" : [module.juvusivu.juvusivu_app_id]
+    "Tietokilta/juvusivu" : [module.muistinnollaus.juvusivu_app_id]
     "Tietokilta/infra" : [module.status.app_id]
     "Tietokilta/rekisteri" : [module.registry.registry_app_id]
     "Tietokilta/running-challenge" : [module.running_challenge.app_id]
@@ -562,8 +556,8 @@ output "backup_azure_tenant_id" {
   value       = module.backup_storage_identity.tenant_id
 }
 
-module "juvusivu" {
-  source                               = "./modules/juvusivu"
+module "muistinnollaus" {
+  source                               = "./modules/muistinnollaus"
   environment                          = "prod"
   app_service_plan_id                  = module.common.tikweb_app_plan_id
   app_service_plan_location            = local.resource_group_location
@@ -572,10 +566,8 @@ module "juvusivu" {
   postgres_server_fqdn                 = module.common.postgres_server_fqdn
   postgres_server_id                   = module.common.postgres_server_id
   acme_account_key                     = module.common.acme_account_key
-  root_zone_name                       = local.juhlavuosi_zone
-  m0_dns_zone_name                     = local.muistinnollaus_zone
-  cloudflare_zone_id                   = data.cloudflare_zone.juvusivu.id
-  cloudflare_m0_zone_id                = data.cloudflare_zone.m0.id
+  root_zone_name                       = local.muistinnollaus_zone
+  cloudflare_zone_id                   = data.cloudflare_zone.m0.id
   cloudflare_api_token                 = module.keyvault.secrets["cloudflare-api-token"]
 }
 
