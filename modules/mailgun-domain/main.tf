@@ -70,24 +70,6 @@ resource "cloudflare_dns_record" "cf_dmarc" {
   ttl     = 300
 }
 
-# State migrations from count-indexed to non-count resources
-moved {
-  from = cloudflare_dns_record.cf_mx_mxa[0]
-  to   = cloudflare_dns_record.cf_mx_mxa
-}
-moved {
-  from = cloudflare_dns_record.cf_mx_mxb[0]
-  to   = cloudflare_dns_record.cf_mx_mxb
-}
-moved {
-  from = cloudflare_dns_record.cf_dkim[0]
-  to   = cloudflare_dns_record.cf_dkim
-}
-moved {
-  from = cloudflare_dns_record.cf_dmarc[0]
-  to   = cloudflare_dns_record.cf_dmarc
-}
-
 # Optional SMTP credential
 resource "random_password" "smtp" {
   count   = var.create_smtp_credential ? 1 : 0

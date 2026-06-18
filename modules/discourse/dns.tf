@@ -48,29 +48,3 @@ resource "cloudflare_dns_record" "discourse_dmarc" {
   content = "v=DMARC1;p=none;sp=none;rua=mailto:dmarc@tietokilta.fi!10m;ruf=mailto:dmarc@tietokilta.fi!10m"
   ttl     = 300
 }
-
-# State migrations from count-indexed to non-count resources
-moved {
-  from = cloudflare_dns_record.discourse_a[0]
-  to   = cloudflare_dns_record.discourse_a
-}
-moved {
-  from = cloudflare_dns_record.discourse_mx_mxa[0]
-  to   = cloudflare_dns_record.discourse_mx_mxa
-}
-moved {
-  from = cloudflare_dns_record.discourse_mx_mxb[0]
-  to   = cloudflare_dns_record.discourse_mx_mxb
-}
-moved {
-  from = cloudflare_dns_record.discourse_spf[0]
-  to   = cloudflare_dns_record.discourse_spf
-}
-moved {
-  from = cloudflare_dns_record.discourse_dkim[0]
-  to   = cloudflare_dns_record.discourse_dkim
-}
-moved {
-  from = cloudflare_dns_record.discourse_dmarc[0]
-  to   = cloudflare_dns_record.discourse_dmarc
-}

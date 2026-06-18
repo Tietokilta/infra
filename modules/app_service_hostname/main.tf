@@ -56,16 +56,6 @@ resource "cloudflare_dns_record" "www_asuid_record" {
   ttl     = 300
 }
 
-# State migrations from count-indexed to non-count resources
-moved {
-  from = cloudflare_dns_record.app_a_record[0]
-  to   = cloudflare_dns_record.app_a_record
-}
-moved {
-  from = cloudflare_dns_record.app_asuid_record[0]
-  to   = cloudflare_dns_record.app_asuid_record
-}
-
 resource "azurerm_app_service_custom_hostname_binding" "app_hostname_binding" {
   hostname            = local.fqdn
   app_service_name    = var.app_service_name

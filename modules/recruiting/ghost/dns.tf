@@ -22,17 +22,3 @@ resource "cloudflare_dns_record" "tikjob_cname_email" {
   proxied = false
   ttl     = 300
 }
-
-# State migrations from count-indexed to non-count resources
-moved {
-  from = cloudflare_dns_record.tikjob_txt_google_verification[0]
-  to   = cloudflare_dns_record.tikjob_txt_google_verification
-}
-moved {
-  from = cloudflare_dns_record.tikjob_spf[0]
-  to   = cloudflare_dns_record.tikjob_spf
-}
-moved {
-  from = cloudflare_dns_record.tikjob_cname_email[0]
-  to   = cloudflare_dns_record.tikjob_cname_email
-}

@@ -6,8 +6,3 @@ resource "cloudflare_dns_record" "tikpannu_a" {
   proxied = false
   ttl     = 300
 }
-
-moved {
-  from = cloudflare_dns_record.tikpannu_a[0]
-  to   = cloudflare_dns_record.tikpannu_a
-}
