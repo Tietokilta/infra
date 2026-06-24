@@ -79,6 +79,7 @@ resource "azurerm_linux_web_app" "tenttiarkisto" {
     DB_USER     = module.service_database.db_user
     DB_PASSWORD = module.service_database.db_password
     DB_HOST     = var.postgres_server_fqdn
+    DB_PORT     = 6432
 
     SECRET_KEY = var.django_secret_key
 
