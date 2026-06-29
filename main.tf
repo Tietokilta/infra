@@ -109,6 +109,11 @@ resource "cloudflare_zone" "ylikellotus" {
   name    = "ylikellotus.fi"
 }
 
+resource "cloudflare_zone" "kurssikone" {
+  account = { id = local.cloudflare_account_id }
+  name    = "kurssikone.com"
+}
+
 import {
   to = cloudflare_zone.tietokilta
   id = "e3193fc9edbb2b28f743a6d7743176f8"
@@ -184,7 +189,9 @@ module "keyvault" {
     "cloudflare-api-token",
     "running-challenge-client-id",
     "running-challenge-client-secret",
-    "running-challenge-refresh-token"
+    "running-challenge-refresh-token",
+    "kurssikone-sisu-api-key",
+    "kurssikone-get-all-secret"
   ]
 }
 
@@ -529,6 +536,7 @@ module "github-ci-roles" {
     "Tietokilta/infra" : [module.status.app_id]
     "Tietokilta/rekisteri" : [module.registry.registry_app_id]
     "Tietokilta/running-challenge" : [module.running_challenge.app_id]
+    "Tietokilta/kurssikone" : [module.kurssikone.backend_app_id, module.kurssikone.frontend_app_id]
   }
 }
 
@@ -653,5 +661,21 @@ module "isopistekortti" {
 module "ylikellotus" {
   source             = "./modules/ylikellotus"
   cloudflare_zone_id = cloudflare_zone.ylikellotus.id
+}
+
+module "kurssikone" {
+  source                  = "./modules/kurssikone"
+  environment             = "prod"
+  resource_group_name     = module.common.resource_group_name
+  resource_group_location = local.resource_group_location
+  app_service_plan_id     = module.common.tikweb_app_plan_id
+  postgres_server_fqdn    = module.common.postgres_server_fqdn
+  postgres_server_id      = module.common.postgres_server_id
+  acme_account_key        = module.common.acme_account_key
+  root_zone_name          = cloudflare_zone.kurssikone.name
+  cloudflare_zone_id      = cloudflare_zone.kurssikone.id
+  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
+  sisu_course_api_key     = module.keyvault.secrets["kurssikone-sisu-api-key"]
+  get_all_secret          = module.keyvault.secrets["kurssikone-get-all-secret"]
 }
 
