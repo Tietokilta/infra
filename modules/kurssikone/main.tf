@@ -50,7 +50,7 @@ resource "azurerm_linux_web_app" "kurssikone_backend" {
     POSTGRES_PASSWORD = module.service_database.db_password
 
     SISU_COURSE_API_KEY = var.sisu_course_api_key
-    GET_ALL_SECRET      = var.get_all_secret
+    ADMIN_SECRET        = var.admin_secret
   }
 
   lifecycle {

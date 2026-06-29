@@ -191,7 +191,7 @@ module "keyvault" {
     "running-challenge-client-secret",
     "running-challenge-refresh-token",
     "kurssikone-sisu-api-key",
-    "kurssikone-get-all-secret"
+    "kurssikone-admin-secret"
   ]
 }
 
@@ -676,6 +676,6 @@ module "kurssikone" {
   cloudflare_zone_id      = cloudflare_zone.kurssikone.id
   cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
   sisu_course_api_key     = module.keyvault.secrets["kurssikone-sisu-api-key"]
-  get_all_secret          = module.keyvault.secrets["kurssikone-get-all-secret"]
+  admin_secret            = module.keyvault.secrets["kurssikone-admin-secret"]
 }
 

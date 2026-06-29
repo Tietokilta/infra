@@ -45,7 +45,7 @@ variable "sisu_course_api_key" {
   sensitive = true
 }
 
-variable "get_all_secret" {
+variable "admin_secret" {
   type      = string
   sensitive = true
 }
