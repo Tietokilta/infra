@@ -56,6 +56,12 @@ resource "azurerm_linux_web_app" "registry" {
     MAILGUN_DOMAIN  = module.mailgun.domain
     MAILGUN_URL     = module.mailgun.api_url
 
+    SMTP_HOST = module.mailgun.smtp_host
+    SMTP_PORT = tostring(module.mailgun.smtp_port)
+    SMTP_USER = module.mailgun.smtp_login
+    SMTP_PASS = module.mailgun.smtp_password
+    SMTP_FROM = "TiK-rekisteri <${module.mailgun.mail_from}>"
+
     STRIPE_API_KEY        = var.stripe_api_key
     STRIPE_WEBHOOK_SECRET = var.stripe_webhook_secret
 
