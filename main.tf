@@ -182,7 +182,6 @@ module "keyvault" {
     "vaultwarden-smtp-password",
     "status-telegram-token",
     "status-telegram-channel-id",
-    "registry-mailgun-api-key",
     "registry-stripe-api-key",
     "registry-stripe-webhook-secret",
     "mailgun-terraform-api-key",
@@ -478,7 +477,6 @@ module "registry" {
   root_zone_name          = cloudflare_zone.tietokilta.name
   subdomain               = "rekisteri"
   acme_account_key        = module.common.acme_account_key
-  mailgun_api_key         = module.keyvault.secrets["registry-mailgun-api-key"]
   stripe_api_key          = module.keyvault.secrets["registry-stripe-api-key"]
   stripe_webhook_secret   = module.keyvault.secrets["registry-stripe-webhook-secret"]
   cloudflare_zone_id      = module.cloudflare.zone_id
@@ -678,4 +676,3 @@ module "kurssikone" {
   sisu_course_api_key     = module.keyvault.secrets["kurssikone-sisu-api-key"]
   admin_secret            = module.keyvault.secrets["kurssikone-admin-secret"]
 }
-
