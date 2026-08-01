@@ -9,8 +9,3 @@ variable "resource_group_location" {
 variable "ghost_db_username" {
   type = string
 }
-
-variable "tikpannu_ip" {
-  type        = string
-  description = "Public IP of tikpannu, allowed to pull backups from MySQL."
-}

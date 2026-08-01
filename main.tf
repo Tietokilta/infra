@@ -32,10 +32,6 @@ terraform {
       source  = "cyrilgdn/postgresql"
       version = "~>1.13"
     }
-    mysql = {
-      source  = "petoju/mysql"
-      version = "~>3.0"
-    }
   }
   backend "azurerm" {
     container_name       = "tfstate"
@@ -77,18 +73,10 @@ provider "postgresql" {
   superuser = false
 }
 
-provider "mysql" {
-  endpoint = "${module.tikjob_storage.mysql_fqdn}:3306"
-  username = module.tikjob_storage.mysql_username
-  password = module.tikjob_storage.mysql_password
-  tls      = "true"
-}
-
 
 locals {
   resource_group_location = "northeurope"
   cloudflare_account_id   = "06aec0668de6760376b202e63643f132"
-  tikpannu_ip             = "46.62.222.17"
 }
 
 resource "cloudflare_zone" "tietokilta" {
@@ -397,23 +385,6 @@ module "tikjob_storage" {
   env_name                = "prod"
   resource_group_location = local.resource_group_location
   ghost_db_username       = "tikrekryadmin"
-  tikpannu_ip             = local.tikpannu_ip
-}
-
-resource "azurerm_key_vault_secret" "mysql_backup_user" {
-  name         = "mysql-backup-user"
-  value        = module.tikjob_storage.mysql_backup_username
-  key_vault_id = module.keyvault.keyvault_id
-}
-resource "azurerm_key_vault_secret" "mysql_backup_password" {
-  name         = "mysql-backup-password"
-  value        = module.tikjob_storage.mysql_backup_password
-  key_vault_id = module.keyvault.keyvault_id
-}
-resource "azurerm_key_vault_secret" "mysql_backup_host" {
-  name         = "mysql-backup-host"
-  value        = module.tikjob_storage.mysql_fqdn
-  key_vault_id = module.keyvault.keyvault_id
 }
 
 module "tikjob_app" {
@@ -465,7 +436,7 @@ module "discourse" {
 
   root_zone_name     = cloudflare_zone.tietokilta.name
   subdomain          = "vaalit"
-  discourse_ip       = local.tikpannu_ip
+  discourse_ip       = "46.62.222.17"
   cloudflare_zone_id = module.cloudflare.zone_id
 
   dkim_selector = "mta"
@@ -477,7 +448,7 @@ module "tikpannu" {
 
   root_zone_name     = cloudflare_zone.tietokilta.name
   subdomain          = "pannu"
-  tikpannu_ip        = local.tikpannu_ip
+  tikpannu_ip        = "46.62.222.17"
   cloudflare_zone_id = module.cloudflare.zone_id
 }
 module "invoicing" {
