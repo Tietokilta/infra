@@ -8,6 +8,7 @@ let
 in
 {
   imports = [
+    ./mysql.nix
     ./postgresql.nix
     ./storage.nix
   ];
