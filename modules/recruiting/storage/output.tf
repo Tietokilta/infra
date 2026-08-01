@@ -21,15 +21,6 @@ output "mysql_password" {
   sensitive = true
 }
 
-output "mysql_backup_username" {
-  value = mysql_user.backup.user
-}
-
-output "mysql_backup_password" {
-  value     = random_password.mysql_backup_password.result
-  sensitive = true
-}
-
 // Storage
 
 output "storage_account_name" {
