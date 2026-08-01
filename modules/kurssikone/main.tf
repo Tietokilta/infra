@@ -2,6 +2,11 @@ locals {
   db_name = "${var.environment}_kurssikone_db"
 }
 
+resource "random_password" "jwt_secret" {
+  length  = 48
+  special = false
+}
+
 module "service_database" {
   source = "../service_database"
 
@@ -51,6 +56,7 @@ resource "azurerm_linux_web_app" "kurssikone_backend" {
 
     SISU_COURSE_API_KEY = var.sisu_course_api_key
     ADMIN_SECRET        = var.admin_secret
+    JWT_SECRET          = random_password.jwt_secret.result
   }
 
   lifecycle {
