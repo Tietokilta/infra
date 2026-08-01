@@ -32,6 +32,10 @@ terraform {
       source  = "cyrilgdn/postgresql"
       version = "~>1.13"
     }
+    mysql = {
+      source  = "hashicorp/mysql"
+      version = "~>1.10"
+    }
   }
   backend "azurerm" {
     container_name       = "tfstate"
@@ -71,6 +75,13 @@ provider "postgresql" {
   password  = module.common.postgres_admin_password
   sslmode   = "require"
   superuser = false
+}
+
+provider "mysql" {
+  endpoint = "${module.tikjob_storage.mysql_fqdn}:3306"
+  username = module.tikjob_storage.mysql_username
+  password = module.tikjob_storage.mysql_password
+  tls      = "true"
 }
 
 
@@ -257,6 +268,24 @@ resource "azurerm_key_vault_secret" "postgres_backup_password" {
   key_vault_id = module.keyvault.keyvault_id
 }
 
+resource "azurerm_key_vault_secret" "mysql_backup_user" {
+  name         = "mysql-backup-user"
+  value        = module.tikjob_storage.mysql_backup_username
+  key_vault_id = module.keyvault.keyvault_id
+}
+
+resource "azurerm_key_vault_secret" "mysql_backup_password" {
+  name         = "mysql-backup-password"
+  value        = module.tikjob_storage.mysql_backup_password
+  key_vault_id = module.keyvault.keyvault_id
+}
+
+resource "azurerm_key_vault_secret" "mysql_backup_host" {
+  name         = "mysql-backup-host"
+  value        = module.tikjob_storage.mysql_backup_host
+  key_vault_id = module.keyvault.keyvault_id
+}
+
 module "mongodb" {
   source                    = "./modules/mongodb"
   mongodb_atlas_public_key  = module.keyvault.secrets["mongodb-atlas-public-key"]
@@ -386,6 +415,7 @@ module "tikjob_storage" {
   env_name                = "prod"
   resource_group_location = local.resource_group_location
   ghost_db_username       = "tikrekryadmin"
+  tikpannu_ip             = "46.62.222.17"
 }
 
 module "tikjob_app" {

@@ -10,6 +10,7 @@ in
   imports = [
     ./postgresql.nix
     ./storage.nix
+    ./mysql.nix
   ];
 
   options.services.tik-backup = {

@@ -39,3 +39,17 @@ output "storage_share_name" {
 output "mysql_db_name" {
   value = azurerm_mysql_flexible_database.tikjob_mysql_db_new.name
 }
+
+output "mysql_backup_username" {
+  value     = mysql_user.backup.user
+  sensitive = true
+}
+
+output "mysql_backup_password" {
+  value     = random_password.mysql_backup_password.result
+  sensitive = true
+}
+
+output "mysql_backup_host" {
+  value = azurerm_mysql_flexible_server.tikjob_mysql_new.fqdn
+}

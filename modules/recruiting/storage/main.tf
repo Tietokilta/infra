@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    mysql = {
+      source = "hashicorp/mysql"
+    }
+  }
+}
+
 resource "azurerm_resource_group" "tikjob_rg" {
   name     = "tikjob-${var.env_name}-rg"
   location = var.resource_group_location
@@ -41,6 +49,34 @@ resource "azurerm_mysql_flexible_server_firewall_rule" "tikjob_new_mysql_access"
   server_name         = azurerm_mysql_flexible_server.tikjob_mysql_new.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
+}
+
+# Allow tikpannu VM (Hetzner) to connect for backups
+resource "azurerm_mysql_flexible_server_firewall_rule" "tikjob_mysql_tikpannu_access" {
+  name                = "tikjob-${var.env_name}-tikpannu-access"
+  resource_group_name = azurerm_resource_group.tikjob_rg.name
+  server_name         = azurerm_mysql_flexible_server.tikjob_mysql_new.name
+  start_ip_address    = var.tikpannu_ip
+  end_ip_address      = var.tikpannu_ip
+}
+
+resource "random_password" "mysql_backup_password" {
+  length           = 32
+  special          = true
+  override_special = "_%@"
+}
+
+resource "mysql_user" "backup" {
+  user               = "backup"
+  host               = "%"
+  plaintext_password = random_password.mysql_backup_password.result
+}
+
+resource "mysql_grant" "backup" {
+  user       = mysql_user.backup.user
+  host       = mysql_user.backup.host
+  database   = "*"
+  privileges = ["SELECT", "LOCK TABLES", "SHOW VIEW", "TRIGGER"]
 }
 
 resource "azurerm_storage_account" "tikjob_storage_account" {

@@ -16,6 +16,7 @@
       enable = lib.mkForce true;
       azure.enable = lib.mkForce true;
       azure.postgresql.enable = lib.mkForce true;
+      azure.mysql.enable = lib.mkForce true;
     };
 
     # Enable a local PostgreSQL server and create mock DBs for the test VM.
@@ -44,6 +45,31 @@
           PGHOST=127.0.0.1
           PGUSER=azure-psql-backup
           PGPASSWORD=verygoodpass
+        ''
+      );
+    };
+
+    # Enable a local MySQL server and create mock DBs for the test VM.
+    services.mysql = {
+      enable = lib.mkForce true;
+      package = lib.mkForce pkgs.mariadb;
+      initialScript = pkgs.writeText "mysql-init" ''
+        CREATE DATABASE IF NOT EXISTS mock_mysql1;
+        CREATE DATABASE IF NOT EXISTS mock_mysql2;
+        CREATE USER IF NOT EXISTS 'azure-mysql-backup'@'%' IDENTIFIED BY 'verygoodpass';
+        GRANT SELECT, LOCK TABLES, SHOW VIEW, TRIGGER ON *.* TO 'azure-mysql-backup'@'%';
+        FLUSH PRIVILEGES;
+      '';
+    };
+
+    systemd.services.stage-azure-mysql = {
+      requires = [ "mysql.service" ];
+      after = [ "mysql.service" ];
+      serviceConfig.EnvironmentFile = lib.mkForce (
+        pkgs.writeText "mysql-envfile" ''
+          MYSQL_HOST=127.0.0.1
+          MYSQL_USER=azure-mysql-backup
+          MYSQL_PASSWORD=verygoodpass
         ''
       );
     };
@@ -86,6 +112,7 @@
     pannu.succeed("systemctl start restic-backups-tik-backup.service")
     unit_succeeded("discourse-stage-backup2.service")
     unit_succeeded("stage-azure-psql.service")
+    unit_succeeded("stage-azure-mysql.service")
 
 
     # Backup user must be able to clean up this dir
@@ -97,7 +124,7 @@
 
     # At least min_files files must exist in the backup. This does not include
     # directories.
-    min_files = 4
+    min_files = 6
     stdout = pannu.succeed(f''''
       restic-tik-backup ls --json latest \\
       | jq --exit-status --slurp \\
