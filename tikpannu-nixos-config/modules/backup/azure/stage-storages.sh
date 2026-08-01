@@ -27,6 +27,7 @@ echo "Found storage accounts:"
 printf "%s\n" "${storage_accounts[@]}"
 
 failed_syncs=()
+should_fail=false
 
 snapshots=()
 clean_snapshots() {
@@ -138,7 +139,20 @@ for sa in "${storage_accounts[@]}"; do
   done
 done
 
-if [[ "${#failed_syncs[@]}" -ne 0 ]]; then
+
+if [[ "$AZCOPY_LOG_LOCATION" != "/var/log/stage-azure-storages" ]]; then
+  echo "<3> \$AZCOPY_LOG_LOCATION is not /var/log/stage-azure-storages, not deleting old logs"
+  should_fail=true
+else
+  remove_logs_older_than_days=14
+  echo "Removing logs older than ${remove_logs_older_than_days}d from $AZCOPY_LOG_LOCATION"
+  find "$AZCOPY_LOG_LOCATION" -xdev -maxdepth 1 -type f -mtime "+${remove_logs_older_than_days}" -delete || {
+    echo "<3> failed to clear old logs!"
+    should_fail=true
+  }
+fi
+
+if [[ "${#failed_syncs[@]}" -ne 0 || "$should_fail" == "true" ]]; then
   echo "<3>The following syncs have failed:"
   printf "<3>%s\n" "${failed_syncs[@]}"
   die "Not all staging jobs were successful, failing..."
