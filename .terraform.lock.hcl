@@ -172,6 +172,7 @@ provider "registry.terraform.io/petoju/mysql" {
   version     = "3.0.94"
   constraints = "~> 3.0"
   hashes = [
+    "h1:FNkY3Ke8IAUu9H7XlcB6BPXxyE6ORXPgnkITOAWNbMo=",
     "h1:YnF0ROuxZcx0tX/8nxsj40H3ro7gEdhd5WtF6FRVOUI=",
     "zh:018c0471e2749a4497004a7e126922c3585df081e8e819830a1eb21b8c38abcf",
     "zh:17713ab09180811c03bd1582cc54164ef579f07329b74856a8c0bd2231074f9b",

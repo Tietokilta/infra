@@ -374,12 +374,6 @@ module "tenttiarkisto" {
   cloudflare_api_token         = module.keyvault.secrets["cloudflare-api-token"]
 }
 
-module "voo" {
-  source                  = "./modules/voo"
-  env_name                = "prod"
-  resource_group_location = local.resource_group_location
-}
-
 module "tikjob_storage" {
   source                  = "./modules/recruiting/storage"
   env_name                = "prod"
