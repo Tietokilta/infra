@@ -43,6 +43,14 @@ resource "azurerm_mysql_flexible_server_firewall_rule" "tikjob_new_mysql_access"
   end_ip_address      = "0.0.0.0"
 }
 
+resource "azurerm_mysql_flexible_server_firewall_rule" "tikpannu_backup_mysql_access" {
+  name                = "tikjob-${var.env_name}-mysql-tikpannu-backup"
+  resource_group_name = azurerm_resource_group.tikjob_rg.name
+  server_name         = azurerm_mysql_flexible_server.tikjob_mysql_new.name
+  start_ip_address    = var.tikpannu_ip
+  end_ip_address      = var.tikpannu_ip
+}
+
 resource "azurerm_storage_account" "tikjob_storage_account" {
   name                            = "tikjob${var.env_name}contentsa"
   resource_group_name             = azurerm_resource_group.tikjob_rg.name

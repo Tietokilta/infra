@@ -77,6 +77,7 @@ provider "postgresql" {
 locals {
   resource_group_location = "northeurope"
   cloudflare_account_id   = "06aec0668de6760376b202e63643f132"
+  tikpannu_ip             = "46.62.222.17"
 }
 
 resource "cloudflare_zone" "tietokilta" {
@@ -385,6 +386,7 @@ module "tikjob_storage" {
   env_name                = "prod"
   resource_group_location = local.resource_group_location
   ghost_db_username       = "tikrekryadmin"
+  tikpannu_ip             = local.tikpannu_ip
 }
 
 module "tikjob_app" {
@@ -436,7 +438,7 @@ module "discourse" {
 
   root_zone_name     = cloudflare_zone.tietokilta.name
   subdomain          = "vaalit"
-  discourse_ip       = "46.62.222.17"
+  discourse_ip       = local.tikpannu_ip
   cloudflare_zone_id = module.cloudflare.zone_id
 
   dkim_selector = "mta"
@@ -448,7 +450,7 @@ module "tikpannu" {
 
   root_zone_name     = cloudflare_zone.tietokilta.name
   subdomain          = "pannu"
-  tikpannu_ip        = "46.62.222.17"
+  tikpannu_ip        = local.tikpannu_ip
   cloudflare_zone_id = module.cloudflare.zone_id
 }
 module "invoicing" {
