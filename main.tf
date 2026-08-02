@@ -272,6 +272,12 @@ resource "azurerm_key_vault_secret" "mongo_db_connection_string" {
   key_vault_id = module.keyvault.keyvault_id
 }
 
+resource "azurerm_key_vault_secret" "mongo_backup_connection_string" {
+  name         = "mongodb-backup-connection-string"
+  value        = module.mongodb.backup_connection_string
+  key_vault_id = module.keyvault.keyvault_id
+}
+
 module "web" {
   source                       = "./modules/web"
   resource_group_location      = local.resource_group_location
