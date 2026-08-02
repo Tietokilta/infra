@@ -61,3 +61,21 @@ resource "mongodbatlas_database_user" "database_user" {
     database_name = "payload"
   }
 }
+
+# Read-only user for the tikpannu backup system (mongodump of every database)
+resource "random_password" "backup_password" {
+  length  = 32
+  special = false
+}
+
+resource "mongodbatlas_database_user" "backup_user" {
+  username           = "backup"
+  password           = random_password.backup_password.result
+  project_id         = mongodbatlas_project.project.id
+  auth_database_name = "admin"
+
+  roles {
+    role_name     = "readAnyDatabase"
+    database_name = "admin"
+  }
+}

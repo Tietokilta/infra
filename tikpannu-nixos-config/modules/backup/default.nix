@@ -5,6 +5,7 @@ in
 {
   imports = [
     ./azure
+    ./mongodb.nix
     ./configuration.nix
     ./storagebox.nix
     ./secrets.nix
