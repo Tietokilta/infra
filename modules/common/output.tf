@@ -22,6 +22,14 @@ output "postgres_server_id" {
 output "postgres_server_fqdn" {
   value = azurerm_postgresql_flexible_server.tikweb_pg_new.fqdn
 }
+
+output "postgres_server_port" {
+  value = 5432
+}
+
+output "postgres_pgbouncer_port" {
+  value = 6432
+}
 output "postgres_server_name" {
   value = azurerm_postgresql_flexible_server.tikweb_pg_new.name
 }
