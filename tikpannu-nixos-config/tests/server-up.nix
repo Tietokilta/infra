@@ -43,7 +43,7 @@
 
       pannu.wait_for_unit("discourse.service")
       # Discourse is 'active' before it's ready for connections
-      pannu.succeed("timeout 120 journalctl -fu discourse.service | grep -m1 'worker=3 ready'")
+      pannu.succeed("timeout 120 journalctl -fu discourse.service | grep -Em1 'worker=3\\b.*\\bready'")
 
       client.wait_for_unit("network.target")
       pannu.wait_for_open_port(80)
