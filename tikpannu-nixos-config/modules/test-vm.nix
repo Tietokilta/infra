@@ -16,6 +16,10 @@ let
   wappupokemonbotEnvFile = pkgs.writeText "wappupokemonbotEnvFile" ''
     TELEGRAM_BOT_TOKEN=my-test-tg-token3
   '';
+  varjoisopistekorttiEnvFile = pkgs.writeText "varjoisopistekorttiEnvFile" ''
+    BOT_TOKEN=my-test-tg-token4
+    ADMIN_TELEGRAM_IDS=
+  '';
 
   resticPassFile = pkgs.writeText "resticPassFile" ''
     veryStrongResticPass1
@@ -70,6 +74,7 @@ in
       summer-body-bot.envFile = lib.mkForce summerbodybotEnvFile.outPath;
       tikbot.envFile = lib.mkForce tikbotEnvFile.outPath;
       wappupokemonbot.envFile = lib.mkForce wappupokemonbotEnvFile.outPath;
+      varjoisopistekortti.envFile = lib.mkForce varjoisopistekorttiEnvFile.outPath;
     };
 
     systemd.tmpfiles.rules = [
