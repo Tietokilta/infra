@@ -16,6 +16,10 @@ let
   wappupokemonbotEnvFile = pkgs.writeText "wappupokemonbotEnvFile" ''
     TELEGRAM_BOT_TOKEN=my-test-tg-token3
   '';
+  varjoisopistekorttiEnvFile = pkgs.writeText "varjoisopistekorttiEnvFile" ''
+    BOT_TOKEN=my-test-tg-token4
+    ADMIN_TELEGRAM_IDS=
+  '';
 
   resticPassFile = pkgs.writeText "resticPassFile" ''
     veryStrongResticPass1
@@ -45,6 +49,10 @@ in
     wappupokemonbot = {
       enable = mkWeakForce false;
       envFile = mkWeakForce wappupokemonbotEnvFile.outPath;
+    };
+    varjoisopistekortti = {
+      enable = mkWeakForce false;
+      envFile = mkWeakForce varjoisopistekorttiEnvFile.outPath;
     };
   };
 
