@@ -41,7 +41,7 @@ resource "azurerm_linux_web_app" "registry" {
     BODY_SIZE_LIMIT = "5M"
 
     DATABASE_URL = format(
-      "postgres://%s:%s@%s:5432/%s",
+      "postgres://%s:%s@%s:6432/%s",
       module.service_database.db_user,
       urlencode(module.service_database.db_password),
       var.postgres_server_fqdn,
