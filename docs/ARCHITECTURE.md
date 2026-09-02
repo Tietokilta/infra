@@ -46,7 +46,7 @@ graph TD
         vaultwarden["vaultwarden<br/>vault.tietokilta.fi"]
         status["status<br/>status.tietokilta.fi<br/>(Go)"]
         isopistekortti["isopistekortti<br/>iso.tietokilta.fi<br/>(Node.js)"]
-        juvusivu["juvusivu<br/>juhlavuosi.fi<br/>(Payload CMS)"]
+        juvusivu["juvusivu<br/>muistinnollaus.fi<br/>(Payload CMS)"]
         oldweb["oldweb<br/>old.tietokilta.fi<br/>(Legacy)"]
     end
 

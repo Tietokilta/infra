@@ -47,10 +47,6 @@ endpoints:
     url: "https://muistinnollaus.fi"
     conditions: *default_conditions
     alerts: *default_alerts
-  - name: juvusivu
-    url: "https://juhlavuosi.fi"
-    conditions: *default_conditions
-    alerts: *default_alerts
   - name: vaultwarden
     url: "https://vault.tietokilta.fi/api/alive"
     conditions: *default_conditions

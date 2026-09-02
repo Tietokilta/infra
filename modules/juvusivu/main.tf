@@ -92,25 +92,7 @@ resource "azurerm_linux_web_app" "juvusivu" {
     DB_HOST     = var.postgres_server_fqdn
     DB_NAME     = module.service_database.db_name
     DB_PORT     = 5432
-
-    PRIMARY_DOMAIN = var.root_zone_name // For m0 redirect
   }
-}
-
-module "juvusivu_hostname" {
-  source = "../app_service_hostname"
-
-  subdomain                       = "@"
-  custom_domain_verification_id   = azurerm_linux_web_app.juvusivu.custom_domain_verification_id
-  app_service_name                = azurerm_linux_web_app.juvusivu.name
-  app_service_resource_group_name = var.app_service_plan_resource_group_name
-  app_service_location            = var.app_service_plan_location
-  app_service_default_hostname    = azurerm_linux_web_app.juvusivu.default_hostname
-  acme_account_key                = var.acme_account_key
-  certificate_name                = "juvusivu-cert"
-  root_zone_name                  = var.root_zone_name
-  cloudflare_zone_id              = var.cloudflare_zone_id
-  cloudflare_api_token            = var.cloudflare_api_token
 }
 
 module "juvusivu_m0_hostname" {
