@@ -90,11 +90,6 @@ resource "cloudflare_zone" "tietokila" {
   name    = "tietokila.fi"
 }
 
-resource "cloudflare_zone" "juhlavuosi" {
-  account = { id = local.cloudflare_account_id }
-  name    = "juhlavuosi.fi"
-}
-
 resource "cloudflare_zone" "muistinnollaus" {
   account = { id = local.cloudflare_account_id }
   name    = "muistinnollaus.fi"
@@ -122,10 +117,6 @@ import {
 import {
   to = cloudflare_zone.tietokila
   id = "316c40dc8ddd4ae3a4b2252b8ffb09ba"
-}
-import {
-  to = cloudflare_zone.juhlavuosi
-  id = "a37622fcf717d85b1bf99a0d96991376"
 }
 import {
   to = cloudflare_zone.muistinnollaus
@@ -603,9 +594,7 @@ module "juvusivu" {
   postgres_server_fqdn                 = module.common.postgres_server_fqdn
   postgres_server_id                   = module.common.postgres_server_id
   acme_account_key                     = module.common.acme_account_key
-  root_zone_name                       = cloudflare_zone.juhlavuosi.name
   m0_dns_zone_name                     = cloudflare_zone.muistinnollaus.name
-  cloudflare_zone_id                   = cloudflare_zone.juhlavuosi.id
   cloudflare_m0_zone_id                = cloudflare_zone.muistinnollaus.id
   cloudflare_api_token                 = module.keyvault.secrets["cloudflare-api-token"]
 }
