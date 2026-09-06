@@ -33,6 +33,7 @@ in
         "dir_mode=0700"
         "_netdev"
         "nofail"
+        "nouser_xattr"
         "x-systemd.automount"
         "x-systemd.idle-timeout=600"
         "x-systemd.device-timeout=10s"
