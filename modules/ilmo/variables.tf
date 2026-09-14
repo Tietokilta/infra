@@ -64,16 +64,6 @@ variable "stripe_webhook_secret" {
   sensitive = true
 }
 
-variable "extra_frontends" {
-  type = map(object({
-    eventDetailsUrl    = optional(string)
-    editSignupUrl      = optional(string)
-    completePaymentUrl = optional(string)
-    adminUrl           = optional(string)
-  }))
-  default = {}
-}
-
 variable "cloudflare_zone_id" {
   type        = string
   description = "Cloudflare zone ID for tietokilta.fi. Used for DNS records and ACME challenge."

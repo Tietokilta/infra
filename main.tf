@@ -313,13 +313,6 @@ module "ilmo" {
   stripe_secret_key     = module.keyvault.secrets["ilmo-stripe-api-key"]
   stripe_webhook_secret = module.keyvault.secrets["ilmo-stripe-webhook-secret"]
   website_url           = "https://tietokilta.fi"
-  extra_frontends = {
-    "juhlavuosi.fi" = {
-      eventDetailsUrl    = "https://juhlavuosi.fi/{lang}/events/{slug}"
-      editSignupUrl      = "https://juhlavuosi.fi/{lang}/signups/{id}/{editToken}"
-      completePaymentUrl = "https://juhlavuosi.fi/{lang}/payment/{id}/{editToken}"
-    }
-  }
 
   root_zone_name       = cloudflare_zone.tietokilta.name
   subdomain            = "ilmo"
