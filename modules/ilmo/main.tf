@@ -67,14 +67,14 @@ resource "azurerm_linux_web_app" "ilmo_backend" {
     EDIT_SIGNUP_URL      = "${var.website_url}/{lang}/signups/{id}/{editToken}"
     COMPLETE_PAYMENT_URL = "${var.website_url}/{lang}/payment/{id}/{editToken}"
     ADMIN_URL            = "https://${module.app_service_hostname.fqdn}/admin"
-    FRONTENDS = jsonencode(merge({
+    FRONTENDS = jsonencode({
       "default" = {
         "eventDetailsUrl"    = "${var.website_url}/{lang}/events/{slug}"
         "editSignupUrl"      = "${var.website_url}/{lang}/signups/{id}/{editToken}"
         "completePaymentUrl" = "${var.website_url}/{lang}/payment/{id}/{editToken}"
         "adminUrl"           = "https://${module.app_service_hostname.fqdn}/admin"
       }
-    }, var.extra_frontends))
+    })
 
     ICAL_UID_DOMAIN = "tietokilta.fi"
 
