@@ -33,9 +33,4 @@
   systemd.services.discourse.environment = {
     UNICORN_WORKERS = "4";
   };
-
-  security.acme = {
-    acceptTerms = true;
-    defaults.email = "admin@tieto" + "kilta.fi";
-  };
 }

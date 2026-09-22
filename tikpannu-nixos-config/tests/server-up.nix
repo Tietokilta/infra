@@ -17,6 +17,7 @@
       };
 
       services.discourse.enable = lib.mkForce true;
+      services.umami.enable = lib.mkForce true;
     };
 
     client =
@@ -25,6 +26,7 @@
         networking.extraHosts = ''
           ${nodes.pannu.networking.primaryIPAddress} pannu.tietokilta.fi
           ${nodes.pannu.networking.primaryIPAddress} vaalit.tietokilta.fi
+          ${nodes.pannu.networking.primaryIPAddress} analytics.tietokilta.fi
         '';
       };
   };
@@ -41,6 +43,7 @@
 
       start_all()
 
+      pannu.wait_for_unit("umami.service")
       pannu.wait_for_unit("discourse.service")
       # Discourse is 'active' before it's ready for connections
       pannu.succeed("timeout 120 journalctl -fu discourse.service | grep -Em1 'worker=3\\b.*\\bready'")
@@ -51,10 +54,17 @@
       assert_http_code("http://pannu.tietokilta.fi", 301)
       assert_http_code("http://pannu.tietokilta.fi/doesnt-exist", 301)
       assert_http_code("http://vaalit.tietokilta.fi", 301)
+      assert_http_code("http://analytics.tietokilta.fi", 301)
 
       pannu.wait_for_open_port(443)
       assert_http_code("https://pannu.tietokilta.fi", 404, extra_curl_args="--insecure")
       assert_http_code("https://pannu.tietokilta.fi/doesnt-exist", 404, extra_curl_args="--insecure")
       assert_http_code("https://vaalit.tietokilta.fi", 200, extra_curl_args="--insecure")
+
+      client.wait_until_succeeds(
+        "curl --silent --fail --insecure https://analytics.tietokilta.fi/ > /dev/null",
+        timeout=120,
+      )
+      assert_http_code("https://analytics.tietokilta.fi/script.js", 200, extra_curl_args="--insecure")
     '';
 }

@@ -1,6 +1,23 @@
-{ config, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   cfg = config.services.tik-backup;
+
+  stagingDirs = [ cfg.stagingDir ] ++ map (def: "${cfg.stagingDir}/${def.subdir}") cfg.stagingSubdirs;
+
+  stagingDirsScript = pkgs.writeShellApplication {
+    name = "tik-backup-staging-dirs";
+    text = ''
+      set -euo pipefail
+      dirs=(${lib.escapeShellArgs stagingDirs})
+      mkdir -p "''${dirs[@]}"
+      chown "backup:backup" "''${dirs[@]}"
+    '';
+  };
 in
 {
   imports = [
@@ -54,11 +71,6 @@ in
             type = lib.types.str;
             example = "discourse";
           };
-          options.user = lib.mkOption {
-            description = "User who owns the subdirectory";
-            type = lib.types.str;
-            example = "discourse";
-          };
           options.clean = lib.mkOption {
             description = "Whether to clean the directory after each backup";
             type = lib.types.bool;
@@ -70,7 +82,6 @@ in
       example = [
         {
           subdir = "discourse";
-          user = "discourse";
           clean = true;
         }
       ];
@@ -78,11 +89,15 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    systemd.tmpfiles.rules = (
-      [
-        ''d "${cfg.stagingDir}" 0700 backup backup -''
-      ]
-      ++ map (def: ''d "${cfg.stagingDir}/${def.subdir}" 0700 ${def.user} backup -'') cfg.stagingSubdirs
-    );
+    systemd.services.tik-backup-staging-dirs = {
+      description = "Create backup staging directories";
+      requiredBy = cfg.stagingServices;
+      before = cfg.stagingServices;
+      unitConfig.RequiresMountsFor = [ cfg.stagingDir ];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = lib.getExe stagingDirsScript;
+      };
+    };
   };
 }

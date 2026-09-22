@@ -64,7 +64,7 @@ in
       stagingServices = [ "stage-azure-psql.service" ];
       stagingSubdirs = [
         {
-          inherit subdir user;
+          inherit subdir;
         }
       ];
     };

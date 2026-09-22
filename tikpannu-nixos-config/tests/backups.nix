@@ -95,6 +95,10 @@
     services.discourse.enable = lib.mkForce true;
     systemd.services.discourse.wantedBy = lib.mkForce [ ];
 
+    # Same for umami
+    services.umami.enable = lib.mkForce true;
+    systemd.services.umami.wantedBy = lib.mkForce [ ];
+
     systemd.tmpfiles.rules = [
       "d /mnt/backup 0700 backup backup -"
       "d /var/lib/discourse/backups/default 0700 discourse discourse -"
@@ -129,6 +133,7 @@
 
     pannu.succeed("systemctl start restic-backups-tik-backup.service")
     unit_succeeded("discourse-stage-backup2.service")
+    unit_succeeded("umami-stage-backup2.service")
     unit_succeeded("stage-azure-psql.service")
     unit_succeeded("stage-azure-mysql.service")
 

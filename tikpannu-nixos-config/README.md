@@ -92,7 +92,6 @@ the following options (defined [here](./modules/backup/default.nix)). See
     stagingSubdirs = [
       {
         subdir = "<subdirectory name>";
-        user = "<user that owns the subdirectory>";
       }
     ];
   };

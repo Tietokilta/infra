@@ -21,6 +21,8 @@ let
     ADMIN_TELEGRAM_IDS=
   '';
 
+  umamiAppSecretFile = pkgs.writeText "umamiAppSecretFile" "veryStrongUmamiAppSecret1";
+
   resticPassFile = pkgs.writeText "resticPassFile" ''
     veryStrongResticPass1
   '';
@@ -54,6 +56,11 @@ in
       enable = mkWeakForce false;
       envFile = mkWeakForce varjoisopistekorttiEnvFile.outPath;
     };
+  };
+
+  services.umami = {
+    enable = mkWeakForce false;
+    settings.APP_SECRET_FILE = mkWeakForce umamiAppSecretFile.outPath;
   };
 
   services.tik-backup = {

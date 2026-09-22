@@ -54,7 +54,7 @@ in
       stagingServices = [ "stage-mongodb.service" ];
       stagingSubdirs = [
         {
-          inherit subdir user;
+          inherit subdir;
         }
       ];
     };
