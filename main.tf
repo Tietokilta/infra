@@ -432,8 +432,11 @@ module "discourse" {
 module "tikpannu" {
   source = "./modules/tikpannu"
 
-  root_zone_name     = cloudflare_zone.tietokilta.name
-  subdomain          = "pannu"
+  root_zone_name = cloudflare_zone.tietokilta.name
+  subdomains = [
+    "pannu",
+    "analytics",
+  ]
   tikpannu_ip        = local.tikpannu_ip
   cloudflare_zone_id = module.cloudflare.zone_id
 }
