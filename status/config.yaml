@@ -35,6 +35,10 @@ endpoints:
     url: "https://tenttiarkisto.fi"
     conditions: *default_conditions
     alerts: *default_alerts
+  - name: analytics
+    url: "https://analytics.tietokilta.fi"
+    conditions: *default_conditions
+    alerts: *default_alerts
   - name: ilmomasiina
     url: "https://ilmo.tietokilta.fi"
     conditions: *default_conditions
