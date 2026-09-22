@@ -74,7 +74,6 @@ in
       stagingSubdirs = [
         {
           inherit subdir;
-          user = "backup";
         }
       ];
     };

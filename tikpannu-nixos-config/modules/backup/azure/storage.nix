@@ -86,12 +86,10 @@ in
       stagingServices = [ "stage-azure-storages.service" ];
       stagingSubdirs = [
         {
-          inherit user;
           subdir = blobSubdir;
           clean = false;
         }
         {
-          inherit user;
           subdir = fileSubdir;
           clean = false;
         }

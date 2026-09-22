@@ -67,7 +67,7 @@ in
       stagingServices = [ "stage-azure-mysql.service" ];
       stagingSubdirs = [
         {
-          inherit subdir user;
+          inherit subdir;
         }
       ];
     };

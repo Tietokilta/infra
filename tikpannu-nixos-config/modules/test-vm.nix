@@ -21,6 +21,8 @@ let
     ADMIN_TELEGRAM_IDS=
   '';
 
+  umamiAppSecretFile = pkgs.writeText "umamiAppSecretFile" "veryStrongUmamiAppSecret1";
+
   resticPassFile = pkgs.writeText "resticPassFile" ''
     veryStrongResticPass1
   '';
@@ -76,6 +78,8 @@ in
       wappupokemonbot.envFile = lib.mkForce wappupokemonbotEnvFile.outPath;
       varjoisopistekortti.envFile = lib.mkForce varjoisopistekorttiEnvFile.outPath;
     };
+
+    services.umami.settings.APP_SECRET_FILE = lib.mkForce umamiAppSecretFile.outPath;
 
     systemd.tmpfiles.rules = [
       "d ${config.services.tik-backup.storageboxMountPath} 0700 backup backup -"
