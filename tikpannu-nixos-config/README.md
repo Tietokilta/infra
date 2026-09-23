@@ -1,8 +1,9 @@
 # NixOS configuration for pannu.tietokilta.fi
 
-This directory defines the system that hosts at least vaalit.tietokilta.fi,
-and the Telegram bots TiKbot, WappuPokemonBot, and SummerBodyBot. The
-configuration also defines the aforementioned services themselves.
+This directory defines the system that hosts at least vaalit.tietokilta.fi
+(Discourse) and analytics.tietokilta.fi (Umami), and the Telegram bots TiKbot,
+WappuPokemonBot, SummerBodyBot, and varjoisopistekortti. The configuration also
+defines the aforementioned services themselves.
 
 ## General configuration
 `./hardware-configuration.nix` and `./networking.nix` should generally not be modified
@@ -35,6 +36,13 @@ For an example on how the secrets can be used in the NixOS configuration, see
 *See [./modules/discourse/](./modules/discourse/)*  
 Discourse is configured using [the Discourse module](https://search.nixos.org/options?channel=unstable&query=services.discourse)
 provided by Nixpkgs.
+
+## analytics.tietokilta.fi (Umami)
+*See [./modules/umami/](./modules/umami/)*  
+[Umami](https://umami.is/) is configured using [the Umami module](https://search.nixos.org/options?channel=unstable&query=services.umami) 
+provided by Nixpkgs. Its database lives on this machine's PostgreSQL instance, 
+created by `services.umami.createPostgresqlDatabase`, and is backed up by
+[./modules/umami/backup.nix](./modules/umami/backup.nix).
 
 ## Telegram bots
 *See [./modules/tikbots/](./modules/tikbots/)*  
@@ -101,7 +109,8 @@ This tells the restic job to first run the staging services to move the data
 into the staging directory before running the restic backup job. This is defined
 by the restic systemd service having `wants` and `after` on each staging
 service. The `stagingSubdirs` definition is used to create the service's
-directory with systemd tmpfiles.
+directory, which `tik-backup-staging-dirs.service` does before any staging
+service runs.
 
 Before running the staging services, a pre-staging cleanup job empties the
 subdirectories so that only the current state is backed up, as restic handles
@@ -120,6 +129,10 @@ subgraph TB pipeline["Backup pipeline"]
   stagingServices -.->|requires, runs after|preCleanup
   preCleanup ==triggers on finish ==> stagingServices
 
+  dirCreation["tik-backup-staging-dirs.service"]
+  stagingServices -.->|requires, runs after|dirCreation
+  dirCreation ==triggers on finish ==> stagingServices
+
   restic
   resticJob ==runs ==> restic
 end
@@ -129,6 +142,7 @@ resticTimer -.-triggers -.-> resticJob
 stagingServices --copies data to --> stagingDir
 
 stagingDir["Staging directory"]
+dirCreation --creates --> stagingDir
 preCleanup --cleans --> stagingDir
 
 SMB@{ shape: lin-cyl, label: "Hetzner Storage Box" }
@@ -193,4 +207,3 @@ The VM can be built and ran with:
 ```bash
 nix run ..#nixosConfigurations.tikpannu.config.system.build.vm
 ```
-
