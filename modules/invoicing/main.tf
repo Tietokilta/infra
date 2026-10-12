@@ -33,7 +33,7 @@ resource "azurerm_linux_web_app" "invoice_generator" {
     MAILGUN_URL      = "${module.mailgun.api_url_with_domain}/messages"
     MAILGUN_USER     = "api"
     MAILGUN_PASSWORD = var.mailgun_api_key
-    MAILGUN_TO       = "Rahastonhoitaja <rahastonhoitaja@tietokilta.fi>"
+    MAILGUN_TO       = "Rahastonhoitaja <rahastonhoitaja@tietokilta.fi>,invoice+1790346-8@to.nocfo.io"
     MAILGUN_FROM     = module.mailgun.mail_from
     # https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/headers.md
     IP_EXTRACTOR_HEADER = "X-Client-IP"
