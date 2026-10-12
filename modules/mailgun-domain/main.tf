@@ -24,7 +24,8 @@ locals {
     r if r.record_type == "TXT" && can(regex("domainkey", r.name))
   ][0]
   # Mailgun returns FQDN like "mg._domainkey.ilmo.tietokilta.fi", strip the zone to get relative name
-  dkim_record_name = trimsuffix(local.dkim_record.name, ".${var.dns_zone_name}")
+  dkim_record_name  = trimsuffix(local.dkim_record.name, ".${var.dns_zone_name}")
+  dmarc_record_name = var.subdomain == "@" ? "_dmarc" : "_dmarc.${var.subdomain}"
 }
 
 resource "cloudflare_dns_record" "cf_mx_mxa" {
@@ -64,7 +65,7 @@ resource "cloudflare_dns_record" "cf_dkim" {
 
 resource "cloudflare_dns_record" "cf_dmarc" {
   zone_id = var.cloudflare_zone_id
-  name    = "_dmarc.${var.subdomain}"
+  name    = local.dmarc_record_name
   type    = "TXT"
   content = "v=DMARC1;p=none;sp=none;rua=mailto:${var.dmarc_email}!10m;ruf=mailto:${var.dmarc_email}!10m"
   ttl     = 300
