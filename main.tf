@@ -135,6 +135,10 @@ import {
   to = cloudflare_zone.ylikellotus
   id = "aadd380eabe1b2fc33de6e7532c831b7"
 }
+import {
+  to = cloudflare_zone.ufositsit
+  id = "c22aa3504940aef91e13043ede6cbfc3"
+}
 
 module "keyvault" {
   source                  = "./modules/keyvault"
