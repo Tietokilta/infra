@@ -67,6 +67,10 @@ endpoints:
     url: "https://liikuntahaaste.tietokilta.fi"
     conditions: *default_conditions
     alerts: *default_alerts
+  - name: ufositsit
+    url: "https://ufosits.it"
+    conditions: *default_conditions
+    alerts: *default_alerts
 external-endpoints:
   - name: guild-room-infoscreen
     token: "$INFOSCREEN_TOKEN"
