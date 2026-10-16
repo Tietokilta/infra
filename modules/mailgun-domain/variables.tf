@@ -4,7 +4,7 @@ variable "domain_name" {
 }
 
 variable "subdomain" {
-  description = "Subdomain part for DNS records (e.g., ilmo)"
+  description = "Subdomain part for DNS records (e.g., ilmo), or @ for the zone apex"
   type        = string
 }
 

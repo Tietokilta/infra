@@ -110,6 +110,11 @@ resource "cloudflare_zone" "kurssikone" {
   name    = "kurssikone.com"
 }
 
+resource "cloudflare_zone" "ufositsit" {
+  account = { id = local.cloudflare_account_id }
+  name    = "ufosits.it"
+}
+
 import {
   to = cloudflare_zone.tietokilta
   id = "e3193fc9edbb2b28f743a6d7743176f8"
@@ -129,6 +134,10 @@ import {
 import {
   to = cloudflare_zone.ylikellotus
   id = "aadd380eabe1b2fc33de6e7532c831b7"
+}
+import {
+  to = cloudflare_zone.ufositsit
+  id = "c22aa3504940aef91e13043ede6cbfc3"
 }
 
 module "keyvault" {
@@ -182,7 +191,9 @@ module "keyvault" {
     "running-challenge-client-secret",
     "running-challenge-refresh-token",
     "kurssikone-sisu-api-key",
-    "kurssikone-admin-secret"
+    "kurssikone-admin-secret",
+    "ufositsit-contact-telegram",
+    "ufositsit-mobilepay-number"
   ]
 }
 
@@ -200,6 +211,7 @@ module "cloudflare" {
     "laskutus.tietokilta.fi",
     "vaalit.tietokilta.fi",
     "rekisteri.tietokilta.fi",
+    "ufosits.it",
   ]
 }
 
@@ -524,6 +536,7 @@ module "github-ci-roles" {
     "Tietokilta/rekisteri" : [module.registry.registry_app_id]
     "Tietokilta/running-challenge" : [module.running_challenge.app_id]
     "Tietokilta/kurssikone" : [module.kurssikone.backend_app_id, module.kurssikone.frontend_app_id]
+    "Tietokilta/ufosits.it" : [module.ufositsit.app_id]
   }
 }
 
@@ -662,4 +675,34 @@ module "kurssikone" {
   cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
   sisu_course_api_key     = module.keyvault.secrets["kurssikone-sisu-api-key"]
   admin_secret            = module.keyvault.secrets["kurssikone-admin-secret"]
+}
+
+module "ufositsit" {
+  source                  = "./modules/ufositsit"
+  environment             = "prod"
+  resource_group_name     = module.common.resource_group_name
+  resource_group_location = local.resource_group_location
+  app_service_plan_id     = module.common.tikweb_app_plan_id
+  postgres_server_fqdn    = module.common.postgres_server_fqdn
+  postgres_server_id      = module.common.postgres_server_id
+  acme_account_key        = module.common.acme_account_key
+  root_zone_name          = cloudflare_zone.ufositsit.name
+  cloudflare_zone_id      = cloudflare_zone.ufositsit.id
+  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
+  ghcr_token              = module.keyvault.secrets["oldweb-ghcr-access-token"]
+
+  event_start             = "2025-11-20T18:00:00+02:00"
+  registration_start      = "2025-11-10T12:00:00+02:00"
+  registration_end        = "2025-11-18T23:59:00+02:00"
+  payment_due_date        = "2025-11-19"
+  max_participants        = 60
+  participation_fee_cents = 2000
+  contact_telegram        = module.keyvault.secrets["ufositsit-contact-telegram"]
+  mobilepay_number        = module.keyvault.secrets["ufositsit-mobilepay-number"]
+}
+
+resource "azurerm_key_vault_secret" "ufositsit_admin_password" {
+  name         = "ufositsit-admin-password"
+  value        = module.ufositsit.admin_password
+  key_vault_id = module.keyvault.keyvault_id
 }
