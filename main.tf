@@ -536,7 +536,7 @@ module "github-ci-roles" {
     "Tietokilta/rekisteri" : [module.registry.registry_app_id]
     "Tietokilta/running-challenge" : [module.running_challenge.app_id]
     "Tietokilta/kurssikone" : [module.kurssikone.backend_app_id, module.kurssikone.frontend_app_id]
-    "Tietokilta/ufosits.it" : [module.ufositsit.app_id]
+    "Tietokilta@5850931/ufosits.it@1415781548" : [module.ufositsit.app_id]
   }
 }
 
