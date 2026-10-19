@@ -691,10 +691,10 @@ module "ufositsit" {
   cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
   ghcr_token              = module.keyvault.secrets["oldweb-ghcr-access-token"]
 
-  event_start             = "2025-11-20T18:00:00+02:00"
-  registration_start      = "2025-11-10T12:00:00+02:00"
-  registration_end        = "2025-11-18T23:59:00+02:00"
-  payment_due_date        = "2025-11-19"
+  event_start             = "2026-11-12T18:00:00+02:00"
+  registration_start      = "2026-10-27T12:00:00+02:00"
+  registration_end        = "2026-11-10T23:59:00+02:00"
+  payment_due_date        = "2026-11-11"
   max_participants        = 60
   participation_fee_cents = 2000
   contact_telegram        = module.keyvault.secrets["ufositsit-contact-telegram"]
