@@ -25,6 +25,11 @@ resource "azurerm_storage_account" "static_site" {
   }
 
   depends_on = [cloudflare_dns_record.static_site_asverify]
+
+  lifecycle {
+    # Azure doesn't return use_subdomain, so it would show as changed on every plan
+    ignore_changes = [custom_domain[0].use_subdomain]
+  }
 }
 
 resource "azurerm_storage_account_static_website" "static_site" {
