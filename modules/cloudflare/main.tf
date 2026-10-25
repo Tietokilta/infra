@@ -93,6 +93,25 @@ resource "cloudflare_ruleset" "cache_rules" {
         respect_strong_etags = true
       }
     },
+    {
+      action      = "set_cache_settings"
+      description = "Cache optimized images per format for as long as the app allows"
+      enabled     = true
+      expression  = "http.host in {\"tietokilta.fi\" \"www.tietokilta.fi\"} and http.request.uri.path eq \"/_next/image\""
+      action_parameters = {
+        cache       = true
+        edge_ttl    = { mode = "respect_origin" }
+        browser_ttl = { mode = "respect_origin" }
+        # Next sends WebP to browsers that accept it and the original format to
+        # others, so keep one cached copy for each and skip any other Vary
+        vary = {
+          default = { action = "bypass" }
+          headers = {
+            accept = { action = "normalize", media_types = ["image/webp"] }
+          }
+        }
+      }
+    },
   ]
 }
 
