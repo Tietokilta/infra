@@ -42,34 +42,54 @@ resource "cloudflare_zone_setting" "http3" {
   value      = "on"
 }
 
-# Cache Next.js static assets for one year (filenames include content hashes)
 resource "cloudflare_ruleset" "cache_rules" {
   zone_id = var.zone_id
   name    = "tikweb cache rules"
   kind    = "zone"
   phase   = "http_request_cache_settings"
 
-  rules = [{
-    action      = "set_cache_settings"
-    description = "Cache Next.js static assets for 1 year"
-    enabled     = true
-    expression  = "starts_with(http.request.uri.path, \"/_next/static/\")"
-    action_parameters = {
-      cache = true
-      edge_ttl = {
-        mode    = "override_origin"
-        default = 31536000 # 1 year
-        status_code_ttl = [{
-          status_code = 200
-          value       = 31536000
-        }]
+  rules = [
+    {
+      action      = "set_cache_settings"
+      description = "Cache Next.js static assets for 1 year"
+      enabled     = true
+      # Filenames include content hashes, so they never change
+      expression = "starts_with(http.request.uri.path, \"/_next/static/\")"
+      action_parameters = {
+        cache = true
+        edge_ttl = {
+          mode    = "override_origin"
+          default = 31536000 # 1 year
+          status_code_ttl = [{
+            status_code = 200
+            value       = 31536000
+          }]
+        }
+        browser_ttl = {
+          mode    = "override_origin"
+          default = 31536000
+        }
       }
-      browser_ttl = {
-        mode    = "override_origin"
-        default = 31536000
+    },
+    {
+      action      = "set_cache_settings"
+      description = "Cache web pages for as long as the app allows"
+      enabled     = true
+      # The cache key ignores cookies, so preview requests must skip the cache to see drafts
+      expression = trimspace(<<-EOT
+        http.host in {"tietokilta.fi" "www.tietokilta.fi"}
+        and (http.request.uri.path in {"/fi" "/en"} or starts_with(http.request.uri.path, "/fi/") or starts_with(http.request.uri.path, "/en/"))
+        and not http.cookie contains "__prerender_bypass"
+      EOT
+      )
+      # The web app decides with Cache-Control which pages may be stored and for how long
+      action_parameters = {
+        cache       = true
+        edge_ttl    = { mode = "respect_origin" }
+        browser_ttl = { mode = "respect_origin" }
       }
-    }
-  }]
+    },
+  ]
 }
 
 # Root domain MX records (Google Workspace)
