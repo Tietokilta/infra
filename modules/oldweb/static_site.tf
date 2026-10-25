@@ -55,22 +55,3 @@ resource "cloudflare_dns_record" "static_site" {
   proxied = true
   ttl     = 1 # automatic, required for proxied records
 }
-
-# The origin presents the *.web.core.windows.net certificate, which "strict" rejects for old.tietokilta.fi; "full" still
-# encrypts the connection to the origin
-resource "cloudflare_ruleset" "static_site_ssl" {
-  zone_id = var.cloudflare_zone_id
-  name    = "oldweb origin SSL"
-  kind    = "zone"
-  phase   = "http_config_settings"
-
-  rules = [{
-    action      = "set_config"
-    description = "Accept the Azure Storage certificate for ${local.fqdn}"
-    enabled     = true
-    expression  = "http.host eq \"${local.fqdn}\""
-    action_parameters = {
-      ssl = "full"
-    }
-  }]
-}
