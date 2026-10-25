@@ -48,19 +48,33 @@ variable "ghcr_token" {
 }
 
 // Event
+// App Service stores date-like app settings in UTC, so the datetimes must be given in UTC to not show as changed on
+// every plan
 variable "event_start" {
   type        = string
-  description = "ISO-8601 datetime"
+  description = "ISO-8601 datetime in UTC, for example 2026-11-12T16:00:00+00:00"
+  validation {
+    condition     = can(regex("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\+00:00$", var.event_start))
+    error_message = "Use UTC in the form YYYY-MM-DDThh:mm:ss+00:00."
+  }
 }
 
 variable "registration_start" {
   type        = string
-  description = "ISO-8601 datetime"
+  description = "ISO-8601 datetime in UTC, for example 2026-10-27T10:00:00+00:00"
+  validation {
+    condition     = can(regex("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\+00:00$", var.registration_start))
+    error_message = "Use UTC in the form YYYY-MM-DDThh:mm:ss+00:00."
+  }
 }
 
 variable "registration_end" {
   type        = string
-  description = "ISO-8601 datetime"
+  description = "ISO-8601 datetime in UTC, for example 2026-11-10T21:59:00+00:00"
+  validation {
+    condition     = can(regex("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\+00:00$", var.registration_end))
+    error_message = "Use UTC in the form YYYY-MM-DDThh:mm:ss+00:00."
+  }
 }
 
 variable "payment_due_date" {

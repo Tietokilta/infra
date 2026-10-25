@@ -709,9 +709,9 @@ module "ufositsit" {
   cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
   ghcr_token              = module.keyvault.secrets["oldweb-ghcr-access-token"]
 
-  event_start             = "2026-11-12T18:00:00+02:00"
-  registration_start      = "2026-10-27T12:00:00+02:00"
-  registration_end        = "2026-11-10T23:59:00+02:00"
+  event_start             = "2026-11-12T16:00:00+00:00" # 18:00 in Helsinki
+  registration_start      = "2026-10-27T10:00:00+00:00" # 12:00 in Helsinki
+  registration_end        = "2026-11-10T21:59:00+00:00" # 23:59 in Helsinki
   payment_due_date        = "2026-11-11"
   max_participants        = 60
   participation_fee_cents = 2000
