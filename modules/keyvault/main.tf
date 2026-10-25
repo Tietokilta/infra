@@ -77,4 +77,12 @@ data "azurerm_key_vault_secret" "secret" {
   for_each     = toset(var.keyvault_secrets)
   name         = each.value
   key_vault_id = azurerm_key_vault.keyvault.id
+
+  lifecycle {
+    postcondition {
+      # App Service trims setting values, so a padded secret would show as changed on every plan
+      condition     = self.value == trimspace(self.value)
+      error_message = "Key Vault secret ${each.value} has leading or trailing whitespace."
+    }
+  }
 }
