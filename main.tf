@@ -213,6 +213,12 @@ module "cloudflare" {
     "rekisteri.tietokilta.fi",
     "ufosits.it",
   ]
+  full_ssl_hosts = ["old.tietokilta.fi"]
+}
+
+moved {
+  from = module.oldweb.cloudflare_ruleset.static_site_ssl
+  to   = module.cloudflare.cloudflare_ruleset.config_rules
 }
 
 module "mailman" {

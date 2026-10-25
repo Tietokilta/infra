@@ -92,6 +92,41 @@ resource "cloudflare_ruleset" "cache_rules" {
   ]
 }
 
+# The zone allows only one configuration ruleset, so rules for all hosts live here
+resource "cloudflare_ruleset" "config_rules" {
+  zone_id = var.zone_id
+  name    = "tietokilta.fi configuration rules"
+  kind    = "zone"
+  phase   = "http_config_settings"
+
+  rules = [
+    {
+      action      = "set_config"
+      description = "Accept the origin certificate for hosts served from Azure Storage"
+      enabled     = true
+      # Their origin presents the *.web.core.windows.net certificate, which "strict" rejects;
+      # "full" still encrypts the connection to the origin
+      expression = "http.host in {${join(" ", [for host in var.full_ssl_hosts : "\"${host}\""])}}"
+      action_parameters = {
+        ssl = "full"
+      }
+    },
+    {
+      action      = "set_config"
+      description = "Keep web pages unmodified so that their ETags survive"
+      enabled     = true
+      expression  = "http.host in {\"tietokilta.fi\" \"www.tietokilta.fi\"}"
+      # Rewriting HTML drops the ETag, which shared and browser caches need to revalidate cheaply.
+      # Email obfuscation protected little: the same addresses are in the page's React data.
+      action_parameters = {
+        email_obfuscation        = false
+        automatic_https_rewrites = false
+        server_side_excludes     = false
+      }
+    },
+  ]
+}
+
 # Root domain MX records (Google Workspace)
 resource "cloudflare_dns_record" "mx_aspmx" {
   zone_id  = var.zone_id
