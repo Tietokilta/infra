@@ -553,7 +553,7 @@ module "histotik_github_ci" {
 module "oldweb_github_ci" {
   source     = "./modules/github-ci-role"
   repository = "Tietokilta/oldweb-static"
-  subject    = "repo:Tietokilta/oldweb-static:environment:production"
+  subject    = "repo:Tietokilta@5850931/oldweb-static@1431593157:environment:production"
   role_assignments = [
     {
       scope                = module.oldweb.static_site_storage_account_id
