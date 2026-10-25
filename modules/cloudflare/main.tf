@@ -87,6 +87,8 @@ resource "cloudflare_ruleset" "cache_rules" {
         cache       = true
         edge_ttl    = { mode = "respect_origin" }
         browser_ttl = { mode = "respect_origin" }
+        # Otherwise Cloudflare drops the pages' strong ETags, so they cannot be revalidated with 304
+        respect_strong_etags = true
       }
     },
   ]
