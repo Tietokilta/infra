@@ -2,6 +2,8 @@ terraform {
   required_providers {
     cloudflare = {
       source = "cloudflare/cloudflare"
+      # Cache rules gained the vary setting in 5.28
+      version = ">= 5.28"
     }
   }
 }
