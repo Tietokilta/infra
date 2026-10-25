@@ -491,11 +491,7 @@ module "oldweb" {
   postgres_server_id   = module.common.postgres_server_id
   root_zone_name       = cloudflare_zone.tietokilta.name
   subdomain            = "old"
-  tikweb_app_plan_id   = module.common.tikweb_app_plan_id
-  tikweb_rg_location   = module.common.resource_group_location
-  tikweb_rg_name       = module.common.resource_group_name
   location             = local.resource_group_location
-  ghcr_token           = module.keyvault.secrets["oldweb-ghcr-access-token"]
   cloudflare_zone_id   = module.cloudflare.zone_id
 }
 
