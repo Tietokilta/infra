@@ -113,19 +113,6 @@ resource "cloudflare_ruleset" "config_rules" {
         ssl = "full"
       }
     },
-    {
-      action      = "set_config"
-      description = "Keep web pages unmodified so that their ETags survive"
-      enabled     = true
-      expression  = "http.host in {\"tietokilta.fi\" \"www.tietokilta.fi\"}"
-      # Rewriting HTML drops the ETag, which shared and browser caches need to revalidate cheaply.
-      # Email obfuscation protected little: the same addresses are in the page's React data.
-      action_parameters = {
-        email_obfuscation        = false
-        automatic_https_rewrites = false
-        server_side_excludes     = false
-      }
-    },
   ]
 }
 
