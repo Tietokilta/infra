@@ -3,5 +3,8 @@ terraform {
     postgresql = {
       source = "cyrilgdn/postgresql"
     }
+    cloudflare = {
+      source = "cloudflare/cloudflare"
+    }
   }
 }

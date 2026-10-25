@@ -491,14 +491,12 @@ module "oldweb" {
   postgres_server_id   = module.common.postgres_server_id
   root_zone_name       = cloudflare_zone.tietokilta.name
   subdomain            = "old"
-  acme_account_key     = module.common.acme_account_key
   tikweb_app_plan_id   = module.common.tikweb_app_plan_id
   tikweb_rg_location   = module.common.resource_group_location
   tikweb_rg_name       = module.common.resource_group_name
   location             = local.resource_group_location
   ghcr_token           = module.keyvault.secrets["oldweb-ghcr-access-token"]
   cloudflare_zone_id   = module.cloudflare.zone_id
-  cloudflare_api_token = module.keyvault.secrets["cloudflare-api-token"]
 }
 
 module "vaultwarden" {
@@ -552,6 +550,23 @@ module "histotik_github_ci" {
   ]
 }
 
+module "oldweb_github_ci" {
+  source     = "./modules/github-ci-role"
+  repository = "Tietokilta/oldweb-static"
+  subject    = "repo:Tietokilta/oldweb-static:environment:production"
+  role_assignments = [
+    {
+      scope                = module.oldweb.static_site_storage_account_id
+      role_definition_name = "Storage Blob Data Contributor"
+    },
+    {
+      # to look up the static website endpoint that the deploy checks
+      scope                = module.oldweb.static_site_storage_account_id
+      role_definition_name = "Reader"
+    }
+  ]
+}
+
 module "backup_storage_identity" {
   source = "./modules/backup-storage-identity"
 }
@@ -561,7 +576,10 @@ output "github_actions_azure_client_ids" {
   description = "Mapping of GitHub repositories to their AZURE_CLIENT_ID"
   value = merge(
     module.github-ci-roles.azure_client_ids,
-    { "Tietokilta/histotik" = module.histotik_github_ci.client_id }
+    {
+      "Tietokilta/histotik"      = module.histotik_github_ci.client_id
+      "Tietokilta/oldweb-static" = module.oldweb_github_ci.client_id
+    }
   )
 }
 

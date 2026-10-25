@@ -91,19 +91,3 @@ resource "azurerm_linux_web_app" "oldweb_backend" {
 
   }
 }
-
-module "oldweb_hostname" {
-  source = "../app_service_hostname"
-
-  subdomain                       = var.subdomain
-  root_zone_name                  = var.root_zone_name
-  custom_domain_verification_id   = azurerm_linux_web_app.oldweb_backend.custom_domain_verification_id
-  app_service_name                = azurerm_linux_web_app.oldweb_backend.name
-  app_service_resource_group_name = var.tikweb_rg_name
-  app_service_location            = var.tikweb_rg_location
-  app_service_default_hostname    = azurerm_linux_web_app.oldweb_backend.default_hostname
-  acme_account_key                = var.acme_account_key
-  certificate_name                = "tik-oldweb-cert-${terraform.workspace}"
-  cloudflare_zone_id              = var.cloudflare_zone_id
-  cloudflare_api_token            = var.cloudflare_api_token
-}
