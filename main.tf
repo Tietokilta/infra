@@ -490,6 +490,18 @@ module "registry" {
   cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
 }
 
+resource "azurerm_key_vault_secret" "registry_oidc_signing_key" {
+  name         = "registry-oidc-signing-key"
+  value        = module.registry.oidc_signing_key_pem
+  key_vault_id = module.keyvault.keyvault_id
+}
+
+resource "azurerm_key_vault_secret" "registry_oidc_cookie_key" {
+  name         = "registry-oidc-cookie-key"
+  value        = module.registry.oidc_cookie_key
+  key_vault_id = module.keyvault.keyvault_id
+}
+
 module "oldweb" {
   source               = "./modules/oldweb"
   environment          = "prod"
