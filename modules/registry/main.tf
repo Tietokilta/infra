@@ -99,10 +99,19 @@ module "app_service_hostname" {
 resource "tls_private_key" "oidc_signing" {
   algorithm = "RSA"
   rsa_bits  = 2048
+
+  # A new key invalidates every issued token; replace it only on purpose (see the rotation note)
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Secret for signing the OIDC provider's cookies
 resource "random_password" "oidc_cookie_key" {
   length  = 48
   special = false
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
