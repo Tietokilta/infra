@@ -64,6 +64,12 @@ resource "azurerm_linux_web_app" "registry" {
     RP_NAME   = "Tietokilta Rekisteri"
     RP_ID     = module.app_service_hostname.fqdn
     RP_ORIGIN = "https://${module.app_service_hostname.fqdn}"
+
+    # OpenID Connect provider (sign in to guild apps with Rekisteri). Keys are generated below and
+    # also stored in Key Vault by the root module.
+    OIDC_ENABLED         = "true"
+    OIDC_SIGNING_KEY_JWK = base64encode(tls_private_key.oidc_signing.private_key_pem)
+    OIDC_COOKIE_KEYS     = random_password.oidc_cookie_key.result
   }
 
   lifecycle {
@@ -86,4 +92,26 @@ module "app_service_hostname" {
   certificate_name                = "tik-registry-cert-${var.environment}"
   cloudflare_zone_id              = var.cloudflare_zone_id
   cloudflare_api_token            = var.cloudflare_api_token
+}
+
+# OIDC token signing key. To rotate, add a new key and put its PEM first in OIDC_SIGNING_KEY_JWK
+# (Base64 of the concatenated PEMs), keeping the old one until its tokens have expired.
+resource "tls_private_key" "oidc_signing" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+
+  # A new key invalidates every issued token; replace it only on purpose (see the rotation note)
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# Secret for signing the OIDC provider's cookies
+resource "random_password" "oidc_cookie_key" {
+  length  = 48
+  special = false
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
