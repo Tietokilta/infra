@@ -91,6 +91,14 @@ resource "cloudflare_ruleset" "cache_rules" {
         browser_ttl = { mode = "respect_origin" }
         # Otherwise Cloudflare drops the pages' strong ETags, so they cannot be revalidated with 304
         respect_strong_etags = true
+        # Strong ETags stop Cloudflare from recompressing, so keep one copy per compression;
+        # otherwise a first request without compression is served uncompressed to everyone
+        vary = {
+          default = { action = "passthrough" }
+          headers = {
+            accept-encoding = { action = "normalize" }
+          }
+        }
       }
     },
     {
