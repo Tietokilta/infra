@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05-small";
     systems.url = "github:nix-systems/default";
     tikbots = {
       url = "github:Tietokilta/tikbots";
