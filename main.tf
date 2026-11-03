@@ -666,7 +666,7 @@ module "running_challenge" {
   acme_account_key        = module.common.acme_account_key
   client_id               = module.keyvault.secrets["running-challenge-client-id"]
   client_secret           = module.keyvault.secrets["running-challenge-client-secret"]
-  challenge_start         = "2026-11-03T00:00:00+02:00"
+  challenge_start         = "2026-10-01T00:00:00+03:00"
   challenge_end           = "2027-01-01T00:00:00+02:00"
   cloudflare_zone_id      = module.cloudflare.zone_id
   cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
