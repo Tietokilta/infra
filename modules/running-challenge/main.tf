@@ -1,3 +1,8 @@
+resource "random_password" "strava_webhook_verify_token" {
+  length  = 32
+  special = false
+}
+
 module "service_database" {
   source = "../service_database"
 
@@ -33,18 +38,20 @@ resource "azurerm_linux_web_app" "running_challenge" {
   https_only = true
 
   app_settings = {
-    WEBSITES_PORT = 3000
-    PORT          = 3000
-    CLUB_ID       = var.club_id
-    CLIENT_ID     = var.client_id
-    CLIENT_SECRET = var.client_secret
-    REFRESH_TOKEN = var.refresh_token
-    PGHOST        = var.postgres_server_fqdn
-    PGPORT        = 5432
-    PGDATABASE    = module.service_database.db_name
-    PGUSER        = module.service_database.db_user
-    PGPASSWORD    = module.service_database.db_password
-    PGSSLMODE     = "require"
+    WEBSITES_PORT               = 3000
+    PORT                        = 3000
+    CLIENT_ID                   = var.client_id
+    CLIENT_SECRET               = var.client_secret
+    PUBLIC_URL                  = "https://${var.subdomain}.${var.root_zone_name}"
+    STRAVA_WEBHOOK_VERIFY_TOKEN = random_password.strava_webhook_verify_token.result
+    CHALLENGE_START             = var.challenge_start
+    CHALLENGE_END               = var.challenge_end
+    PGHOST                      = var.postgres_server_fqdn
+    PGPORT                      = 5432
+    PGDATABASE                  = module.service_database.db_name
+    PGUSER                      = module.service_database.db_user
+    PGPASSWORD                  = module.service_database.db_password
+    PGSSLMODE                   = "require"
   }
 
   lifecycle {

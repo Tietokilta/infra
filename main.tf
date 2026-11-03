@@ -189,7 +189,6 @@ module "keyvault" {
     "cloudflare-api-token",
     "running-challenge-client-id",
     "running-challenge-client-secret",
-    "running-challenge-refresh-token",
     "kurssikone-sisu-api-key",
     "kurssikone-admin-secret",
     "ufositsit-contact-telegram",
@@ -667,8 +666,8 @@ module "running_challenge" {
   acme_account_key        = module.common.acme_account_key
   client_id               = module.keyvault.secrets["running-challenge-client-id"]
   client_secret           = module.keyvault.secrets["running-challenge-client-secret"]
-  refresh_token           = module.keyvault.secrets["running-challenge-refresh-token"]
-  club_id                 = "1997937"
+  challenge_start         = "2026-11-03T00:00:00+02:00"
+  challenge_end           = "2027-01-01T00:00:00+02:00"
   cloudflare_zone_id      = module.cloudflare.zone_id
   cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
 }
