@@ -51,13 +51,3 @@ variable "client_secret" {
   type      = string
   sensitive = true
 }
-
-variable "refresh_token" {
-  type      = string
-  sensitive = true
-}
-
-variable "club_id" {
-  type    = string
-  default = "1997937"
-}
