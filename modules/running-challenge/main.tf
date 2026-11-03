@@ -44,6 +44,8 @@ resource "azurerm_linux_web_app" "running_challenge" {
     CLIENT_SECRET               = var.client_secret
     PUBLIC_URL                  = "https://${var.subdomain}.${var.root_zone_name}"
     STRAVA_WEBHOOK_VERIFY_TOKEN = random_password.strava_webhook_verify_token.result
+    CHALLENGE_START             = var.challenge_start
+    CHALLENGE_END               = var.challenge_end
     PGHOST                      = var.postgres_server_fqdn
     PGPORT                      = 5432
     PGDATABASE                  = module.service_database.db_name

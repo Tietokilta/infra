@@ -51,3 +51,13 @@ variable "client_secret" {
   type      = string
   sensitive = true
 }
+
+variable "challenge_start" {
+  type        = string
+  description = "Challenge start (inclusive), ISO 8601 with offset, e.g. 2026-11-03T00:00:00+02:00."
+}
+
+variable "challenge_end" {
+  type        = string
+  description = "Challenge end (exclusive), ISO 8601 with offset. All Strava data is purged 7 days after it."
+}
