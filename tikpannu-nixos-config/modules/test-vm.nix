@@ -81,6 +81,9 @@ in
 
     services.umami.settings.APP_SECRET_FILE = lib.mkForce umamiAppSecretFile.outPath;
 
+    # Would otherwise pull the production system and switch the VM to it
+    services.tik-update-host.enable = lib.mkForce false;
+
     systemd.tmpfiles.rules = [
       "d ${config.services.tik-backup.storageboxMountPath} 0700 backup backup -"
     ];

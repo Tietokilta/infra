@@ -83,3 +83,13 @@ external-endpoints:
       - type: telegram
         send-on-resolved: false
         failure-threshold: 1
+  # Pull deployments of tikpannu (tikpannu-nixos-config/modules/deployment.nix),
+  # reported every ~5 min. Uses the same token as `backups` (sops: gatus-token).
+  - name: tikpannu-update
+    token: "$BACKUPS_TOKEN"
+    heartbeat:
+      interval: 30m
+    alerts:
+      - type: telegram
+        send-on-resolved: true
+        failure-threshold: 2

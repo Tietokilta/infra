@@ -1,10 +1,11 @@
+# Builds all flake checks (NixOS tests and the tikpannu system) and pushes them
+# to Cachix. On main, the tikpannu system is pinned in Cachix, from where
+# tikpannu pulls and switches to it (tikpannu-nixos-config/modules/deployment.nix).
 name: Build & Deploy tikpannu
 on:
+  # No path filter, so that this can be a required check. Outputs that are
+  # already in the cache are skipped.
   pull_request:
-    paths:
-      - "flake.*"
-      - tikpannu-nixos-config/**/*
-      - .github/workflows/deploy-pannu.yml
   push:
     branches:
       - main
@@ -15,89 +16,50 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
-  actions: write
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/main'
+    outputs:
+      toplevel: ${{ steps.toplevel.outputs.path }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
       - name: Install Nix
         uses: cachix/install-nix-action@v31
-      - name: Restore and save /nix/store
-        uses: nix-community/cache-nix-action@v7
+      - name: Set up Cachix
+        uses: cachix/cachix-action@v16
         with:
-          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
-          restore-prefixes-first-match: nix-${{ runner.os }}
-          purge: true
-          purge-prefixes: nix-${{ runner.os }}
-          purge-primary-key: never
-      - name: Run flake checks
+          name: tietokilta
+          # Not available in PRs from forks, which then only read from the cache
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - name: Build flake checks
         run: |
-          nix flake check -L
-          # Add GC roots
-          nix flake show --json | jq ".checks.\"$(uname -m)-linux\" | keys[]" | \
-            xargs -I{} nix build .#checks.x86_64-linux."{}" --out-link "{}"
-      - name: Build NixOS Configuration
+          nix run --inputs-from . nixpkgs#nix-fast-build -- \
+            --no-nom --no-link --skip-cached
+      - name: Get tikpannu system path
+        id: toplevel
         run: |
-          nix build .#nixosConfigurations.tikpannu.config.system.build.toplevel -L --out-link tikpannu-config
-      - name: Nix GC
-        run: |
-          nix-collect-garbage
-  deploy:
+          echo "path=$(nix eval --raw ".#checks.$(uname -m)-linux.host-tikpannu.outPath")" >> "$GITHUB_OUTPUT"
+  publish:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
       - name: Install Nix
         uses: cachix/install-nix-action@v31
-      - name: Restore and save /nix/store
-        uses: nix-community/cache-nix-action@v7
+      - name: Set up Cachix
+        uses: cachix/cachix-action@v16
         with:
-          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
-          restore-prefixes-first-match: nix-${{ runner.os }}
-          purge: true
-          purge-prefixes: nix-${{ runner.os }}
-          purge-primary-key: never
-      - name: Configure SSH
+          name: tietokilta
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          skipPush: true
+      - name: Pin tikpannu system
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+          TOPLEVEL: ${{ needs.build.outputs.toplevel }}
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-
-          cat >> ~/.ssh/config <<EOF
-          Host pannu.tietokilta.fi
-            IdentityFile ~/.ssh/deploy_key
-            User deploy
-          EOF
-      - name: Run flake checks
-        run: |
-          nix flake check -L
-          # Add GC roots
-          nix flake show --json | jq ".checks.\"$(uname -m)-linux\" | keys[]" | \
-            xargs -I{} nix build .#checks.x86_64-linux."{}" --out-link "{}"
-      - name: Build and Deploy NixOS Configuration
-        run: |
-          nix build .#nixosConfigurations.tikpannu.config.system.build.toplevel -L --out-link tikpannu-config
-
-          nix copy .#nixosConfigurations.tikpannu.config.system.build.toplevel -L \
-            --to ssh://pannu.tietokilta.fi
-
-          ssh pannu.tietokilta.fi 'sudo $(realpath $(which rebuild-from-infra))'
-      - name: Nix GC
-        run: |
-          nix-collect-garbage
-      - name: Cleanup
-        if: always()
-        run: |
-          rm -f ~/.ssh/deploy_key
+          # Fails if the closure did not make it to the cache
+          nix path-info --store https://tietokilta.cachix.org "$TOPLEVEL"
+          cachix pin tietokilta tikpannu "$TOPLEVEL" --keep-revisions 10

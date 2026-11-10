@@ -6,43 +6,26 @@
 }:
 let
   cfg = config.services.tik-backup;
-  gatusEndpoint = "https://status.tietokilta.fi/api/v1/endpoints/_backups/external";
+  gatus = import ../../lib/gatus.nix { inherit pkgs lib; };
   stagingServiceNames = map (name: lib.removeSuffix ".service" name) cfg.stagingServices;
-  mkHeartbeatCommand =
-    {
-      success,
-      error ? "unknown",
-    }:
-    /* bash */ ''
-      ${lib.getExe pkgs.curl} \
-        --fail-with-body \
-        --silent \
-        --show-error \
-        -X POST \
-        -H "Authorization: Bearer ''${GATUS_TOKEN}" \
-        --url-query "success=${lib.boolToString success}" \
-        --url-query "error=${error}" \
-        ${gatusEndpoint}
-    '';
 
-  mkHeartbeatService = success: {
-    serviceConfig = {
-      Type = "oneshot";
-      User = "backup";
-      Group = "backup";
-      EnvironmentFile = config.sops.templates.gatus-token-envfile.path;
-      ExecStart = mkHeartbeatCommand {
-        inherit success;
-        error = "%I";
+  mkHeartbeatService =
+    success:
+    gatus.mkHeartbeatService {
+      endpoint = "_backups";
+      inherit success;
+      error = "%I";
+      environmentFile = config.sops.templates.gatus-token-envfile.path;
+      serviceConfig = {
+        User = "backup";
+        Group = "backup";
       };
     };
-  };
 in
 {
   config = lib.mkIf cfg.enable {
-    sops.secrets.gatus-token = {
-      sopsFile = ../secrets/backup.yaml;
-    };
+    # In the default sops file, shared with update-host (../deployment.nix)
+    sops.secrets.gatus-token = { };
     sops.templates.gatus-token-envfile = {
       owner = "backup";
       content = ''
