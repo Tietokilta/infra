@@ -12,7 +12,7 @@ module "service_database" {
 }
 
 resource "azurerm_linux_web_app" "pakuvaraus" {
-  name                = "tik-pakuvaraus-${terraform.workspace}"
+  name                = "tik-pakuvaraus-${var.environment}"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
   service_plan_id     = var.app_service_plan_id
@@ -40,12 +40,12 @@ resource "azurerm_linux_web_app" "pakuvaraus" {
     PORT             = 3000
     WEBSITES_PORT    = 3000
     BIND_ADDR        = "0.0.0.0"
-    ALLOWED_ORIGINS  = "http://localhost:3000,https://tietokilta.fi"
+    ALLOWED_ORIGINS  = "https://tietokilta.fi"
     RUST_LOG         = "pakuvaraus=debug,tower_http=debug,axum::rejection=trace"
     RUST_LOG_STYLE   = "never"
     DATABASE_URL     = "postgresql://${module.service_database.db_user}:${urlencode(module.service_database.db_password)}@${var.postgres_server_fqdn}:5432/${module.service_database.db_name}"
     APPROVER_EMAIL   = "pakuvastaava@tietokilta.fi"
-    EMAIL_ENABLED    = 0
+    EMAIL_ENABLED    = 1
     MAILGUN_URL      = "${module.mailgun.api_url_with_domain}/messages"
     MAILGUN_API_USER = "api"
     MAILGUN_API_KEY  = var.mailgun_api_key
@@ -72,7 +72,7 @@ module "app_service_hostname" {
   app_service_location            = var.resource_group_location
   app_service_default_hostname    = azurerm_linux_web_app.pakuvaraus.default_hostname
   acme_account_key                = var.acme_account_key
-  certificate_name                = "tik-pakuvaraus-cert-${terraform.workspace}"
+  certificate_name                = "tik-pakuvaraus-cert-${var.environment}"
   cloudflare_zone_id              = var.cloudflare_zone_id
   cloudflare_api_token            = var.cloudflare_api_token
 }
