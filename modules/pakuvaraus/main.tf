@@ -70,7 +70,7 @@ module "app_service_hostname" {
   app_service_name                = azurerm_linux_web_app.pakuvaraus.name
   app_service_resource_group_name = var.resource_group_name
   app_service_location            = var.resource_group_location
-  app_service_default_hostname    = azurerm_linux_web_app.pakuvarus.default_hostname
+  app_service_default_hostname    = azurerm_linux_web_app.pakuvaraus.default_hostname
   acme_account_key                = var.acme_account_key
   certificate_name                = "tik-pakuvaraus-cert-${terraform.workspace}"
   cloudflare_zone_id              = var.cloudflare_zone_id
