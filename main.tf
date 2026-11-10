@@ -477,7 +477,7 @@ module "pakuvaraus" {
   source = "./modules/pakuvaraus"
 
   root_zone_name          = cloudflare_zone.tietokilta.name
-  subdomain               = "pakuvaraus"
+  subdomain               = "paku"
   postgres_server_fqdn    = module.common.postgres_server_fqdn
   postgres_server_id      = module.common.postgres_server_id
   mailgun_api_key         = module.keyvault.secrets["mailgun-api-key"]
