@@ -472,6 +472,23 @@ module "invoicing" {
   cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
 }
 
+module "pakuvaraus" {
+  source = "./modules/pakuvaraus"
+
+  root_zone_name          = cloudflare_zone.tietokilta.name
+  subdomain               = "paku"
+  postgres_server_fqdn    = module.common.postgres_server_fqdn
+  postgres_server_id      = module.common.postgres_server_id
+  mailgun_api_key         = module.keyvault.secrets["mailgun-api-key"]
+  resource_group_location = local.resource_group_location
+  resource_group_name     = module.common.resource_group_name
+  app_service_plan_id     = module.common.tikweb_app_plan_id
+  acme_account_key        = module.common.acme_account_key
+  cloudflare_zone_id      = module.cloudflare.zone_id
+  cloudflare_api_token    = module.keyvault.secrets["cloudflare-api-token"]
+  environment             = "prod"
+}
+
 module "registry" {
   source                  = "./modules/registry"
   resource_group_location = local.resource_group_location
@@ -540,6 +557,7 @@ module "github-ci-roles" {
   repo_app_service_map = {
     "Tietokilta/web" : [module.web.web_app_id]
     "Tietokilta/laskugeneraattori" : [module.invoicing.invoicing_app_id]
+    "Tietokilta/pakuvaraus" : [module.pakuvaraus.pakuvaraus_app_id]
     "Tietokilta/ilmomasiina" : [module.ilmo.app_id]
     "Tietokilta/ISOpistekortti" : [module.isopistekortti.app_id]
     "Tietokilta/juvusivu" : [module.juvusivu.juvusivu_app_id]
