@@ -27,7 +27,7 @@ graph TB
     end
 
     CI -->|manages| Azure
-    CI -->|deploys| Tikpannu
+    CI -->|builds, pulled by| Tikpannu
     Azure --- KV
 ```
 
@@ -116,6 +116,7 @@ graph LR
 
     PR -->|approved| Main
     Apply -->|Azure resources| Azure[Azure Cloud]
-    Deploy -->|nixos-rebuild| Pannu[tikpannu]
+    Deploy -->|build + Cachix pin| Cachix[(Cachix)]
+    Pannu[tikpannu] -->|pulls every 5 min| Cachix
     Apps -->|deploy to| Azure
 ```

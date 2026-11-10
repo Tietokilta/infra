@@ -62,11 +62,57 @@ The `envFile` option similarly sources environment variables from the specified
 file into the service. This option should be used with sops-nix for secrets.
 
 ## Deployment
-We have a [GitHub Actions workflow](../.github/workflows/deploy-pannu.yml) that
-automatically deploys any configuration changes pushed to the `main` branch. This
-should be the preferred method of deployment.
+Deployment is pull-based, modelled after
+[nix-community/infra](https://github.com/nix-community/infra). Nothing is pushed
+to the server, and the flake is never evaluated on it:
 
-If required, `nixos-rebuild switch` can be used like so, provided you have SSH access:
+1. The [GitHub Actions workflow](../.github/workflows/deploy-pannu.yml) builds
+   all flake checks, including the system (`checks.x86_64-linux.host-tikpannu`),
+   and pushes them to the [`tietokilta` Cachix cache](https://app.cachix.org/cache/tietokilta).
+2. On `main`, it pins the system's store path in Cachix as `tikpannu`.
+3. Every 5 minutes, the `update-host` service on tikpannu
+   ([./modules/deployment.nix](./modules/deployment.nix)) reads the pin,
+   downloads the system from Cachix (Nix checks its signature) and runs
+   `nixos-rebuild switch --store-path`.
+
+Every run is reported to [status.tietokilta.fi](https://status.tietokilta.fi)
+as `tikpannu-update`. A failed update shows up as a failure there, and is sent
+to the alert Telegram channel. If no run has been reported in 30 minutes (the
+timer is stopped or the server is down), the endpoint goes red as well.
+
+Flake inputs are updated by [Renovate](../renovate.json): a `flake.lock` update
+PR is opened every Monday morning and merged automatically once CI passes.
+`tikbots` updates are merged as soon as they appear. NixOS release upgrades
+(e.g. `nixos-26.05` → `nixos-26.11`) are never merged automatically.
+
+If an update changes the kernel, initrd or kernel modules, `update-host` still
+switches to it right away, and schedules a reboot for 03:00 Europe/Helsinki
+(`services.tik-update-host.rebootTime`, before the 04:00 backups) as the
+transient `update-host-reboot.timer`.
+
+Useful commands on the server:
+```bash
+systemctl status update-host     # last run
+journalctl -u update-host        # logs
+readlink /run/current-system     # currently running system
+
+# Show or cancel a scheduled reboot. A cancelled reboot is scheduled again
+# by the next update that still differs from the booted kernel.
+systemctl list-timers update-host-reboot.timer
+systemctl stop update-host-reboot.timer
+
+# Pause automatic deployments (e.g. while testing something manually).
+# Otherwise, anything deployed manually is overwritten within ~5 minutes.
+# Gatus will report tikpannu-update as down after 30 minutes.
+systemctl stop update-host.timer
+systemctl start update-host.timer  # resume
+```
+
+To roll back, revert the change on `main`. In an emergency, stop the timer and
+run `nixos-rebuild switch --rollback` on the server.
+
+If required, `nixos-rebuild switch` can be used like so, provided you have SSH
+access. Remember to pause automatic deployments first:
 ```bash
 # The `--flake` argument has two parts separated by a `#`
 # First a path to the directory containing the flake.nix file to be used,

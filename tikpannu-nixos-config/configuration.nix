@@ -7,6 +7,9 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  # Pull-based deployment from CI, see ./modules/deployment.nix
+  services.tik-update-host.enable = true;
+
   nix = {
     settings = {
       experimental-features = [

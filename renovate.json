@@ -1,0 +1,42 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "timezone": "Europe/Helsinki",
+  "enabledManagers": ["nix", "github-actions"],
+  "nix": {
+    "enabled": true
+  },
+  "platformAutomerge": false,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": ["before 4am on monday"]
+  },
+  "packageRules": [
+    {
+      "description": "Flake inputs are updated together by the weekly lock file maintenance",
+      "matchManagers": ["nix"],
+      "matchUpdateTypes": ["digest"],
+      "enabled": false
+    },
+    {
+      "description": "Ship our own bots as soon as they change",
+      "matchManagers": ["nix"],
+      "matchDepNames": ["tikbots"],
+      "matchUpdateTypes": ["digest"],
+      "enabled": true,
+      "automerge": true
+    },
+    {
+      "description": "NixOS release upgrades (e.g. nixos-26.05 -> nixos-26.11) need a human",
+      "matchManagers": ["nix"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "automerge": false
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "automerge": true
+    }
+  ]
+}

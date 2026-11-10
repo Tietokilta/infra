@@ -54,6 +54,15 @@
               '';
         }
         // (import ./tikpannu-nixos-config/tests { inherit pkgs inputs; })
+        # Build every host in CI, `host-<name>` (pattern from nix-community/infra)
+        //
+          nixpkgs.lib.mapAttrs'
+            (name: host: nixpkgs.lib.nameValuePair "host-${name}" host.config.system.build.toplevel)
+            (
+              nixpkgs.lib.filterAttrs (
+                _: host: host.pkgs.stdenv.hostPlatform.system == pkgs.stdenv.hostPlatform.system
+              ) self.nixosConfigurations
+            )
       );
 
       formatter = forAllSystems (
