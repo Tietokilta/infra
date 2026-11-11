@@ -35,7 +35,7 @@ nix develop
 # Format all code (Nix, Terraform, YAML)
 nix fmt
 
-# Run flake checks including NixOS tests
+# Run flake checks including NixOS tests and the tikpannu system build
 nix flake check -L
 
 # Build NixOS configuration locally
@@ -44,7 +44,8 @@ nix build .#nixosConfigurations.tikpannu.config.system.build.toplevel -L
 # Build and run VM for local testing
 nix run .#nixosConfigurations.tikpannu.config.system.build.vm
 
-# Manual deployment (prefer CI)
+# Manual deployment (prefer CI; stop update-host.timer on the server first,
+# or the pull deployment will overwrite it within ~5 min)
 nixos-rebuild switch --target-host root@pannu.tietokilta.fi --flake .#tikpannu
 ```
 
@@ -86,7 +87,8 @@ Secrets managed via sops-nix. Use `sops updatekeys <file>` to add new key access
 ## CI/CD Workflows
 
 - **terraform.yml**: Runs `plan` on PRs, `apply` on main (for non-Nix changes)
-- **deploy-pannu.yml**: Builds and deploys NixOS config on main (for `*.nix` changes)
+- **deploy-pannu.yml**: Builds all flake checks (incl. the tikpannu system) with `nix-fast-build`, pushes to the `tietokilta` Cachix cache; on main, pins the system as `tikpannu` in Cachix. tikpannu pulls the pin and switches to it every 5 min (`update-host` in `tikpannu-nixos-config/modules/deployment.nix`, status reported to Gatus as `tikpannu-update`), and schedules a reboot for 03:00 Europe/Helsinki if the kernel changed. There is no push/SSH deploy.
+- **Renovate** (`renovate.json`): weekly `flake.lock` maintenance and GitHub Actions updates, auto-merged when CI is green
 - **format-check.yml**: Validates formatting via `nix build .#checks.<system>.formatting`
 
 ## Key Patterns
