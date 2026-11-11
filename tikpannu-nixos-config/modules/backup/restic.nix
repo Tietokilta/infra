@@ -136,6 +136,20 @@ in
       };
     };
 
+    # Report every step of the backup to https://status.tietokilta.fi, see ../gatus.nix
+    tik.gatus.alertServices =
+      lib.genAttrs
+        (
+          map (lib.removeSuffix ".service") cfg.stagingServices
+          ++ [
+            "restic-backups-${cfg.resticBackupName}"
+            "pre-${cfg.resticBackupName}-cleanup"
+          ]
+        )
+        (_: {
+          endpoint = "_backups";
+        });
+
     users = {
       users.backup = {
         group = "backup";
