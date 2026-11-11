@@ -10,7 +10,8 @@
 # If the new system has a different kernel, initrd or kernel modules, a reboot
 # is scheduled for `rebootTime`.
 #
-# Every run is reported to https://status.tietokilta.fi (`tikpannu-update`).
+# Every run is reported to https://status.tietokilta.fi (`tikpannu-update`,
+# see ./gatus.nix).
 {
   config,
   lib,
@@ -19,7 +20,6 @@
 }:
 let
   cfg = config.services.tik-update-host;
-  gatus = import ../lib/gatus.nix { inherit pkgs lib; };
 
   cacheName = "tietokilta";
   pinName = config.networking.hostName;
@@ -77,15 +77,6 @@ let
       done
     '';
   };
-
-  mkHeartbeatService =
-    success:
-    gatus.mkHeartbeatService {
-      endpoint = "_tikpannu-update";
-      inherit success;
-      error = lib.optionalString (!success) "update-host failed, see journalctl -u update-host";
-      environmentFile = config.sops.templates.update-host-gatus-envfile.path;
-    };
 in
 {
   options.services.tik-update-host = {
@@ -108,11 +99,7 @@ in
       trusted-public-keys = [ "tietokilta.cachix.org-1:Vz36YHwKEz8q6aq+UI8AqE1ceh/ALsRT2ICR819YHUY=" ];
     };
 
-    # In the default sops file, shared with the backup heartbeats (Gatus `$BACKUPS_TOKEN`)
-    sops.secrets.gatus-token = { };
-    sops.templates.update-host-gatus-envfile.content = ''
-      GATUS_TOKEN="${config.sops.placeholder.gatus-token}"
-    '';
+    tik.gatus.alertServices.update-host.endpoint = "_tikpannu-update";
 
     systemd.services = {
       update-host = {
@@ -122,16 +109,11 @@ in
         # Don't let switch-to-configuration stop or restart the unit running it
         restartIfChanged = false;
         unitConfig.X-StopOnRemoval = false;
-        onSuccess = [ "update-host-success.service" ];
-        onFailure = [ "update-host-failure.service" ];
         serviceConfig = {
           Type = "oneshot";
           ExecStart = lib.getExe update-host;
         };
       };
-
-      update-host-success = mkHeartbeatService true;
-      update-host-failure = mkHeartbeatService false;
     };
 
     systemd.timers.update-host = {

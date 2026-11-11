@@ -27,7 +27,6 @@ in
     ./storagebox.nix
     ./secrets.nix
     ./restic.nix
-    ./gatus.nix
   ];
 
   options.services.tik-backup = {

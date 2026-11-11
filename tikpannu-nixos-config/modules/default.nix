@@ -5,6 +5,7 @@
     ./tikbots
     ./umami
     ./deployment.nix
+    ./gatus.nix
     ./nginx.nix
     ./test-vm.nix
     ./backup
