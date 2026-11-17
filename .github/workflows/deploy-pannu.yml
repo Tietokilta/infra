@@ -22,8 +22,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      toplevel: ${{ steps.toplevel.outputs.path }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -38,27 +36,11 @@ jobs:
       - name: Build flake checks
         run: |
           nix flake check -L
-      - name: Get tikpannu system path
-        id: toplevel
+      - name: Publish tikpannu system
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
-          echo "path=$(nix eval --raw ".#checks.$(uname -m)-linux.host-tikpannu.outPath")" >> "$GITHUB_OUTPUT"
-  publish:
-    needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
-      - name: Set up Cachix
-        uses: cachix/cachix-action@v16
-        with:
-          name: tietokilta
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-          skipPush: true
-      - name: Pin tikpannu system
-        env:
-          TOPLEVEL: ${{ needs.build.outputs.toplevel }}
-        run: |
-          # Fails if the closure did not make it to the cache
-          nix path-info --store https://tietokilta.cachix.org "$TOPLEVEL"
+          TOPLEVEL=$(nix eval --raw ".#checks.$(uname -m)-linux.host-tikpannu.outPath")
+          # The Cachix daemon only finishes pushing at the end of the job, so
+          # push the closure explicitly before tikpannu can see the pin
+          cachix push tietokilta "$TOPLEVEL"
           cachix pin tietokilta tikpannu "$TOPLEVEL" --keep-revisions 10
