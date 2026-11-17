@@ -1,4 +1,4 @@
-FROM ghcr.io/twin/gatus:stable
+FROM ghcr.io/twin/gatus:v5.38.0
 
 COPY config.yaml /app/config.yaml
 

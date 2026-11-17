@@ -36,7 +36,7 @@ resource "azurerm_linux_web_app" "vaultwarden_app" {
 
     application_stack {
       docker_registry_url = "https://docker.io"
-      docker_image_name   = "vaultwarden/server:latest"
+      docker_image_name   = "vaultwarden/server:1.37.5"
     }
   }
   # Mount the Azure File Share

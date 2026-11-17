@@ -2,10 +2,21 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "timezone": "Europe/Helsinki",
-  "enabledManagers": ["nix", "github-actions"],
+  "enabledManagers": ["nix", "github-actions", "custom.regex", "dockerfile"],
   "nix": {
     "enabled": true
   },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Version-pinned container images of Azure web apps (e.g. Ghost)",
+      "managerFilePatterns": ["/\\.tf$/"],
+      "matchStrings": [
+        "docker_registry_url\\s*=\\s*\"(?<registryUrl>[^\"]+)\"\\s*docker_image_name\\s*=\\s*\"(?<depName>[^\":]+):(?<currentValue>\\d[^\"]*)\""
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
   "platformAutomerge": false,
   "lockFileMaintenance": {
     "enabled": true,
@@ -32,6 +43,14 @@
       "matchManagers": ["nix"],
       "matchUpdateTypes": ["major", "minor", "patch"],
       "automerge": false
+    },
+    {
+      "description": "Third-party container image (Ghost, Vaultwarden, Gatus) minor/patch updates go out weekly once CI is green; majors need a human",
+      "matchManagers": ["custom.regex", "dockerfile"],
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "schedule": ["before 4am on monday"]
     },
     {
       "matchManagers": ["github-actions"],
