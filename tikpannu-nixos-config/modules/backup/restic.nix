@@ -126,6 +126,8 @@ in
     };
 
     systemd.services."pre-${cfg.resticBackupName}-cleanup" = {
+      requires = [ "tik-backup-staging-dirs.service" ];
+      after = [ "tik-backup-staging-dirs.service" ];
       requiredBy = cfg.stagingServices;
       before = cfg.stagingServices;
       serviceConfig = {

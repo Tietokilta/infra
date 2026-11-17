@@ -37,8 +37,7 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - name: Build flake checks
         run: |
-          nix run --inputs-from . nixpkgs#nix-fast-build -- \
-            --no-nom --no-link --skip-cached
+          nix flake check -L
       - name: Get tikpannu system path
         id: toplevel
         run: |

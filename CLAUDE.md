@@ -87,7 +87,7 @@ Secrets managed via sops-nix. Use `sops updatekeys <file>` to add new key access
 ## CI/CD Workflows
 
 - **terraform.yml**: Runs `plan` on PRs, `apply` on main (for non-Nix changes)
-- **deploy-pannu.yml**: Builds all flake checks (incl. the tikpannu system) with `nix-fast-build`, pushes to the `tietokilta` Cachix cache; on main, pins the system as `tikpannu` in Cachix. tikpannu pulls the pin and switches to it every 5 min (`update-host` in `tikpannu-nixos-config/modules/deployment.nix`, status reported to Gatus as `tikpannu-update`), and schedules a reboot for 03:00 Europe/Helsinki if the kernel changed. There is no push/SSH deploy.
+- **deploy-pannu.yml**: Builds all flake checks (incl. the tikpannu system) with `nix flake check -L`, pushes to the `tietokilta` Cachix cache; on main, pins the system as `tikpannu` in Cachix. tikpannu pulls the pin and switches to it every 5 min (`update-host` in `tikpannu-nixos-config/modules/deployment.nix`, status reported to Gatus as `tikpannu-update`), and schedules a reboot for 03:00 Europe/Helsinki if the kernel changed. There is no push/SSH deploy.
 - **Renovate** (`renovate.json`): weekly `flake.lock` maintenance and GitHub Actions updates, auto-merged when CI is green
 - **format-check.yml**: Validates formatting via `nix build .#checks.<system>.formatting`
 
