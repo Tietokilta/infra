@@ -1,4 +1,23 @@
 {
+  imports = [
+    (
+      { lib, ... }:
+      {
+        options.services.nginx.virtualHosts = lib.mkOption {
+          type = lib.types.attrsOf (
+            lib.types.submodule {
+              config = {
+                http2 = lib.mkForce false;
+                http3 = lib.mkForce false;
+                quic = lib.mkForce false;
+              };
+            }
+          );
+        };
+      }
+    )
+  ];
+
   security.acme = {
     acceptTerms = true;
     defaults.email = "admin@tieto" + "kilta.fi";
