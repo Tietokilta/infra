@@ -55,7 +55,7 @@ let
 
       echo "Updating $current -> $p"
       nix-store --option narinfo-cache-negative-ttl 0 --realise "$p"
-      nixos-rebuild switch --store-path "$p"
+      nixos-rebuild switch --no-reexec --store-path "$p"
 
       for f in kernel initrd kernel-modules; do
         if [[ "$(readlink -f "/run/booted-system/$f")" != "$(readlink -f "$p/$f")" ]]; then
