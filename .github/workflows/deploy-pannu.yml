@@ -39,7 +39,10 @@ jobs:
       - name: Publish tikpannu system
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
-          TOPLEVEL=$(nix eval --raw ".#checks.$(uname -m)-linux.host-tikpannu.outPath")
+          # `nix flake check` skips checks that are already in a cache (e.g.
+          # built in the PR), but `cachix push` and `cachix pin` need the
+          # system in the local store, so substitute it if needed
+          TOPLEVEL=$(nix build --no-link --print-out-paths .#nixosConfigurations.tikpannu.config.system.build.toplevel)
           # The Cachix daemon only finishes pushing at the end of the job, so
           # push the closure explicitly before tikpannu can see the pin
           cachix push tietokilta "$TOPLEVEL"
