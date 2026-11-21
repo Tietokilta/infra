@@ -28,7 +28,7 @@ jobs:
       - name: Install Nix
         uses: cachix/install-nix-action@v31
       - name: Set up Cachix
-        uses: cachix/cachix-action@v16
+        uses: cachix/cachix-action@v17
         with:
           name: tietokilta
           # Not available in PRs from forks, which then only read from the cache
