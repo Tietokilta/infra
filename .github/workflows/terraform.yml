@@ -49,6 +49,37 @@ jobs:
         id: plan
         run: terraform plan -input=false -lock-timeout=10m -no-color -out=tfplan
         continue-on-error: true
+      # Renovate automerges its PRs once this job is green, so hold them to what
+      # such an update should plan: an image bump updates an app in place, and a
+      # provider bump changes nothing at all.
+      - name: Check Renovate plan
+        id: renovate
+        if: startsWith(github.head_ref, 'renovate/') && steps.plan.outcome == 'success'
+        continue-on-error: true
+        env:
+          # Branch of the "terraform providers" group in renovate.json
+          PROVIDERS_BRANCH: renovate/terraform-providers
+        run: |
+          # No -detailed-exitcode: the setup-terraform wrapper turns exit code 2 into 0
+          terraform show -json tfplan > plan.json
+          changes=$(jq -r '.resource_changes // [] | .[]
+            | select(.change.actions != ["no-op"] and .change.actions != ["read"])
+            | "\(.change.actions | join("/")) \(.address)"' plan.json)
+          destroys=$(jq -r '.resource_changes // [] | .[]
+            | select(.change.actions | index("delete"))
+            | "\(.change.actions | join("/")) \(.address)"' plan.json)
+          if [ -n "$destroys" ]; then
+            echo "::error::Renovate PRs must not destroy or replace resources"
+            echo "$destroys"
+            exit 1
+          fi
+          if [ "$GITHUB_HEAD_REF" = "$PROVIDERS_BRANCH" ] && [ -n "$changes" ]; then
+            echo "::error::Provider updates must not change any resources"
+            echo "$changes"
+            exit 1
+          fi
+          echo "Plan changes:"
+          echo "${changes:-none}"
       - name: Generate Plan Output
         id: plan_output
         if: always() && steps.init.outcome == 'success'
@@ -89,6 +120,7 @@ jobs:
           FMT_OUTCOME: ${{ steps.fmt.outcome }}
           VALIDATE_OUTCOME: ${{ steps.validate.outcome }}
           PLAN_OUTCOME: ${{ steps.plan.outcome }}
+          RENOVATE_OUTCOME: ${{ steps.renovate.outcome }}
           STATUS_EMOJI: ${{ steps.plan_output.outputs.status_emoji }}
           STATUS_MESSAGE: ${{ steps.plan_output.outputs.status_message }}
         with:
@@ -108,6 +140,11 @@ jobs:
             const fmtIcon = process.env.FMT_OUTCOME === 'success' ? ':white_check_mark:' : ':x:';
             const validateIcon = process.env.VALIDATE_OUTCOME === 'success' ? ':white_check_mark:' : ':x:';
             const planIcon = process.env.PLAN_OUTCOME === 'success' ? ':white_check_mark:' : ':x:';
+            const renovateOutcome = process.env.RENOVATE_OUTCOME;
+            const renovateIcon = renovateOutcome === 'success' ? ':white_check_mark:' : ':x:';
+            const renovateRow = renovateOutcome && renovateOutcome !== 'skipped'
+              ? [`| :robot: **Renovate plan check** | ${renovateIcon} \`${renovateOutcome}\` |`]
+              : [];
             const statusEmoji = `:${process.env.STATUS_EMOJI}:`;
 
             // Build comment body
@@ -121,6 +158,7 @@ jobs:
               `| :pencil2: **Format** | ${fmtIcon} \`${process.env.FMT_OUTCOME}\` |`,
               `| :mag: **Validate** | ${validateIcon} \`${process.env.VALIDATE_OUTCOME}\` |`,
               `| :book: **Plan** | ${planIcon} \`${process.env.PLAN_OUTCOME}\` |`,
+              ...renovateRow,
               ``,
               `<details><summary><b>Show Plan Output</b></summary>`,
               ``,
@@ -166,12 +204,13 @@ jobs:
               console.log('Created new comment');
             }
       - name: Check Status
-        if: steps.fmt.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.plan.outcome == 'failure'
+        if: steps.fmt.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.plan.outcome == 'failure' || steps.renovate.outcome == 'failure'
         run: |
           echo "::error::One or more Terraform steps failed"
           echo "Format: ${{ steps.fmt.outcome }}"
           echo "Validate: ${{ steps.validate.outcome }}"
           echo "Plan: ${{ steps.plan.outcome }}"
+          echo "Renovate plan check: ${{ steps.renovate.outcome }}"
           exit 1
   apply:
     name: Apply

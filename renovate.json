@@ -2,10 +2,31 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "timezone": "Europe/Helsinki",
-  "enabledManagers": ["nix", "github-actions"],
+  "enabledManagers": [
+    "nix",
+    "github-actions",
+    "custom.regex",
+    "dockerfile",
+    "terraform"
+  ],
   "nix": {
     "enabled": true
   },
+  "terraform": {
+    "description": "Bump the locked provider version while it still satisfies the ~> constraint, widen the constraint only for majors",
+    "rangeStrategy": "update-lockfile"
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Version-pinned container images of Azure web apps (e.g. Ghost)",
+      "managerFilePatterns": ["/\\.tf$/"],
+      "matchStrings": [
+        "docker_registry_url\\s*=\\s*\"(?<registryUrl>[^\"]+)\"\\s*docker_image_name\\s*=\\s*\"(?<depName>[^\":]+):(?<currentValue>\\d[^\"]*)\""
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
   "platformAutomerge": false,
   "lockFileMaintenance": {
     "enabled": true,
@@ -31,6 +52,35 @@
       "description": "NixOS release upgrades (e.g. nixos-26.05 -> nixos-26.11) need a human",
       "matchManagers": ["nix"],
       "matchUpdateTypes": ["major", "minor", "patch"],
+      "automerge": false
+    },
+    {
+      "description": "Third-party container image (Ghost, Vaultwarden, Gatus) minor/patch updates go out weekly once CI is green; majors need a human",
+      "matchManagers": ["custom.regex", "dockerfile"],
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "schedule": ["before 4am on monday"]
+    },
+    {
+      "description": "Provider updates get their own PR below instead of riding along in the flake.lock maintenance PR",
+      "matchManagers": ["terraform"],
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "enabled": false
+    },
+    {
+      "description": "Terraform provider minor/patch updates are grouped weekly and automerged once terraform plan is green; majors need a human. terraform.yml requires an empty plan on this group's branch (renovate/terraform-providers)",
+      "matchManagers": ["terraform"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "terraform providers",
+      "automerge": true,
+      "schedule": ["before 4am on monday"]
+    },
+    {
+      "description": "hetzner/ is applied by hand and CI never plans it, so its updates need a human",
+      "matchManagers": ["terraform"],
+      "matchFileNames": ["hetzner/**"],
+      "groupName": "hetzner terraform providers",
       "automerge": false
     },
     {
