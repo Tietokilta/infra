@@ -83,7 +83,7 @@ jobs:
           fi
       - name: Comment Plan on PR
         if: always() && steps.init.outcome == 'success'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         env:
           PLAN_FILE: plan_output.txt
           FMT_OUTCOME: ${{ steps.fmt.outcome }}
